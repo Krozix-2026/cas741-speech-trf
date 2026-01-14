@@ -7,7 +7,7 @@
 
 \author{\authname}
 
-\date{}
+\date{January 14th, 2026}
 
 \input{../Comments.text}
 \input{../Common.text}
@@ -22,8 +22,8 @@
 \toprule
 \textbf{Date} & \textbf{Developer(s)} & \textbf{Change}\\
 \midrule
-Date1 & Name(s) & Description of changes\\
-Date2 & Name(s) & Description of changes\\
+14 January 2026 & Xiao Shao & Initial release of document\\
+% Date2 & Name(s) & Description of changes\\
 ... & ... & ...\\
 \bottomrule
 \end{tabularx}
@@ -31,63 +31,150 @@ Date2 & Name(s) & Description of changes\\
 
 \section{Problem Statement}
 
-\wss{You should check your problem statement with the
-\href{https://smiths.github.io/capTemplate/Checklists/ProbState-Checklist.pdf}
-{problem statement checklist}}. 
+% \wss{You should check your problem statement with the
+% \href{https://smiths.github.io/capTemplate/Checklists/ProbState-Checklist.pdf}
+% {problem statement checklist}}. 
 
-\wss{You can change the section headings, as long as you include the required
-information.}
+% \wss{You can change the section headings, as long as you include the required
+% information.}
+
+Understanding how the brain recognizes continuous speech remains an open
+scientific problem. Modern computational speech models can produce rich internal
+representations of speech, but it is unclear which representations best align
+with brain neural responses measured during speech recognition.
+
+Magnetoencephalography (MEG) provides millisecond-resolution neural signals that
+capture the time course of speech processing. Encoding models such as
+multivariate Temporal Response Functions (mTRFs) enable a principled comparison
+between candidate predictors (e.g., acoustic features, model-derived
+representations) and MEG responses. However, performing these comparisons
+reproducibly is difficult due to the practical challenges of (i) extracting and
+time-aligning model representations to the stimulus, (ii) fitting and evaluating
+mTRFs consistently across different predictors, and (iii) generating clear visualizations
+and summaries for scientific interpretation.
+
+This project develops a reusable scientific software pipeline that takes speech
+stimuli and MEG recordings as inputs, constructs time-aligned predictors from
+multiple speech model representations, fits mTRF encoding models, and produces
+quantitative and visual comparisons of how well each predictor explains MEG
+responses.
+
 
 \subsection{Problem}
 
 \subsection{Inputs and Outputs}
 
-\wss{Characterize the problem in terms of ``high level'' inputs and outputs.  
-Use abstraction so that you can avoid details.}
+% \wss{Characterize the problem in terms of ``high level'' inputs and outputs.  
+% Use abstraction so that you can avoid details.}
+
+\noindent \textbf{Inputs:}
+\begin{itemize}
+  \item \textbf{Speech stimuli:} audio waveforms (and associated metadata such as
+  gammatone filterbank).
+  \item \textbf{Neural data:} MEG recordings corresponding to the same stimuli,
+  assumed to be available in a standard research format and preprocessed to a
+  usable state for modeling.
+\end{itemize}
+
+\noindent \textbf{Outputs:}
+\begin{itemize}
+  \item \textbf{Time-aligned predictor matrices} for each candidate predictor,
+  stored in a reproducible format for reuse.
+  \item \textbf{Fitted encoding models} (mTRF weights and hyperparameters) for
+  each predictor and target signal.
+  \item \textbf{Evaluation summaries} with clearly defined metrics (e.g., Word error rate, prediction correlation) and cross-validation results.
+  \item \textbf{Figures and reports} that visualize predictor performance across
+  time lags.
+\end{itemize}
+
+
 
 \subsection{Stakeholders}
 
+The companies or research teams that will use the software to run experiments, compare predictors, and extend the pipeline.
+
 \subsection{Environment}
 
-\wss{Hardware and Software Environment for the users.  The developer environment
-is summarized as part of the developer plan.}
+% \wss{Hardware and Software Environment for the users.  The developer environment
+% is summarized as part of the developer plan.}
+
+This software is intended to run on any modern operating system, including
+Windows 10, macOS, and Linux. Users require a standard scientific
+computing environment capable of running numerical workflows, reading common
+audio formats, and handling MEG research data formats. 
+The workflow assumes
+access to sufficient computing resources for feature extraction and model fitting.
+A GPU with 8 GB memory is required to accelerate model training or representation
+extraction, but is not strictly required for the encoding analysis.
+
+Visualization and inspection of results will be supported through a
+Eelbrain-based neuroscience visualization environment.
 
 \section{Goals}
 
+\begin{itemize}
+  \item \textbf{End-to-end reproducibility:} Provide a configuration-driven
+  workflow that can run from input speech stimuli and MEG recordings to final
+  evaluation summaries and figures with a documented command sequence.
+
+  \item \textbf{Predictor modularity:} Support multiple predictor families in a
+  consistent interface, including at least one acoustic baseline predictor and
+  at least two model-derived representation predictors (e.g., hidden-state based).
+
+  \item \textbf{Fair model comparison:} Ensure that all predictors are evaluated
+  under the same cross-validation procedure to enable valid comparisons.
+
+  \item \textbf{Scientific visualization:} Generate high-quality figures
+  that summarizes predictor performance, using an Eelbrain-based visualization workflow.
+
+\end{itemize}
+
+
 \section{Stretch Goals}
 
-\wss{Goals you hope to get to, but not necessary.  They are also helpful if the
-scope of the original project needs to be expanded.}
+% \wss{Goals you hope to get to, but not necessary.  They are also helpful if the
+% scope of the original project needs to be expanded.}
+
+\begin{itemize}
+  \item Add additional representation predictors (e.g., different models or multiple layers) and enable systematic layer-by-layer benchmarking.
+
+  \item Extend the evaluation to support comparisons between different regions of interest.
+
+\end{itemize}
+
 
 \section{Extras}
 
-\wss{For CAS 741: State whether the project is a research project. This
-designation, with the approval (or request) of the instructor, can be modified
-over the course of the term.}
+% \wss{For CAS 741: State whether the project is a research project. This
+% designation, with the approval (or request) of the instructor, can be modified
+% over the course of the term.}
 
-\wss{For SE Capstone: List your extras.  Potential extras include usability
-testing, code walkthroughs, user documentation, formal proof, GenderMag
-personas, Design Thinking, etc.  (The full list is on the course outline and in
-Lecture 02.) Normally the number of extras will be two.  Approval of the extras
-will be part of the discussion with the instructor for approving the project.
-The extras, with the approval (or request) of the instructor, can be modified
-over the course of the term.}
+% \wss{For SE Capstone: List your extras.  Potential extras include usability
+% testing, code walkthroughs, user documentation, formal proof, GenderMag
+% personas, Design Thinking, etc.  (The full list is on the course outline and in
+% Lecture 02.) Normally the number of extras will be two.  Approval of the extras
+% will be part of the discussion with the instructor for approving the project.
+% The extras, with the approval (or request) of the instructor, can be modified
+% over the course of the term.}
+
+This is a research project. The software will support comparisons between computational speech representations and MEG responses using encoding models.
+
 
 \newpage{}
 
-\section*{Appendix --- Reflection}
+% \section*{Appendix --- Reflection}
 
-\wss{Not required for CAS 741}
+% \wss{Not required for CAS 741}
 
-\input{../Reflection.text}
+% \input{../Reflection.text}
 
-\begin{enumerate}
-    \item What went well while writing this deliverable? 
-    \item What pain points did you experience during this deliverable, and how
-    did you resolve them?
-    \item How did you and your team adjust the scope of your goals to ensure
-    they are suitable for a Capstone project (not overly ambitious but also of
-    appropriate complexity for a senior design project)?
-\end{enumerate}  
+% \begin{enumerate}
+%     \item What went well while writing this deliverable? 
+%     \item What pain points did you experience during this deliverable, and how
+%     did you resolve them?
+%     \item How did you and your team adjust the scope of your goals to ensure
+%     they are suitable for a Capstone project (not overly ambitious but also of
+%     appropriate complexity for a senior design project)?
+% \end{enumerate}  
 
 \end{document}
