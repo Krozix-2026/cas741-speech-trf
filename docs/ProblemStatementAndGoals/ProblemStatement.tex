@@ -7,7 +7,7 @@
 
 \author{\authname}
 
-\date{January 14th, 2026}
+% \date{January 14th, 2026}
 
 \input{../Comments.text}
 \input{../Common.text}
@@ -23,7 +23,7 @@
 \textbf{Date} & \textbf{Developer(s)} & \textbf{Change}\\
 \midrule
 14 January 2026 & Xiao Shao & Initial release of document\\
-% Date2 & Name(s) & Description of changes\\
+16 January 2026 & Xiao Shao & Refined based on feedback \\
 ... & ... & ...\\
 \bottomrule
 \end{tabularx}
@@ -70,7 +70,8 @@ responses.
 \noindent \textbf{Inputs:}
 \begin{itemize}
   \item \textbf{Speech stimuli:} audio waveforms (and associated metadata such as
-  gammatone filterbank).
+  sampling rate and time alignment information). Optionally, a cochlea-inspired time--frequency decomposition method, \href{https://en.wikipedia.org/wiki/Gammatone_filter}{gammatone filterbank}, is adopted to increase the model's prediction performance.
+
   \item \textbf{Neural data:} MEG recordings corresponding to the same stimuli,
   assumed to be available in a standard research format and preprocessed to a
   usable state for modeling.
@@ -81,17 +82,27 @@ responses.
   \item \textbf{Time-aligned predictor matrices} for each candidate predictor,
   stored in a reproducible format for reuse.
   \item \textbf{Fitted encoding models} (mTRF weights and hyperparameters) for
-  each predictor and target signal.
+  each predictor and target signal. The software will support linear TRF-style encoding models with a configurable time-lag window and regularization. The default will be a ridge-regularized mTRF formulation, which regularized linear regression over time-lagged predictors, following standard practice in neural speech encoding through \href{https://eelbrain.readthedocs.io/en/stable/auto_examples/temporal-response-functions/alice-trf.html#sphx-glr-auto-examples-temporal-response-functions-alice-trf-py}{Eelbrain}.
   \item \textbf{Evaluation summaries} with clearly defined metrics (e.g., Word error rate, prediction correlation) and cross-validation results.
   \item \textbf{Figures and reports} that visualize predictor performance across
-  time lags.
+  time lags through Eelbrain.
 \end{itemize}
+
+
 
 
 
 \subsection{Stakeholders}
 
-The companies or research teams that will use the software to run experiments, compare predictors, and extend the pipeline.
+\begin{itemize}
+
+\item The companies that will use the software to run experiments, compare predictors, and extend the pipeline.
+
+\item Researchers or students who wish to benchmark computational speech representations against neural data using a transparent, reusable workflow.
+
+\end{itemize}
+
+
 
 \subsection{Environment}
 
@@ -106,7 +117,6 @@ The workflow assumes
 access to sufficient computing resources for feature extraction and model fitting.
 A GPU with 8 GB memory is required to accelerate model training or representation
 extraction, but is not strictly required for the encoding analysis.
-
 Visualization and inspection of results will be supported through a
 Eelbrain-based neuroscience visualization environment.
 
@@ -158,6 +168,18 @@ Eelbrain-based neuroscience visualization environment.
 % over the course of the term.}
 
 This is a research project. The software will support comparisons between computational speech representations and MEG responses using encoding models.
+The project will include two extras (subject to instructor approval):
+
+\begin{itemize}
+  \item \textbf{User Manual:} Provide user-facing
+  documentation (README + quickstart).
+
+  \item \textbf{Code walkthrough:} Conduct a structured walkthrough of the codebase
+  with at least one reviewer. 
+
+  
+\end{itemize}
+
 
 
 \newpage{}
