@@ -20,9 +20,8 @@ if str(current_dir) not in sys.path:
 
 print(f"Adding to path: {current_dir}")
 
-from train.trainer import run_once
+from train.trainer_librispeech import run_once
 from config.schema import TrainConfig
-
 
 
 def main():
