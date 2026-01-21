@@ -1,3 +1,83 @@
+cat > .gitignore <<'EOF'
+
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# =========================
+# Python cache / build
+# =========================
+__pycache__/
+*.py[cod]
+*.pyd
+*.so
+*.egg-info/
+build/
+dist/
+.eggs/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# =========================
+# Virtual envs
+# =========================
+.venv/
+venv/
+env/
+ENV/
+env_sc2/
+*.conda*
+*.env
+
+# =========================
+# Logs / temp / checkpoints
+# =========================
+*.log
+*.tmp
+*.swp
+
+# Typical ML/RL outputs
+runs/
+lightning_logs/
+tensorboard/
+checkpoints/
+outputs/
+results/
+logs/
+
+# If you have huge videos / replays etc.
+*.mp4
+*.avi
+*.mkv
+
+# =========================
+# Data (keep private/large)
+# =========================
+data/
+datasets/
+*.pt
+*.pth
+*.ckpt
+*.npz
+*.npy
+*.pkl
+*.pickle
+
+# =========================
+# Secrets / local config
+# =========================
+.env
+*.key
+*.pem
+*secret*
+*token*
+
 ## Core latex/pdflatex auxiliary files:
 *.aux
 *.lof
