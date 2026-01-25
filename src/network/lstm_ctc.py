@@ -53,7 +53,7 @@ class LSTMCTC(nn.Module):
         packed_out, _ = self.lstm(packed)
         out, out_lens = nn.utils.rnn.pad_packed_sequence(packed_out, batch_first=True)
 
-        logits = self.proj(out)                 # (B, T, V)
+        logits = self.proj(out) # (B, T, V)
         log_probs = torch.log_softmax(logits, dim=-1)
-        log_probs = log_probs.transpose(0, 1)   # (T, B, V) for CTC
+        log_probs = log_probs.transpose(0, 1) # (T, B, V) for CTC
         return log_probs, out_lens

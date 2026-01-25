@@ -6,7 +6,6 @@ from collections import defaultdict
 import warnings
 import pickle
 import numpy as np
-# import matplotlib.pyplot as plt
 
 import torch
 import torch.nn as nn
@@ -20,17 +19,28 @@ if str(current_dir) not in sys.path:
 
 print(f"Adding to path: {current_dir}")
 
-from train.trainer_librispeech import run_once
+
 from config.schema import TrainConfig
 
 
 def main():
     device = "cuda" if torch.cuda.is_available() else "cpu"
     
-    cfg = TrainConfig(task_name="LSTM", policy_name="modified_loss", seed=0)
+    cfg = TrainConfig(dataset="librispeech",task_name="RNNT", policy_name="modified_loss", seed=0)
     cfg.ensure_dirs()
     
-    run_once(cfg, device)
-
+    if cfg.dataset == "librispeech": 
+        if cfg.task_name == "LSTM":
+            from train.trainer_librispeech import run_once
+            run_once(cfg, device)
+        if cfg.task_name == "RNNT":
+            from train.trainer_rnnt import run_once
+            run_once(cfg, device)
+    
+    
+    if cfg.dataset == "burgendy":
+        from train.trainer_burgendy import run_once
+        run_once(cfg, device)
+    
 if __name__ == "__main__":
     main()

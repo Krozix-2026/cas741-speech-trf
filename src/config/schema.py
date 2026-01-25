@@ -7,6 +7,7 @@ from pathlib import Path
 
 @dataclass
 class TrainConfig:
+    dataset: str = "librispeech"
     task_name: str = "LSTM"
     policy_name: str = "modified_loss"
     
@@ -15,35 +16,57 @@ class TrainConfig:
     
     runs_root: Path = Path("runs")
     
-    ## ---- EarShot specific ----
-    speaker: List[str] = field(default_factory=lambda: [
-        "Agnes", "Allison", "Bruce", "Junior", "Princess", "Samantha",
-        "Tom", "Victoria", "Alex", "Ava", "Fred", "Kathy", "Ralph",
-        "Susan", "Vicki", "MALD",
-    ])
+    if dataset == "burgendy":
+        ## ---- EarShot specific ----
+        speaker: List[str] = field(default_factory=lambda: [
+            "Agnes", "Allison", "Bruce", "Junior", "Princess", "Samantha",
+            "Tom", "Victoria", "Alex", "Ava", "Fred", "Kathy", "Ralph",
+            "Susan", "Vicki", "MALD",
+        ])
+        
+        gammatone_dir: Path = Path("C:/Dataset/EARSHOT/EARSHOT-gammatone+/GAMMATONE_64_100/")
+        neighbors: Path = Path("C:/Dataset/EARSHOT/EARSHOT-gammatone+/MALD-NEIGHBORS-1000.txt")
     
-    gammatone_dir: Path = Path("C:/Dataset/EARSHOT/EARSHOT-gammatone+/GAMMATONE_64_100/")
-    neighbors: Path = Path("C:/Dataset/EARSHOT/EARSHOT-gammatone+/MALD-NEIGHBORS-1000.txt")
-    
-    # ---- LibriSpeech specific ----
-    librispeech_root: Path = Path("C:\Dataset\LibriSpeech")
-    train_subset: str = "train-clean-100"
-    valid_subset: str = "dev-clean"
-    test_subset: str = "test-clean"
+    if dataset == "librispeech":
+        # ---- LibriSpeech specific ----
+        librispeech_root: Path = Path(r"C:\Dataset")
+        train_subset: str = "train-clean-100"
+        valid_subset: str = "dev-clean"
+        test_subset: str = "test-clean"
 
-    # ---- feature / model ----
-    sample_rate: int = 16000
-    n_mels: int = 80
-    win_length_ms: float = 25.0
-    hop_length_ms: float = 10.0
+        # ---- feature / model ----
+        sample_rate: int = 16000
+        n_mels: int = 80
+        win_length_ms: float = 25.0
+        hop_length_ms: float = 10.0
+        
+        limit_train_samples: Optional[int] = None
+        limit_valid_samples: Optional[int] = None
+        limit_test_samples: Optional[int] = None
+        
+        dropout: float = 0.1
+        
+        if task_name == "LSTM":
+            lstm_hidden: int = 512
+            lstm_layers: int = 3
+            bidirectional: bool = True
+            
+            # ---- training ----
+            batch_size: int = 32
+            
 
-    lstm_hidden: int = 512
-    lstm_layers: int = 3
-    bidirectional: bool = True
-    dropout: float = 0.1
+        if task_name == "RNNT":
+            lstm_hidden: int = 256
+            lstm_layers: int = 1
+            
+            rnnt_enc_subsample: int = 4
+            rnnt_pred_embed: int = 256
+            rnnt_pred_hidden: int = 512
+            rnnt_joint_dim: int = 512
+            
+            # ---- training ----
+            batch_size: int = 1
     
-    # ---- training ----
-    batch_size: int = 128
     lr: float = 1e-3
     weight_decay: float = 1e-5
     grad_clip: float = 5.0
@@ -51,9 +74,6 @@ class TrainConfig:
     use_amp: bool = True
 
     # ---- debug / speed ----
-    limit_train_samples: Optional[int] = 2000
-    limit_valid_samples: Optional[int] = 500
-    limit_test_samples: Optional[int] = 500
     log_every: int = 20
     eval_every_epochs: int = 1
 

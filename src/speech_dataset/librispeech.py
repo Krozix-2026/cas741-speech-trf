@@ -93,7 +93,7 @@ class LibriSpeechASR(Dataset):
     def __getitem__(self, idx: int) -> Dict[str, Any]:
         real_idx = self.indices[idx] if self.indices is not None else idx
 
-        # ✅ 不触发 torchaudio.load
+        #不触发 torchaudio.load
         rel_path, sr, transcript, spk_id, chap_id, utt_id = self.ds.get_metadata(real_idx)
         abs_path = self.archive_root / rel_path
 
@@ -150,3 +150,41 @@ def collate_librispeech(items: List[Dict[str, Any]]) -> LibriSpeechBatch:
         texts=texts,
         utt_ids=utt_ids,
     )
+
+def collate_rnnt(items: List[Dict[str, Any]]):
+    """
+    For RNNT:
+      feats: (B, T, F) padded
+      targets: (B, U) padded (NO concatenation)
+    """
+    items = sorted(items, key=lambda x: x["feat_len"], reverse=True)
+
+    feat_lens = torch.tensor([it["feat_len"] for it in items], dtype=torch.long)
+    target_lens = torch.tensor([it["target_len"] for it in items], dtype=torch.long)
+
+    max_t = int(feat_lens.max().item())
+    feat_dim = int(items[0]["feat"].shape[1])
+    feats = torch.zeros(len(items), max_t, feat_dim, dtype=torch.float32)
+    for i, it in enumerate(items):
+        t = it["feat_len"]
+        feats[i, :t] = it["feat"]
+
+    max_u = int(target_lens.max().item()) if len(items) > 0 else 0
+    targets = torch.full((len(items), max_u), 0, dtype=torch.long)  # pad with blank(0)
+    for i, it in enumerate(items):
+        u = it["target_len"]
+        if u > 0:
+            targets[i, :u] = it["target"]
+
+    texts = [it["text"] for it in items]
+    utt_ids = [it["utt_id"] for it in items]
+
+    return {
+        "feats": feats,
+        "feat_lens": feat_lens,
+        "targets": targets,
+        "target_lens": target_lens,
+        "texts": texts,
+        "utt_ids": utt_ids,
+    }
+
