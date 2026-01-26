@@ -1,0 +1,5 @@
+*.ipynb
+joblib
+__pycache__
+
+burgundy.egg-info/
