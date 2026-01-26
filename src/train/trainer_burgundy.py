@@ -370,7 +370,7 @@ def run_once(cfg, device):
 
     best_acc = 0.0
     
-    for ep in range(1, cfg.epoch):
+    for ep in range(1, cfg.epoch + 1):
         if ep == 1:
             with torch.no_grad():
                 Xb, Yb, _ = next(iter(train_loader))
@@ -394,8 +394,7 @@ def run_once(cfg, device):
                 x_chunk = X[:, t0:t1, :]                     # (B,Tc,64)
                 y_chunk = Y[:, t0:t1, :]        # (B, Tc, V)，包含词帧 & 静音帧(全0)
 
-                
-
+    
                 logits_chunk, h = model(x_chunk, h)          # (B,Tc,V)
 
                 logits_tok, targets = pooled_tail_logits_for_chunk(
@@ -497,7 +496,7 @@ def run_once(cfg, device):
             best_acc = val_acc
             torch.save(
                 {"model": model.state_dict(), "vocab_words": vocab_words},
-                f"RNN_ori_localist_{ep}.pt"
+                cfg.ckpt_dir / "RNN_ori_localist_{ep}.pt"
             )
 
     print(f"Best val acc: {best_acc*100:.2f}%")

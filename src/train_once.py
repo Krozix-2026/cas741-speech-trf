@@ -25,21 +25,20 @@ from config.schema import TrainConfig
 
 def main():
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    
-    cfg = TrainConfig(dataset="librispeech",task_name="RNNT", policy_name="modified_loss", seed=0)
+
+    cfg = TrainConfig(dataset="burgundy", task_name="LSTM", policy_name="modified_loss", seed=0)
     cfg.ensure_dirs()
-    
-    if cfg.dataset == "librispeech": 
+
+    if cfg.dataset == "librispeech":
         if cfg.task_name == "LSTM":
             from train.trainer_librispeech import run_once
             run_once(cfg, device)
-        if cfg.task_name == "RNNT":
+        elif cfg.task_name == "RNNT":
             from train.trainer_rnnt import run_once
             run_once(cfg, device)
-    
-    
-    if cfg.dataset == "burgendy":
-        from train.trainer_burgendy import run_once
+
+    elif cfg.dataset == "burgundy":
+        from train.trainer_burgundy import run_once
         run_once(cfg, device)
     
 if __name__ == "__main__":

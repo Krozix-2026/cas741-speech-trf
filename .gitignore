@@ -31,7 +31,6 @@ dist/
 venv/
 env/
 ENV/
-env_sc2/
 *.conda*
 *.env
 
