@@ -25,15 +25,13 @@ import numpy
 from eelbrain import *
 import trftools
 import cssl
-import os
 
 from settings import LEXICON_PATH
 
 
-DATA_ROOT = Path(os.environ.get("ALICE_ROOT", r"C:\Dataset\Appleseed")).expanduser()
-PREDICTORS_DIR = DATA_ROOT / "predictors"
-STIMULUS_DIR = DATA_ROOT / "stimuli"
-GRID_DIR = STIMULUS_DIR
+PREDICTOR_DIR = Path('~/Data/Appleseed/predictors').expanduser() 
+STIMULUS_DIR = Path('~/iCloud/Research/Appleseed/stimuli').expanduser()
+GRID_DIR = STIMULUS_DIR / 'mfa' / '1'
 STIMULI = [*map(str, range(1, 12)), '11b']
 
 lexicon = load.unpickle(LEXICON_PATH)
@@ -54,12 +52,18 @@ for stim in STIMULI:
     
 print(f"\n{word_count} words; {phoneme_count} phonemes")
 
+
+# -
+
 # # Make predictor
+
+# +
 def r_pos(r):
     if r.pronunciation.strip():
         return range(len(r.phones))
     else:
         return [-1]
+
 
 for stim in STIMULI:
     print(stim, end=', ')
@@ -78,7 +82,7 @@ for stim in STIMULI:
     ds['p0'] = Var(pos == 0)
     ds['p1_'] = Var(pos > 0)
     # save
-    save.pickle(ds, PREDICTORS_DIR / f'{stim}|phone.pickle')
+    save.pickle(ds, PREDICTOR_DIR / f'{stim}|phone.pickle')
 
 
 # +

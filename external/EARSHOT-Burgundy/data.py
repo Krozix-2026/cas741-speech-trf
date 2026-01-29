@@ -4,17 +4,17 @@ import fnmatch
 from pathlib import Path
 from typing import Tuple
 
-from earshot.earshot_lexicon import DATA_DIR
-from earshot.train_earshot import Model
-from earshot.report import Example
+# from earshot.earshot_lexicon import DATA_DIR
+# from earshot.train_earshot import Model
+# from earshot.report import Example
 from eelbrain import testnd, Dataset, combine
 import joblib
 
 from constants2 import model
 
 
-GRID_DIR = Path('/Volumes/Seagate BarracudaFastSSD/Corpus/MALD/fixed-words')
-MEMORY = joblib.Memory(DATA_DIR / 'joblib')
+# GRID_DIR = Path('/Volumes/Seagate BarracudaFastSSD/Corpus/MALD/fixed-words')
+# MEMORY = joblib.Memory(DATA_DIR / 'joblib')
 
 
 class NoTrainedModel(Exception):
@@ -56,48 +56,48 @@ def load_performance(
     return ds
 
 
-def load_best(
-        keys,
-        values,
-        by_speaker: bool = False,
-        seed: int = 0,
-        stimuli: str = 'NoSil inf',
-):
-    return _load(keys, values, by_speaker, seed, stimuli)
+# def load_best(
+#         keys,
+#         values,
+#         by_speaker: bool = False,
+#         seed: int = 0,
+#         stimuli: str = 'NoSil inf',
+# ):
+#     return _load(keys, values, by_speaker, seed, stimuli)
 
 
-@MEMORY.cache
-def _load(
-        keys,
-        values,
-        by_speaker: bool = False,
-        seed: int = 0,
-        stimuli: str = 'NoSil inf',
-):
-    args = {k: v for k, v in zip(keys, values)}
-    model = Model(seed=seed, **args)
-    if model.checkpoints:
-        checkpoint = model.checkpoints[-1]
-    else:
-        checkpoint = -1
-    # Results
-    example = Example(model)
-    results, ds_correct = example.load_results(stimuli)
-    layers = values[keys.index('hidden')].count('x') + 1
-    # word error rate
-    del ds_correct['overall']
-    x = 'speaker % trained' if by_speaker else 'trained'
-    ds = ds_correct.aggregate(x, drop_bad=True)
-    ds['wer'] = 1 - ds['last10']
-    ds[:, 'layers'] = layers
-    ds[:, 'seed'] = seed
-    ds[:, 'checkpoint'] = checkpoint
-    for key, value in zip(keys, values):
-        ds[:, key] = value
-    return ds
+# @MEMORY.cache
+# def _load(
+#         keys,
+#         values,
+#         by_speaker: bool = False,
+#         seed: int = 0,
+#         stimuli: str = 'NoSil inf',
+# ):
+#     args = {k: v for k, v in zip(keys, values)}
+#     model = Model(seed=seed, **args)
+#     if model.checkpoints:
+#         checkpoint = model.checkpoints[-1]
+#     else:
+#         checkpoint = -1
+#     # Results
+#     example = Example(model)
+#     results, ds_correct = example.load_results(stimuli)
+#     layers = values[keys.index('hidden')].count('x') + 1
+#     # word error rate
+#     del ds_correct['overall']
+#     x = 'speaker % trained' if by_speaker else 'trained'
+#     ds = ds_correct.aggregate(x, drop_bad=True)
+#     ds['wer'] = 1 - ds['last10']
+#     ds[:, 'layers'] = layers
+#     ds[:, 'seed'] = seed
+#     ds[:, 'checkpoint'] = checkpoint
+#     for key, value in zip(keys, values):
+#         ds[:, key] = value
+#     return ds
 
 
-@MEMORY.cache
+# @MEMORY.cache
 def load_roi_data(
         model: str = f"gt-log8 + phone-p0",
         roi: str = 'STG301',
@@ -106,7 +106,7 @@ def load_roi_data(
     ""
     import trftools.roi
     from burgundy import e
-    from jobs import STG, WHOLEBRAIN
+    from jobs_rnn import STG
 
     hemis = ('lh', 'rh')
     src = e.load_src(ndvar=True, mrisubject='fsaverage')
@@ -121,7 +121,7 @@ def load_roi_data(
         raise TypeError(f"{norm=}")
 
     e.reset()
-    parameters = STG if roi.startswith('STG') else WHOLEBRAIN
+    parameters = STG
     ds_raw = e.load_trfs(-1, model, **parameters, trfs=False)
     dss = []
     for hemi, hemi_roi, hemi_norm in zip(hemis, rois, norms):
@@ -169,19 +169,19 @@ def load_model_roi_data(
     return ds
 
 
-@MEMORY.cache
+# @MEMORY.cache
 def load_roi_norm(
         roi: str = None,
 ):
     "Use acoustic model as 100%"
-    ds0 = load_roi_data('gt-log8 + phone-p0', roi, False)
+    ds0 = load_roi_data('log-8 + phone', roi, False)
     ds = ds0.aggregate('hemi', drop_bad=True)
     dets = {hemi: det for det, hemi in ds.zip('det_roi', 'hemi')}
     lh, rh = dets['lh'], dets['rh']
     return lh, rh
 
 
-@MEMORY.cache
+# @MEMORY.cache
 def load_variance_components(x: str, parameters: dict, components: Tuple[str, ...] = None):
     from burgundy import e
 
@@ -230,7 +230,7 @@ def load_variance_components(x: str, parameters: dict, components: Tuple[str, ..
     return Dataset.from_caselist(['subject', 'x', 'det'], rows, info=info)
 
 
-@MEMORY.cache
+# @MEMORY.cache
 def load_variance_component_tests(x: str, components: Tuple[str, ...] = None):
     data = load_variance_components(x, components)
     data['det'] = data['det'].smooth('source', 0.005, 'gaussian')
