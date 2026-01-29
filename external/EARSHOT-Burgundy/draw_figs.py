@@ -11,7 +11,7 @@ import seaborn
 
 from jobs import e, WHOLEBRAIN
 from constants2 import model
-from data import load_performance, load_model_roi_data, load_roi_data, load_variance_components, load_variance_component_tests
+from data import load_roi_data
 from rc import LOSS, LOSS_COLORS
 import rc
 
@@ -22,12 +22,12 @@ HIDDEN_FLAT = [
 # norm: divided by baseline model in each hemisphere
 rnn = partial(model, HIDDEN_FLAT[0], target_space='OneHot', loss=f'dw1024to10', k=32)
 
-ds_full = load_roi_data(f"gt-log8 + phone-p0 + {rnn()}")
+ds_full = load_roi_data(f"log-8 + phone + {rnn()}")
 dss_reduced = {
-    'onset': load_roi_data(f"gt-log8 + phone-p0 + {rnn(transform='sum')}"),
-    'sum': load_roi_data(f"gt-log8 + phone-p0 + {rnn(transform='onset')}"),
-    'rnn': load_roi_data(f"gt-log8 + phone-p0"),
-    'auditory': load_roi_data(f"phone-p0 + {rnn()}"),
+    'onset': load_roi_data(f"log-8 + phone + {rnn(transform='sum')}"),
+    'sum': load_roi_data(f"log-8 + phone + {rnn(transform='onset')}"),
+    'rnn': load_roi_data(f"log-8 + phone + "),
+    'auditory': load_roi_data(f"phone + {rnn()}"),
 }
 # Variance component in full 'det_roi' attributable to key:
 for key, ds_reduced in dss_reduced.items():

@@ -131,7 +131,7 @@ def mask_roi(
     hemi_labels = []
     for hemi in HEMIS:
         hemi_vertices = vertices(key, src.subject, src.subjects_dir, hemi)
-        index = numpy.in1d(src.vertices[hemi == 'rh'], hemi_vertices)
+        index = numpy.isin(src.vertices[hemi == 'rh'], hemi_vertices)
         if hemi == 'lh':
             index = numpy.concatenate([index, numpy.zeros(src.rh_n, bool)])
         else:
@@ -161,7 +161,7 @@ def vertices(
             raise ValueError(f"{key=}")
         base, split = m.groups()
         base_ids = [names.index(base_key.encode()) for base_key in roi_to_aparc(base)]
-        part_vertices = numpy.flatnonzero(numpy.in1d(labels, base_ids))
+        part_vertices = numpy.flatnonzero(numpy.isin(labels, base_ids))
         # label sub-section
         if split:
             n, *keep = [int(c) for c in split]
