@@ -28,6 +28,13 @@ class TrainConfig:
     train_subset: Optional[str] = None
     valid_subset: Optional[str] = None
     test_subset: Optional[str] = None
+    
+    # ---- LibriSpeech word-aligned coch specific ----
+    librispeech_manifest: Optional[Path] = Path(r"C:\Dataset\LibriSpeech\manifest_librispeech_coch_align.jsonl")
+    coch_feat_dim: int = 64
+    env_sr: int = 100
+    tail_ms: int = 100
+    word_vocab_topk: int = 20000
 
     # ---- feature / model (shared defaults; can be overridden per task) ----
     sample_rate: int = 16000
@@ -105,12 +112,13 @@ class TrainConfig:
                 self.valid_subset = "dev-clean"
             if self.test_subset is None:
                 self.test_subset = "test-clean"
-
+            if self.librispeech_manifest is None:
+                self.librispeech_manifest = Path(r"C:\Dataset\manifest_librispeech_coch_align.jsonl")
         else:
             raise ValueError(f"Unknown dataset: {self.dataset} (expected 'librispeech' or 'burgundy')")
 
         # ---- task defaults ----
-        if self.task_name == "LSTM":
+        if self.task_name == "LSTM" or "LSTM_WORD":
             # 你原来 LSTM 的 batch_size=32
             if self.batch_size is None:
                 self.batch_size = 32

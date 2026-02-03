@@ -26,14 +26,18 @@ from config.schema import TrainConfig
 def main():
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
-    cfg = TrainConfig(dataset="burgundy", task_name="LSTM", policy_name="modified_loss", seed=0)
+    # cfg = TrainConfig(dataset="burgundy", task_name="LSTM", policy_name="modified_loss", seed=0)
+    cfg = TrainConfig(dataset="librispeech", task_name="LSTM_WORD", policy_name="baseline", seed=0)
     cfg.ensure_dirs()
 
     if cfg.dataset == "librispeech":
+        if cfg.task_name == "LSTM_WORD":
+            from train.trainer_librispeech_words import run_once
+            run_once(cfg, device)
         if cfg.task_name == "LSTM":
             from train.trainer_librispeech import run_once
             run_once(cfg, device)
-        elif cfg.task_name == "RNNT":
+        if cfg.task_name == "RNNT":
             from train.trainer_rnnt import run_once
             run_once(cfg, device)
 
