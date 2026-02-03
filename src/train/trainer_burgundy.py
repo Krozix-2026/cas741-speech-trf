@@ -13,7 +13,7 @@ import numpy as np
 
 from network.loss import DownWeightCompetitors
 from network.RNN import LocalistRNN
-from utils import compress_and_norm_64T, load_pickle_quiet
+from utils.utils import compress_and_norm_64T, load_pickle_quiet
 from speech_dataset.earshot_dataset import ContinuousStreamDataset
 
 
