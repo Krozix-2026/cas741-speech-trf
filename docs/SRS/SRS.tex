@@ -147,23 +147,23 @@
 \begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
 \toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
 \midrule
-Date 1 & 1.0 & Notes\\
-Date 2 & 1.1 & Notes\\
+Jan 29 & 1.0 & Initial draft\\
+Feb 2 & 1.1 & Update data explaniation\\
 \bottomrule
 \end{tabularx}
 
-~\\
-\plt{This template is intended for use by CAS 741.  For CAS 741 the template
-should be used exactly as given, except the Reflection Appendix can be deleted.
-For the capstone course it is a source of ideas, but shouldn't be followed
-exactly.  The exception is the reflection appendix.  All capstone SRS documents
-should have a reflection appendix.}
+% ~\\
+% \plt{This template is intended for use by CAS 741.  For CAS 741 the template
+% should be used exactly as given, except the Reflection Appendix can be deleted.
+% For the capstone course it is a source of ideas, but shouldn't be followed
+% exactly.  The exception is the reflection appendix.  All capstone SRS documents
+% should have a reflection appendix.}
 
 ~\newpage
 
 \section{Reference Material}
 
-This section records information for easy reference.
+This section records information for easy reference, including units, symbols, abbreviations, and mathematical conventions used throughout this SRS.
 
 \subsection{Table of Units}
 
@@ -174,39 +174,41 @@ description of the unit and the SI name.
 ~\newline
 
 \renewcommand{\arraystretch}{1.2}
-%\begin{table}[ht]
-  \noindent \begin{tabular}{l l l} 
-    \toprule		
-    \textbf{symbol} & \textbf{unit} & \textbf{SI}\\
-    \midrule 
-    \si{\metre} & length & metre\\
-    \si{\kilogram} & mass	& kilogram\\
-    \si{\second} & time & second\\
-    \si{\celsius} & temperature & centigrade\\
-    \si{\joule} & energy & joule\\
-    \si{\watt} & power & watt (W = \si{\joule\per\second})\\
-    \bottomrule
-  \end{tabular}
-  %	\caption{Provide a caption}
-%\end{table}
+\begin{table}[ht]
+\noindent \begin{tabular}{l l l}
+\toprule
+\textbf{symbol} & \textbf{quantity} & \textbf{SI name}\\
+\midrule
+\si{\second} & time & second\\
+\si{\milli\second} & time & millisecond\\
+\si{\hertz} & sampling rate / frequency & hertz\\
+\si{\kilo\hertz} & audio sampling rate  & kilohertz\\
+\si{\tesla} & magnetic flux density & tesla\\
+\si{\femto\tesla} & MEG sensor-level magnitude  & femtotesla\\
 
-\plt{Only include the units that your SRS actually uses.}
+\bottomrule
+\end{tabular}
+\caption{SI units used in this document}
+\end{table}
 
-\plt{Derived units, like newtons, pascal, etc, should show their derivation
-    (the units they are derived from) if their constituent units are in the
-    table of units (that is, if the units they are derived from are used in the
-    document).  For instance, the derivation of pascals as
-    $\si{\pascal}=\si{\newton\per\square\meter}$ is shown if newtons and m are
-    both in the table.  The derivations of newtons would not be shown if kg and
-    s are not both in the table.}
 
-\plt{The symbol for units named after people use capital letters, but the name
-  of the unit itself uses lower case.  For instance, pascals use the symbol Pa,
-  watts use the symbol W, teslas use the symbol T, newtons use the symbol N,
-  etc.  The one exception to this is degree Celsius.  Details on writing metric
-  units can be found on the 
-  \href{https://www.nist.gov/pml/weights-and-measures/writing-metric-units}
-  {NIST} web-page.}
+% \plt{Only include the units that your SRS actually uses.}
+
+% \plt{Derived units, like newtons, pascal, etc, should show their derivation
+%     (the units they are derived from) if their constituent units are in the
+%     table of units (that is, if the units they are derived from are used in the
+%     document).  For instance, the derivation of pascals as
+%     $\si{\pascal}=\si{\newton\per\square\meter}$ is shown if newtons and m are
+%     both in the table.  The derivations of newtons would not be shown if kg and
+%     s are not both in the table.}
+
+% \plt{The symbol for units named after people use capital letters, but the name
+%   of the unit itself uses lower case.  For instance, pascals use the symbol Pa,
+%   watts use the symbol W, teslas use the symbol T, newtons use the symbol N,
+%   etc.  The one exception to this is degree Celsius.  Details on writing metric
+%   units can be found on the 
+%   \href{https://www.nist.gov/pml/weights-and-measures/writing-metric-units}
+%   {NIST} web-page.}
 
 \subsection{Table of Symbols}
 
@@ -215,622 +217,1091 @@ their units.  The choice of symbols was made to be consistent with the heat
 transfer literature and with existing documentation for solar water heating
 systems.  The symbols are listed in alphabetical order.
 
-\renewcommand{\arraystretch}{1.2}
-%\noindent \begin{tabularx}{1.0\textwidth}{l l X}
-\noindent \begin{longtable*}{l l p{12cm}} \toprule
+\renewcommand{\arraystretch}{1.15}
+\noindent \begin{longtable}{l l p{11.2cm}}
+\toprule
 \textbf{symbol} & \textbf{unit} & \textbf{description}\\
-\midrule 
-$A_C$ & \si[per-mode=symbol] {\square\metre} & coil surface area
-\\
-$A_\text{in}$ & \si[per-mode=symbol] {\square\metre} & surface area over which
-heat is transferred in
-\\ 
+\midrule
+\endfirsthead
+\toprule
+\textbf{symbol} & \textbf{unit} & \textbf{description}\\
+\midrule
+\endhead
+\midrule
+\multicolumn{3}{r}{\emph{Continued on next page}}\\
+\endfoot
 \bottomrule
-\end{longtable*}
-\plt{Use your problems actual symbols.  The si package is a good idea to use for
-  units.}
+\endlastfoot
+
+$C$ & -- & Number of MEG sensors.\\
+$D$ & -- & Predictor feature dimension.\\
+$B$ & -- & Training batch size. \\
+$E$ & -- & Training epochs. \\
+$\mathcal{D}$ & -- & Speech dataset collection (e.g., $\mathcal{D}_{\text{Burgundy}}, \mathcal{D}_{\text{LibriSpeech}}$).\\
+$\mathcal{D}_{\text{train}}$ & -- & Training splits of dataset $\mathcal{D}$.\\
+$\mathcal{D}_{\text{val}}$ & -- & Validation splits of dataset $\mathcal{D}$.\\
+$\mathcal{D}_{\text{test}}$ & -- & Test splits of dataset $\mathcal{D}$.\\
+$\boldsymbol{a}$ & -- & Audio input sequence provided to the speech model.\\
+$\boldsymbol{s}^\star$ & -- & Ground-truth transcript for ASR training.\\
+$\boldsymbol{\theta}$ & -- & Trainable parameters of the speech model.\\
+$\boldsymbol{\theta}^\ast$ & -- & Optimized model parameters.\\
+$f_{\boldsymbol{\theta}}(\cdot)$ & -- & Speech model parameterized by $\boldsymbol{\theta}$.\\
+$\mathcal{L}_{\mathrm{ASR}}$ & -- & ASR training loss function used to fit $f_{\boldsymbol{\theta}}$.\\
+$\eta$ & -- & Learning rate for gradient-based optimization.\\
+$\ell$ & -- & Layer index of the deep model.\\
+$H_\ell$ & -- & Hidden-state dimensionality of layer $\ell$.\\
+$\boldsymbol{h}^{(\ell)}_t$ & -- & Hidden state vector from layer $\ell$ at model time index $t$.\\
+$g(\cdot)$ & -- & Optional transformation applied to hidden states to form predictors.\\
+$\boldsymbol{r}^{(\ell)}_t$ & -- & Predictor representation vector derived from $\boldsymbol{h}^{(\ell)}_t$.\\
+$\mathbf{R}^{(\ell)}$ & -- & Time-by-feature predictor matrix aligned to MEG grid, $\mathbf{R}^{(\ell)}\in\mathbb{R}^{N\times D}$.\\
+$\mathbf{R}^{(\mathrm{base})}$ & -- & Baseline predictor matrix, $\mathbf{R}^{(\mathrm{base})}\in\mathbb{R}^{N\times D_b}$.\\
+$D_b$ & -- & Feature dimension of the baseline predictor matrix $\mathbf{R}^{(\mathrm{base})}$.\\
+$\mathbf{X}(\mathbf{R})$ & -- & Lagged design matrix constructed from predictor matrix $\mathbf{R}$, $\mathbf{X}(\mathbf{R})\in\mathbb{R}^{N\times (KD)}$.\\
+$\mathbf{W}^\ast$ & -- & Ridge-regularized estimate of TRF weights.\\
+$\rho_{\mathrm{base}}$ & -- & Encoding score obtained using the baseline predictor.\\
+$\rho_{\ell}$ & -- & Encoding score obtained using model-derived representations from layer $\ell$.\\
+$\Delta\rho_{\ell}$ & -- & Improvement over baseline: $\Delta\rho_{\ell} = \rho_{\ell} - \rho_{\mathrm{base}}$.\\
+$f_s$ & \si{\hertz} & Sampling frequency of MEG signals used for TRF modeling.\\
+$f_a$ & \si{\hertz} & Sampling frequency of the raw audio waveform.\\
+$K$ & -- & Number of time lags used in the TRF.\\
+$L$ & -- & Number of candidate predictors being compared.\\
+$N$ & -- & Number of time samples used for model fitting.\\
+$N_{\mathrm{ROI}}$ & -- & Number of regions of interests (ROI).\\
+$t$ & \si{\second} & Continuous time index.\\
+$\Delta t$ & \si{\second} & Sampling interval of MEG signals ($\Delta t = 1/f_s$).\\
+$\tau$ & \si{\second} & Time-lag variable for TRF, which whithin $[\tau_{\min}, \tau_{\max}]$.\\
+$\tau_{\min}$, $\tau_{\max}$ & \si{\second} & Start and end of the TRF lag window.\\
+$\boldsymbol{x}(t)$ & -- & Predictor vector at time $t$.\\
+$\mathbf{R}^{(\ell)}$ & -- & Time-by-feature matrix. \\
+$\mathbf{R}^{(\mathrm{base})}$ & -- & Baseline predictor. \\
+$\mathbf{X}$ & -- & Design matrix formed from time-lagged predictors.\\
+$\mathbf{X}_{\tau}$ & -- & Lagged version of $\mathbf{X}$ corresponding to a specific lag $\tau$.\\
+$\boldsymbol{y}(t)$ & \si{\tesla}/\si{\femto\tesla} & MEG response vector across sensors at time $t$.\\
+$\mathbf{Y}$ & \si{\tesla}/\si{\femto\tesla} & MEG response matrix across time and sensors.\\
+$\mathbf{w}(\tau)$ & -- & TRF weight vector at lag $\tau$, which used to map predictors to responses.\\
+$\mathbf{W}$ & -- & Full TRF weight matrix across all lags and sensors.\\
+$\lambda$ & -- & Ridge regularization coefficient for TRF fitting.\\
+$\hat{\mathbf{Y}}$ & \si{\tesla}/\si{\femto\tesla} & Predicted MEG responses from the fitted encoding model.\\
+$\rho$ & -- & Prediction score.\\
+$\mathrm{CV}$ & -- & Cross-validation procedure.\\
+\end{longtable}
+
+
+
+
+
+
+
 
 \subsection{Abbreviations and Acronyms}
 
-\renewcommand{\arraystretch}{1.2}
-\begin{tabular}{l l} 
-  \toprule		
-  \textbf{symbol} & \textbf{description}\\
-  \midrule 
-  A & Assumption\\
-  DD & Data Definition\\
-  GD & General Definition\\
-  GS & Goal Statement\\
-  IM & Instance Model\\
-  LC & Likely Change\\
-  PS & Physical System Description\\
-  R & Requirement\\
-  SRS & Software Requirements Specification\\
-  \progname{} & \plt{put an expanded version of your program name here (as appropriate)}\\
-  TM & Theoretical Model\\
-  \bottomrule
-\end{tabular}\\
 
-\plt{Add any other abbreviations or acronyms that you add}
+\renewcommand{\arraystretch}{1.2}
+\begin{table}[ht]
+\noindent \begin{tabular}{l p{12cm}}
+\toprule
+\textbf{symbol} & \textbf{description}\\
+\midrule
+A & Assumption\\
+API & Application Programming Interface\\
+BIDS & Brain Imaging Data Structure\\
+CI & Continuous Integration\\
+CLI & Command Line Interface\\
+CV & Cross-Validation\\
+DL & Deep Learning\\
+EEG & Electroencephalography\\
+HPC & High-Performance Computing\\
+MEG & Magnetoencephalography\\
+mTRF & Multivariate Temporal Response Function\\
+Req & Requirement\\
+ROI & Region of Interest\\
+SRS & Software Requirements Specification\\
+TRF & Temporal Response Function\\
+WER & Word Error Rate\\
+\bottomrule
+\end{tabular}
+\caption{Abbreviations and acronyms used in this document}
+\end{table}
+
+
+% \plt{Add any other abbreviations or acronyms that you add}
+
+
+
+
 
 \subsection{Mathematical Notation}
+The following conventions are used.
 
-\plt{This section is optional, but should be included for projects that make use
-  of notation to convey mathematical information.  For instance, if typographic
-  conventions (like bold face font) are used to distinguish matrices, this
-  should be stated here.  If symbols are used to show mathematical operations,
-  these should be summarized here.  In some cases the easiest way to summarize
-  the notation is to point to a text or other source that explains the
-  notation.}
-
-\plt{This section was added to the template because some students use very
-  domain specific notation.  This notation will not be readily understandable to
-  people outside of your domain.  It should be explained.}
-
-\newpage
-
-\pagenumbering{arabic}
-
-\plt{This SRS template is based on \citet{SmithAndLai2005, SmithEtAl2007,
-  SmithAndKoothoor2016}.  It will get you started.  You should not modify the
-  section headings, without first discussing the change with the course
-  instructor.  Modification means you are not following the template, which
-  loses some of the advantage of a template, especially standardization.
-  Although the bits shown below do not include type information, you may need to
-  add this information for your problem.  If you are unsure, please can ask the
-  instructor.}
-
-\plt{Feel free to change the appearance of the report by modifying the LaTeX
-  commands.}
-
-\plt{This template document assumes that a single program is being documented.
-  If you are documenting a family of models, you should start with a commonality
-  analysis.  A separate template is provided for this.  For program
-  families you should look at \cite{Smith2006, SmithMcCutchanAndCarette2017}.
-  Single family member programs are often programs based on a single physical
-  model.  General purpose tools are usually documented as a family.  Families of
-  physical models also come up.}
-
-\plt{The SRS is not generally written, or read, sequentially.  The SRS is a
-  reference document.  It is generally read in an ad hoc order, as the need
-  arises.  For writing an SRS, and for reading one for the first time, the
-  suggested order of sections is:
 \begin{itemize}
-\item Goal Statement
-\item Instance Models
-\item Requirements
-\item Introduction
-\item Specific System Description
+  \item \textbf{Typesetting:} Scalars are written in italic (e.g., $t, f_s, \lambda$), vectors in bold
+  lowercase (e.g., $\boldsymbol{x}$), and matrices in bold uppercase (e.g., $\mathbf{X}, \mathbf{W}$).
+  \item \textbf{Time indices:} Discrete-time samples are indexed by $n \in \{1,\dots,N\}$. Continuous time is denoted by $t$.
+  \item \textbf{Lag window:} A time-lag window is defined by $[\tau_{\min}, \tau_{\max}]$ and discretized into $K$ lags.
+
+  \item \textbf{Datasets:} We denote the speech dataset used for training and evaluation as
+  $\mathcal{D} \in \{\mathcal{D}_{\text{Burgundy}},\mathcal{D}_{\text{LibriSpeech}}\}$ with splits
+  $\mathcal{D}_{\text{train}}, \mathcal{D}_{\text{val}}, \mathcal{D}_{\text{test}}$.
+
+  \item \textbf{Deep model training objective:} A speech model with parameters $\boldsymbol{\theta}$ is trained to minimize
+  an ASR-style loss on $\mathcal{D}_{\text{train}}$:
+  \[
+    \boldsymbol{\theta}^\ast
+    = \arg\min_{\boldsymbol{\theta}}
+      \mathbb{E}_{(\boldsymbol{a}, \boldsymbol{s}^\star)\sim \mathcal{D}_{\text{train}}}
+      \left[\mathcal{L}_{\mathrm{ASR}}\!\left(f_{\boldsymbol{\theta}}(\boldsymbol{a}), \boldsymbol{s}^\star\right)\right],
+  \]
+  where $\boldsymbol{a}$ is an audio input, $\boldsymbol{s}^\star$ is the target transcript,
+  and $\mathcal{L}_{\mathrm{ASR}}$ is the loss function depend on the selected model.
+
+  \item \textbf{Gradient-based optimization:}
+  \[
+    \boldsymbol{\theta} \leftarrow \boldsymbol{\theta} - \eta \nabla_{\boldsymbol{\theta}} \mathcal{L}_{\mathrm{ASR}}(\boldsymbol{\theta}),
+  \]
+  with learning rate $\eta$, applied over mini-batches of size $B$ for $E$ epochs.
+
+  \item \textbf{Model representations:} Given a trained model $f_{\boldsymbol{\theta}^\ast}$, internal representations are extracted.
+  Let $\boldsymbol{h}^{(\ell)}_t \in \mathbb{R}^{H_\ell}$ denote the hidden state from layer $\ell$ at model time index $t$.
+  A predictor representation is defined as
+  \[
+    \boldsymbol{r}^{(\ell)}_t = g\!\left(\boldsymbol{h}^{(\ell)}_t\right) \in \mathbb{R}^{D},
+  \]
+  where $g(\cdot)$ is an optional transformation chosen to yield a consistent predictor dimension $D$.
+
+  \item \textbf{Time alignment to MEG grid:} Representations $\{\boldsymbol{r}_m^{(\ell)}\}$ are resampled and aligned to the MEG sampling grid at rate $f_s$ to produce a time-by-feature matrix $\mathbf{R}^{(\ell)} \in \mathbb{R}^{N \times D}$.
+  In the same way, an acoustic baseline predictor (e.g., gammatone features) yields $\mathbf{R}^{(\mathrm{base})}\in \mathbb{R}^{N\times D_b}$.
+
+  \item \textbf{Lagged design matrix construction:} For a given predictor matrix $\mathbf{R}$, a lagged design matrix
+  $\mathbf{X}(\mathbf{R}) \in \mathbb{R}^{N \times (K D)}$ is formed by concatenating time-shifted copies of $\mathbf{R}$
+  over lags in $[\tau_{\min}, \tau_{\max}]$.
+
+  \item \textbf{TRF encoding model:} A linear TRF maps lagged predictors to MEG responses:
+  \[
+    \hat{\mathbf{Y}} = \mathbf{X}(\mathbf{R})\,\mathbf{W},
+  \]
+  where $\mathbf{Y}\in \mathbb{R}^{N\times C}$ is the MEG response matrix and $\mathbf{W}\in \mathbb{R}^{(K D)\times C}$ are TRF weights.
+
+  \item \textbf{Ridge-regularized estimation:}
+  \[
+    \mathbf{W}^\ast = \arg\min_{\mathbf{W}}
+    \left\lVert \mathbf{Y} - \mathbf{X}(\mathbf{R})\mathbf{W} \right\rVert_F^2
+    + \lambda \left\lVert \mathbf{W} \right\rVert_F^2,
+  \]
+  where $\lambda$ is selected using a fixed cross-validation procedure shared across all predictors for fair comparison.
+
+  \item \textbf{Encoding performance metric:} For each sensor/ROI and CV fold, predictor performance is summarized using
+  a metric such as Pearson correlation $\rho(\hat{\mathbf{Y}}, \mathbf{Y})$ and then aggregated across folds.
+
+  \item \textbf{Baseline comparison and improvement:} Let $\rho_{\mathrm{base}}$ denote the encoding score obtained with the baseline predictor
+  and $\rho_{\ell}$ the score obtained using model-derived representations from layer $\ell$. The improvement over baseline is defined as
+  \[
+    \Delta \rho_{\ell} = \rho_{\ell} - \rho_{\mathrm{base}}.
+  \]
+  The software reports $\Delta \rho_{\ell}$ (and optionally confidence intervals) to quantify how much each model representation improves encoding performance.
 \end{itemize}
-}
 
-\plt{Guiding principles for the SRS document:
-\begin{itemize}
-\item Do not repeat the same information at the same abstraction level.  If
-  information is repeated, the repetition should be at a different abstraction
-  level.  For instance, there will be overlap between the scope section and the
-  assumptions, but the scope section will not go into as much detail as the
-  assumptions section.
-\end{itemize}
-}
 
-\plt{The template description comments should be disabled before submitting this
-  document for grading.}
 
-\plt{You can borrow any wording from the text given in the template.  It is part
-  of the template, and not considered an instance of academic integrity.  Of
-  course, you need to cite the source of the template.}
 
-\plt{When the documentation is done, it should be possible to trace back to the
-  source of every piece of information.  Some information will come from
-  external sources, like terminology.  Other information will be derived, like
-  General Definitions.}
 
-\plt{An SRS document should have the following qualities: unambiguous,
-  consistent, complete, validatable, abstract and traceable.}
 
-\plt{The overall goal of the SRS is that someone that meets the Characteristics
-  of the Intended Reader (Section~\ref{sec_IntendedReader}) can learn,
-  understand and verify the captured domain knowledge.  They should not have to
-  trust the authors of the SRS on any statements.  They should be able to
-  independently verify/derive every statement made.}
+
+
+
+% \plt{This section is optional, but should be included for projects that make use
+%   of notation to convey mathematical information.  For instance, if typographic
+%   conventions (like bold face font) are used to distinguish matrices, this
+%   should be stated here.  If symbols are used to show mathematical operations,
+%   these should be summarized here.  In some cases the easiest way to summarize
+%   the notation is to point to a text or other source that explains the
+%   notation.}
+
+% \plt{This section was added to the template because some students use very
+%   domain specific notation.  This notation will not be readily understandable to
+%   people outside of your domain.  It should be explained.}
+
+% \newpage
+
+% \pagenumbering{arabic}
+
+% \plt{This SRS template is based on \citet{SmithAndLai2005, SmithEtAl2007,
+%   SmithAndKoothoor2016}.  It will get you started.  You should not modify the
+%   section headings, without first discussing the change with the course
+%   instructor.  Modification means you are not following the template, which
+%   loses some of the advantage of a template, especially standardization.
+%   Although the bits shown below do not include type information, you may need to
+%   add this information for your problem.  If you are unsure, please can ask the
+%   instructor.}
+
+% \plt{Feel free to change the appearance of the report by modifying the LaTeX
+%   commands.}
+
+% \plt{This template document assumes that a single program is being documented.
+%   If you are documenting a family of models, you should start with a commonality
+%   analysis.  A separate template is provided for this.  For program
+%   families you should look at \cite{Smith2006, SmithMcCutchanAndCarette2017}.
+%   Single family member programs are often programs based on a single physical
+%   model.  General purpose tools are usually documented as a family.  Families of
+%   physical models also come up.}
+
+% \plt{The SRS is not generally written, or read, sequentially.  The SRS is a
+%   reference document.  It is generally read in an ad hoc order, as the need
+%   arises.  For writing an SRS, and for reading one for the first time, the
+%   suggested order of sections is:
+% \begin{itemize}
+% \item Goal Statement
+% \item Instance Models
+% \item Requirements
+% \item Introduction
+% \item Specific System Description
+% \end{itemize}
+% }
+
+% \plt{Guiding principles for the SRS document:
+% \begin{itemize}
+% \item Do not repeat the same information at the same abstraction level.  If
+%   information is repeated, the repetition should be at a different abstraction
+%   level.  For instance, there will be overlap between the scope section and the
+%   assumptions, but the scope section will not go into as much detail as the
+%   assumptions section.
+% \end{itemize}
+% }
+
+% \plt{The template description comments should be disabled before submitting this
+%   document for grading.}
+
+% \plt{You can borrow any wording from the text given in the template.  It is part
+%   of the template, and not considered an instance of academic integrity.  Of
+%   course, you need to cite the source of the template.}
+
+% \plt{When the documentation is done, it should be possible to trace back to the
+%   source of every piece of information.  Some information will come from
+%   external sources, like terminology.  Other information will be derived, like
+%   General Definitions.}
+
+% \plt{An SRS document should have the following qualities: unambiguous,
+%   consistent, complete, validatable, abstract and traceable.}
+
+% \plt{The overall goal of the SRS is that someone that meets the Characteristics
+%   of the Intended Reader (Section~\ref{sec_IntendedReader}) can learn,
+%   understand and verify the captured domain knowledge.  They should not have to
+%   trust the authors of the SRS on any statements.  They should be able to
+%   independently verify/derive every statement made.}
 
 \section{Introduction}
 
-\plt{The introduction section is written to introduce the problem.  It starts
-  general and focuses on the problem domain. The general advice is to start with
-a paragraph or two that describes the problem, followed by a ``roadmap''
-paragraph.  A roadmap orients the reader by telling them what sub-sections to
-expect in the Introduction section.}
+% \plt{The introduction section is written to introduce the problem.  It starts
+%   general and focuses on the problem domain. The general advice is to start with
+% a paragraph or two that describes the problem, followed by a ``roadmap''
+% paragraph.  A roadmap orients the reader by telling them what sub-sections to
+% expect in the Introduction section.}
+
+Human speech communication is remarkably efficient, yet the computational mechanisms by which the brain recognizes continuous speech remain only partially understood. 
+Modern deep learning models for speech recognition (e.g., RNN/LSTM-based architectures) can achieve strong behavioral performance, but it is unclear which of their internal representations correspond to the neural representations that unfold in the brain over time. 
+Magnetoencephalography (MEG) offers millisecond-scale measurements of neural activity during naturalistic listening, enabling direct tests of whether candidate speech representations encode information in a brain-like manner.
+
+
+A common approach to model--brain comparison is to treat the model's time-varying representations as predictors and quantify how well they explain neural responses using encoding models such as multivariate Temporal Response Functions (mTRFs). 
+However, producing trustworthy comparisons across multiple models and predictors is difficult in practice. The difficulties are primarily engineering and reproducibility challenges: training models across datasets, extracting layer-wise hidden representations, aligning all predictors to the MEG time axis, fitting mTRFs under identical cross-validation and regularization settings, and generating consistent summaries and visualizations.
+Without a standardized workflow, comparisons can be confounded by subtle differences in preprocessing, alignment, or evaluation procedures rather than reflecting true representational differences.
+
+
+This project develops a reusable scientific software pipeline for model--to--brain alignment in speech recognition. The software supports training multiple deep learning models on speech dataset (e.g., Burgundy and LibriSpeech), extracting hidden representations as predictors, constructing time-aligned predictor matrices, fitting ridge-regularized mTRF encoding models, and reporting how much each model-derived predictor improves neural prediction relative to an acoustic baseline.
+
+
+
+
+
+
+
 
 \subsection{Purpose of Document}
 
-\plt{This section summarizes the purpose of the SRS document.  It does not focus
-  on the problem itself.  The problem is described in the ``Problem
-  Description'' section (Section~\ref{Sec_pd}).  The purpose is for the document
-  in the context of the project itself, not in the context of this course.
-  Although the ``purpose'' of the document is to get a grade, you should not
-  mention this.  Instead, ``fake it'' as if this is a real project.  The purpose
-  section will be similar between projects.  The purpose of the document is the
-  purpose of the SRS, including communication, planning for the design stage,
-  etc.}
+% \plt{This section summarizes the purpose of the SRS document.  It does not focus
+%   on the problem itself.  The problem is described in the ``Problem
+%   Description'' section (Section~\ref{Sec_pd}).  The purpose is for the document
+%   in the context of the project itself, not in the context of this course.
+%   Although the ``purpose'' of the document is to get a grade, you should not
+%   mention this.  Instead, ``fake it'' as if this is a real project.  The purpose
+%   section will be similar between projects.  The purpose of the document is the
+%   purpose of the SRS, including communication, planning for the design stage,
+%   etc.}
+
+The purpose of this Software Requirements Specification (SRS) is to provide a precise, testable, and shared description of the requirements for the \progname{} software system. 
+This document serves as a reference for developers, to ensure a shared understanding of the software requirements. It also provides background information and planning for design, implementation, and validation.
+
+
+
+
+
+
+
 
 \subsection{Scope of Requirements} 
 
-\plt{Modelling the real world requires simplification.  The full complexity of
-  the actual physics, chemistry, biology is too much for existing models, and
-  for existing computational solution techniques.  Rather than say what is in
-  the scope, it is usually easier to say what is not.  You can think of it as
-  the scope is initially everything, and then it is constrained to create the
-  actual scope.  For instance, the problem can be restricted to 2 dimensions, or
-  it can ignore the effect of temperature (or pressure) on the material
-  properties, etc.}  
+% \plt{Modelling the real world requires simplification.  The full complexity of
+%   the actual physics, chemistry, biology is too much for existing models, and
+%   for existing computational solution techniques.  Rather than say what is in
+%   the scope, it is usually easier to say what is not.  You can think of it as
+%   the scope is initially everything, and then it is constrained to create the
+%   actual scope.  For instance, the problem can be restricted to 2 dimensions, or
+%   it can ignore the effect of temperature (or pressure) on the material
+%   properties, etc.}  
 
-\plt{The scope section is related to the assumptions section
-  (Section~\ref{sec_assumpt}).  However, the scope and the assumptions are not
-  at the same level of abstraction.  The scope is at a high level.  The focus is
-  on the ``big picture'' assumptions.  The assumptions section lists, and
-  describes, all of the assumptions.}
+% \plt{The scope section is related to the assumptions section
+%   (Section~\ref{sec_assumpt}).  However, the scope and the assumptions are not
+%   at the same level of abstraction.  The scope is at a high level.  The focus is
+%   on the ``big picture'' assumptions.  The assumptions section lists, and
+%   describes, all of the assumptions.}
 
-\plt{The scope section is relevant for later determining typical values of inputs. The scope should make it clear what inputs are reasonable to expect. This is a distinction between scope and context (context is a later section).  Scope affects the inputs while context affects how the software will be used.}
+% \plt{The scope section is relevant for later determining typical values of inputs. The scope should make it clear what inputs are reasonable to expect. This is a distinction between scope and context (context is a later section).  Scope affects the inputs while context affects how the software will be used.}
+
+
+The scope of this project covers (i) training selected deep learning-based speech models on supported speech dataset, (ii) extracting time-resolved hidden representations
+from trained models, (iii) transforming and aligning these representations to MEG recordings, (iv) fitting and evaluating mTRF encoding models under standardized cross-validation and regularization procedures, and (v) generating quantitative summaries and figures for scientific interpretation.
+The project does not aim to provide novel MEG preprocessing algorithms, it assumes MEG data are available in a usable, preprocessed form.
+
+
+
+
 
 \subsection{Characteristics of Intended Reader} \label{sec_IntendedReader}
 
-\plt{This section summarizes the skills and knowledge of the readers of the
-  SRS.  It does NOT have the same purpose as the ``User Characteristics''
-  section (Section~\ref{SecUserCharacteristics}).  The intended readers are the
-  people that will read, review and maintain the SRS.  They are the people that
-  will conceivably design the software that is intended to meet the
-  requirements.  The user, on the other hand, is the person that uses the
-  software that is built.  They may never read this SRS document.  Of course,
-  the same person could be a ``user'' and an ``intended reader.''}
+% \plt{This section summarizes the skills and knowledge of the readers of the
+%   SRS.  It does NOT have the same purpose as the ``User Characteristics''
+%   section (Section~\ref{SecUserCharacteristics}).  The intended readers are the
+%   people that will read, review and maintain the SRS.  They are the people that
+%   will conceivably design the software that is intended to meet the
+%   requirements.  The user, on the other hand, is the person that uses the
+%   software that is built.  They may never read this SRS document.  Of course,
+%   the same person could be a ``user'' and an ``intended reader.''}
 
-\plt{The intended reader characteristics should be written as unambiguously and
-  as specifically as possible.  Rather than say, the user should have an
-  understanding of physics, say what kind of physics and at what level.  For
-  instance, is high school physics adequate, or should the reader have had a
-  graduate course on advanced quantum mechanics?}
+% \plt{The intended reader characteristics should be written as unambiguously and
+%   as specifically as possible.  Rather than say, the user should have an
+%   understanding of physics, say what kind of physics and at what level.  For
+%   instance, is high school physics adequate, or should the reader have had a
+%   graduate course on advanced quantum mechanics?}
+
+
+The intended readers of this SRS are the stakeholders who will review, maintain, and use this document to design and implement \progname{}. These readers are expected to have the following background and skills:
+
+\begin{itemize}
+  \item \textbf{Software engineering:} Experience designing and implementing scientific computing software in Python, including modular code organization, configuration-driven workflows, and basic familiarity with testing practices and version control.
+
+  \item \textbf{Numerical methods and data handling:} Comfort with linear algebra and numerical computation at the level of an undergraduate course in scientific computing, including matrix and vector operations, regularized linear regression concepts, and handling large arrays. Readers should be familiar with common scientific Python libraries and data formats used in research pipelines.
+
+  \item \textbf{Speech and audio processing engineering:} Practical understanding of digital signal processing at the level of an undergraduate course in signals and systems, sufficient to work with sampling rates, resampling, time--frequency features.
+
+  \item \textbf{Deep learning technology:} Ability to train and test deep learning-based models for speech at a graduate machine learning level, including familiarity with
+  backpropagation algorithm and extracting hidden representations from trained models.
+
+  \item \textbf{Neural data analysis:} Familiarity with MEG data as time series measured at multiple sensors and basic preprocessing outcomes. Readers should understand the purpose of encoding models and cross-validation, but do not need expertise in MEG source reconstruction or advanced neurophysiology.
+
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 \subsection{Organization of Document}
 
-\plt{This section provides a roadmap of the SRS document.  It will help the
-  reader orient themselves.  It will provide direction that will help them
-  select which sections they want to read, and in what order.  This section will
-  be similar between project.}
+% \plt{This section provides a roadmap of the SRS document.  It will help the
+%   reader orient themselves.  It will provide direction that will help them
+%   select which sections they want to read, and in what order.  This section will
+%   be similar between project.}
 
-\plt{Include a reference to the template (\citet{SmithAndLai2005, SmithEtAl2007,
-  SmithAndKoothoor2016}) you are using in the documentation in the Organization of
-  the Document section.}
+% \plt{Include a reference to the template (\citet{SmithAndLai2005, SmithEtAl2007,
+%   SmithAndKoothoor2016}) you are using in the documentation in the Organization of
+%   the Document section.}
   
+This document follows a abstract-to-specific approach. It first presents high-level goals, models and scope in the real world, then derivte the functional and nonfunctional requirements from them. 
+For readers that are already familiar with the M/EEG domain, they can start with Section~\ref{Requirements} and look for clarifications in previous sections. 
+This document follows the template for an SRS for scientific computing software proposed by \citet{SmithAndLai2005, SmithEtAl2007, SmithAndKoothoor2016}. 
+
+
+
+
 
 \section{General System Description}
 
 This section provides general information about the system.  It identifies the
 interfaces between the system and its environment, describes the user
-characteristics and lists the system constraints.  \plt{This text can likely be
-  borrowed verbatim.}
+characteristics and lists the system constraints.  
 
-\plt{The purpose of this section is to provide general information about the
-  system so the specific requirements in the next section will be easier to
-  understand. The general system description section is designed to be
-  changeable independent of changes to the functional requirements documented in
-  the specific system description. The general system description provides a
-  context for a family of related models.  The general description can stay the
-  same, while specific details are changed between family members.}
+% \plt{This text can likely be
+%   borrowed verbatim.}
+
+% \plt{The purpose of this section is to provide general information about the
+%   system so the specific requirements in the next section will be easier to
+%   understand. The general system description section is designed to be
+%   changeable independent of changes to the functional requirements documented in
+%   the specific system description. The general system description provides a
+%   context for a family of related models.  The general description can stay the
+%   same, while specific details are changed between family members.}
 
 \subsection{System Context}
 
-\plt{Your system context will include a figure that shows the abstract view of
-  the software.  Often in a scientific context, the program can be viewed
-  abstractly following the design pattern of Inputs $\rightarrow$ Calculations
-  $\rightarrow$ Outputs.  The system context will therefore often follow this
-  pattern.  The user provides inputs, the system does the calculations, and then
-  provides the outputs to the user.  The figure should not show all of the
-  inputs, just an abstract view of the main categories of inputs (like material
-  properties, geometry, etc.).  Likewise, the outputs should be presented from
-  an abstract point of view.  In some cases the diagram will show other external
-  entities, besides the user.  For instance, when the software product is a
-  library, the user will be another software program, not an actual end user.
-  If there are system constraints that the software must work with external
-  libraries, these libraries can also be shown on the System Context diagram.
-  They should only be named with a specific library name if this is required by
-  the system constraint.}
+
+% \plt{Your system context will include a figure that shows the abstract view of
+%   the software.  Often in a scientific context, the program can be viewed
+%   abstractly following the design pattern of Inputs $\rightarrow$ Calculations
+%   $\rightarrow$ Outputs.  The system context will therefore often follow this
+%   pattern.  The user provides inputs, the system does the calculations, and then
+%   provides the outputs to the user.  The figure should not show all of the
+%   inputs, just an abstract view of the main categories of inputs (like material
+%   properties, geometry, etc.).  Likewise, the outputs should be presented from
+%   an abstract point of view.  In some cases the diagram will show other external
+%   entities, besides the user.  For instance, when the software product is a
+%   library, the user will be another software program, not an actual end user.
+%   If there are system constraints that the software must work with external
+%   libraries, these libraries can also be shown on the System Context diagram.
+%   They should only be named with a specific library name if this is required by
+%   the system constraint.}
+
+This system context is shown as inputs and outputs in Figure~\ref{Fig_SystemContext}. 
+This project relies on Eelbrain as an external library for mTRF calculation and visualization.
+
+
+
 
 \begin{figure}[h!]
 \begin{center}
- \includegraphics[width=0.6\textwidth]{SystemContextFigure}
+ \includegraphics[width=1.0\textwidth]{SystemContextFigure}
 \caption{System Context}
 \label{Fig_SystemContext} 
 \end{center}
 \end{figure}
 
-\plt{For each of the entities in the system context diagram its responsibilities
-  should be listed.  Whenever possible the system should check for data quality,
-  but for some cases the user will need to assume that responsibility.  The list
-  of responsibilities should be about the inputs and outputs only, and they
-  should be abstract.  Details should not be presented here.  However, the
-  information should not be so abstract as to just say ``inputs'' and
-  ``outputs''.  A summarizing phrase can be used to characterize the inputs.
-  For instance, saying ``material properties'' provides some information, but it
-  stays away from the detail of listing every required properties.}
+% \plt{For each of the entities in the system context diagram its responsibilities
+%   should be listed.  Whenever possible the system should check for data quality,
+%   but for some cases the user will need to assume that responsibility.  The list
+%   of responsibilities should be about the inputs and outputs only, and they
+%   should be abstract.  Details should not be presented here.  However, the
+%   information should not be so abstract as to just say ``inputs'' and
+%   ``outputs''.  A summarizing phrase can be used to characterize the inputs.
+%   For instance, saying ``material properties'' provides some information, but it
+%   stays away from the detail of listing every required properties.}
+
+
+
+% \plt{Identify in what context the software will typically be used.  Is it for
+% exploration? education? engineering work? scientific work?. Identify whether it
+% will be used for mission-critical or safety-critical applications.} \plt{This
+% additional context information is needed to determine how much effort should be
+% devoted to the rationale section.  If the application is safety-critical, the
+% bar is higher.  This is currently less structured, but analogous to, the idea to
+% the Automotive Safety Integrity Levels (ASILs) that McSCert uses in their
+% automotive hazard analyses.}
+
+
+
 
 \begin{itemize}
 \item User Responsibilities:
 \begin{itemize}
-\item 
+\item Provide speech experiment materials as input audio.
+\item Provide neural experiment materials (MEG dataset).
+\item Provide experiment configurations.
 \end{itemize}
 \item \progname{} Responsibilities:
 \begin{itemize}
-\item Detect data type mismatch, such as a string of characters instead of a
-  floating point number
-\item 
+\item Produce training pipeline for different models.
+\item Extract representation features from trained models.
+\item Produce time-aligned process for different models.
+\item Produce predictors that are compatible with the neural time base.
+
 \end{itemize}
 \end{itemize}
 
-\plt{Identify in what context the software will typically be used.  Is it for
-exploration? education? engineering work? scientific work?. Identify whether it
-will be used for mission-critical or safety-critical applications.} \plt{This
-additional context information is needed to determine how much effort should be
-devoted to the rationale section.  If the application is safety-critical, the
-bar is higher.  This is currently less structured, but analogous to, the idea to
-the Automotive Safety Integrity Levels (ASILs) that McSCert uses in their
-automotive hazard analyses.}
+
+The software will typically be used for neuroscience research. It will not be used for mission-critical or safety-critical work.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 \subsection{User Characteristics} \label{SecUserCharacteristics}
 
-\plt{This section summarizes the knowledge/skills expected of the user.
-  Measuring usability, which is often a required non-function requirement,
-  requires knowledge of a typical user.  As mentioned above, the user is a
-  different role from the ``intended reader,'' as given in
-  Section~\ref{sec_IntendedReader}.  As in Section~\ref{sec_IntendedReader}, the
-  user characteristics should be specific an unambiguous.  For instance, ``The
-  end user of \progname{} should have an understanding of undergraduate Level 1
-  Calculus and Physics.''}
+% \plt{This section summarizes the knowledge/skills expected of the user.
+%   Measuring usability, which is often a required non-function requirement,
+%   requires knowledge of a typical user.  As mentioned above, the user is a
+%   different role from the ``intended reader,'' as given in
+%   Section~\ref{sec_IntendedReader}.  As in Section~\ref{sec_IntendedReader}, the
+%   user characteristics should be specific an unambiguous.  For instance, ``The
+%   end user of \progname{} should have an understanding of undergraduate Level 1
+%   Calculus and Physics.''}
+
+
+The end user of \progname{} should have experience in:
+
+\begin{itemize}
+\item Python programming;
+\item Deep learning programming;
+\item Neuroimaging data, particularly MEG/EEG data and its workflow;
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 \subsection{System Constraints}
 
-\plt{System constraints differ from other type of requirements because they
-  limit the developers' options in the system design and they identify how the
-  eventual system must fit into the world. This is the only place in the SRS
-  where design decisions can be specified.  That is, the quality requirement for
-  abstraction is relaxed here.  However, system constraints should only be
-  included if they are truly required.}
+% \plt{System constraints differ from other type of requirements because they
+%   limit the developers' options in the system design and they identify how the
+%   eventual system must fit into the world. This is the only place in the SRS
+%   where design decisions can be specified.  That is, the quality requirement for
+%   abstraction is relaxed here.  However, system constraints should only be
+%   included if they are truly required.}
+
+\begin{itemize}
+  \item \textbf{Python program:} \progname{} shall be implemented in Python.
+  \item \textbf{Deep learning method:} Model training and representation extraction shall use PyTorch.
+  \item \textbf{TRF backend:} Encoding analysis and visualization shall use the Eelbrain TRF pipeline.
+  \item \textbf{MEG dependency:} The Eelbrain pipeline shall delegate MEG data structures and preprocessing operations to MNE-Python.
+
+\end{itemize}
+
+
+
+
 
 \section{Specific System Description}
 
 This section first presents the problem description, which gives a high-level
 view of the problem to be solved.  This is followed by the solution characteristics
 specification, which presents the assumptions, theories, definitions and finally
-the instance models.  \plt{Add any project specific details that are relevant
-  for the section overview.}
+the instance models.  
+
+% \plt{Add any project specific details that are relevant
+  % for the section overview.}
 
 \subsection{Problem Description} \label{Sec_pd}
 
-\progname{} is intended to solve ... \plt{What problem does your program solve?
-The description here should be in the problem space, not the solution space.}
+\progname{} is intended to solve the problem of reproducibly comparing candidate speech representations by how well they explain neural responses during continuous speech perception. 
+In practice, researchers often have multiple competing candidate representations (e.g., acoustic features or hidden features from trained speech models). The core scientific
+question is to explore which representations are most predictive of neural measurements, under a fair and consistent evaluation protocol.
+
+The difficulty is that the comparison requires multiple steps that can introduce confounds if handled inconsistently. For example, representations must be defined at an appropriate temporal resolution, aligned to the neural recording time base, and evaluated using the same modeling assumptions. 
+Without a standardized and traceable workflow, observed differences in neural predictivity may reflect differences in preprocessing or evaluation rather than genuine representational differences.
+
+% \plt{What problem does your program solve?
+% The description here should be in the problem space, not the solution space.}
+
+
+
+
 
 \subsubsection{Terminology and  Definitions}
 
-\plt{This section is expressed in words, not with equations.  It provide the
-  meaning of the different words and phrases used in the domain of the problem.
-The terminology is used to introduce concepts from the world outside of the
-mathematical model  The terminology provides a real world connection to give the
-mathematical model meaning.}
+% \plt{This section is expressed in words, not with equations.  It provide the
+%   meaning of the different words and phrases used in the domain of the problem.
+% The terminology is used to introduce concepts from the world outside of the
+% mathematical model  The terminology provides a real world connection to give the
+% mathematical model meaning.}
 
 This subsection provides a list of terms that are used in the subsequent
 sections and their meaning, with the purpose of reducing ambiguity and making it
 easier to correctly understand the requirements:
 
+
+
 \begin{itemize}
+  \item \textbf{Speech stimulus:} The auditory signal presented to participants, together with associated annotation information.
 
-\item 
+  \item \textbf{Neural response:} Time-resolved measurements of brain activity
+  recorded during listening, assumed to be
+  preprocessed into a usable form.
 
+  \item \textbf{Representation:} A time-indexed representation features derived from
+  the stimulus, such as acoustic features and internal states of a deep learning model.
+
+  \item \textbf{Predictor:} A representation expressed on the same time grid as
+  the neural response, used as an explanatory variable in an encoding model.
+
+  \item \textbf{Time alignment:} The process of mapping a representation’s time
+  indices into the neural recording time base, which aims to make predictor samples
+  correspond to neural samples.
+
+  \item \textbf{Speech model:} The deep learning model that predicts neural responses from
+  input audio.
+
+  \item \textbf{Lag window:} The range of temporal delays between predictor and
+  neural response considered by the speech model, capturing response latency.
+
+  \item \textbf{Cross validation:} A procedure for estimating predictive performance on unseen data by splitting data into training and testing partitions.
+
+  \item \textbf{Region of Interest:} A predefined subset of sensors or sources used to summarize neural responses.
+
+  \item \textbf{Comparison result:} A quantitative summary indicating how much
+  a candidate predictor improves neural prediction relative to the baseline under the same evaluation protocol.
 \end{itemize}
+
+
+
+
+
+
+
+
+
+
+
 
 \subsubsection{Physical System Description} \label{sec_phySystDescrip}
 
-\plt{The purpose of this section is to clearly and unambiguously state the
-  physical system that is to be modelled. Effective problem solving requires a
-  logical and organized approach. The statements on the physical system to be
-  studied should cover enough information to solve the problem. The physical
-  description involves element identification, where elements are defined as
-  independent and separable items of the physical system. Some example elements
-  include acceleration due to gravity, the mass of an object, and the size and
-  shape of an object. Each element should be identified and labelled, with their
-  interesting properties specified clearly. The physical description can also
-  include interactions of the elements, such as the following: i) the
-  interactions between the elements and their physical environment; ii) the
-  interactions between elements; and, iii) the initial or boundary conditions.}
+% \plt{The purpose of this section is to clearly and unambiguously state the
+%   physical system that is to be modelled. Effective problem solving requires a
+%   logical and organized approach. The statements on the physical system to be
+%   studied should cover enough information to solve the problem. The physical
+%   description involves element identification, where elements are defined as
+%   independent and separable items of the physical system. Some example elements
+%   include acceleration due to gravity, the mass of an object, and the size and
+%   shape of an object. Each element should be identified and labelled, with their
+%   interesting properties specified clearly. The physical description can also
+%   include interactions of the elements, such as the following: i) the
+%   interactions between the elements and their physical environment; ii) the
+%   interactions between elements; and, iii) the initial or boundary conditions.}
 
-\plt{The elements of the physical system do not have to correspond to an actual
-physical entity.  They can be conceptual.  This is particularly important when
-the documentation is for a numerical method. }
+% \plt{The elements of the physical system do not have to correspond to an actual
+% physical entity.  They can be conceptual.  This is particularly important when
+% the documentation is for a numerical method. }
 
-The physical system of \progname{}, as shown in Figure~?,
+The physical system of \progname{}, as shown in Figure~\ref{fig:physical_system},
 includes the following elements:
 
+
+
+
 \begin{itemize}
-
-\item[PS1:] 
-
-\item[PS2:] ...
+  \item[PS1:] Neural current sources. Electrical currents generated by neuronal populations within the cerebral cortex. These currents are the primary sources of the electromagnetic fields measured in MEG.
+  \item[PS2:] Head volume conductor. The human head acts as a volume conductor for electromagnetic fields. The geometry and conductivity properties of these tissues influence how fields generated by neural sources propagate toward the sensors.
+  \item[PS3:] Sensor system. MEG sensors positioned on the head that measure magnetic fields resulting from neural activity.
 
 \end{itemize}
 
-\plt{A figure here makes sense for most SRS documents}
 
-% \begin{figure}[h!]
-% \begin{center}
-% %\rotatebox{-90}
-% {
-%  \includegraphics[width=0.5\textwidth]{<FigureName>}
-% }
-% \caption{\label{<Label>} <Caption>}
-% \end{center}
-% \end{figure}
+
+
+
+
+% \plt{A figure here makes sense for most SRS documents}
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=0.7\textwidth]{physical_system.jpg}
+\caption{Physical System of MEG}
+\label{fig:physical_system}
+\end{center}
+\end{figure}
+
+
+
+
+
+
 
 \subsubsection{Goal Statements}
 
-\plt{The goal statements refine the ``Problem Description''
-  (Section~\ref{Sec_pd}).  A goal is a functional objective the system under
-  consideration should achieve. Goals provide criteria for sufficient
-  completeness of a requirements specification and for requirements
-  pertinence. Goals will be refined in Section “Instanced Models”
-  (Section~\ref{sec_instance}). Large and complex goals should be decomposed
-  into smaller sub-goals.  The goals are written abstractly, with a minimal
-  amount of technical language.  They should be understandable by non-domain
-  experts.}
+% \plt{The goal statements refine the ``Problem Description''
+%   (Section~\ref{Sec_pd}).  A goal is a functional objective the system under
+%   consideration should achieve. Goals provide criteria for sufficient
+%   completeness of a requirements specification and for requirements
+%   pertinence. Goals will be refined in Section “Instanced Models”
+%   (Section~\ref{sec_instance}). Large and complex goals should be decomposed
+%   into smaller sub-goals.  The goals are written abstractly, with a minimal
+%   amount of technical language.  They should be understandable by non-domain
+%   experts.}
 
-\noindent Given the \plt{inputs}, the goal statements are:
+Given the input peech stimuli, neural responses, the goal statements are:
+
+% \begin{itemize}
+
+% \item[GS\refstepcounter{goalnum}\thegoalnum \label{G_meaningfulLabel}:] \plt{One
+%     sentence description of the goal.  There may be more than one.  Each Goal
+%     should have a meaningful label.}
+
+% \end{itemize}
+
+
 
 \begin{itemize}
+  \item[GS\refstepcounter{goalnum}\thegoalnum \label{G_reproCompare}:]
+  Enable reproducible comparison of multiple candidate speech representations by
+  their ability to predict neural responses under a consistent protocol.
 
-\item[GS\refstepcounter{goalnum}\thegoalnum \label{G_meaningfulLabel}:] \plt{One
-    sentence description of the goal.  There may be more than one.  Each Goal
-    should have a meaningful label.}
+  \item[GS\refstepcounter{goalnum}\thegoalnum \label{G_fairEval}:]
+  Ensure fair evaluation across predictors by applying the same alignment
+  assumptions, lag window, regularization selection, and cross-validation
+  procedure.
 
+  \item[GS\refstepcounter{goalnum}\thegoalnum \label{G_quantifyGain}:]
+  Quantify how much each model-extracted representation improves neural prediction
+  relative to an acoustic baseline in a way that supports scientific
+  interpretation.
+
+  \item[GS\refstepcounter{goalnum}\thegoalnum \label{G_traceableArtifacts}:]
+  Produce traceable artifacts and summaries that allow experiments and results
+  to be inspected, repeated, and extended.
 \end{itemize}
+
+
+
+
+
+
+
+
 
 \subsection{Solution Characteristics Specification}
 
-\plt{This section specifies the information in the solution domain of the system
-  to be developed. This section is intended to express what is required in
-  such a way that analysts and stakeholders get a clear picture, and the
-  latter will accept it. The purpose of this section is to reduce the problem
-  into one expressed in mathematical terms. Mathematical expertise is used to
-  extract the essentials from the underlying physical description of the
-  problem, and to collect and substantiate all physical data pertinent to the
-  problem.}
+% \plt{This section specifies the information in the solution domain of the system
+%   to be developed. This section is intended to express what is required in
+%   such a way that analysts and stakeholders get a clear picture, and the
+%   latter will accept it. The purpose of this section is to reduce the problem
+%   into one expressed in mathematical terms. Mathematical expertise is used to
+%   extract the essentials from the underlying physical description of the
+%   problem, and to collect and substantiate all physical data pertinent to the
+%   problem.}
 
-\plt{This section presents the solution characteristics by successively refining
-  models.  It starts with the abstract/general Theoretical Models (TMs) and
-  refines them to the concrete/specific Instance Models (IMs).  If necessary
-  there are intermediate refinements to General Definitions (GDs).  All of these
-  refinements can potentially use Assumptions (A) and Data Definitions (DD).
-  TMs are refined to create new models, that are called GMs or IMs. DDs are not
-  refined; they are just used. GDs and IMs are derived, or refined, from other
-  models. DDs are not derived; they are just given. TMs are also just given, but
-  they are refined, not used.  If a potential DD includes a derivation, then
-  that means it is refining other models, which would make it a GD or an IM.}
+% \plt{This section presents the solution characteristics by successively refining
+%   models.  It starts with the abstract/general Theoretical Models (TMs) and
+%   refines them to the concrete/specific Instance Models (IMs).  If necessary
+%   there are intermediate refinements to General Definitions (GDs).  All of these
+%   refinements can potentially use Assumptions (A) and Data Definitions (DD).
+%   TMs are refined to create new models, that are called GMs or IMs. DDs are not
+%   refined; they are just used. GDs and IMs are derived, or refined, from other
+%   models. DDs are not derived; they are just given. TMs are also just given, but
+%   they are refined, not used.  If a potential DD includes a derivation, then
+%   that means it is refining other models, which would make it a GD or an IM.}
 
-\plt{The above makes a distinction between ``refined'' and ``used.'' A model is
-  refined to another model if it is changed by the refinement. When we change a
-  general 3D equation to a 2D equation, we are making a refinement, by applying
-  the assumption that the third dimension does not matter. If we use a
-  definition, like the definition of density, we aren't refining, or changing
-  that definition, we are just using it.}
+% \plt{The above makes a distinction between ``refined'' and ``used.'' A model is
+%   refined to another model if it is changed by the refinement. When we change a
+%   general 3D equation to a 2D equation, we are making a refinement, by applying
+%   the assumption that the third dimension does not matter. If we use a
+%   definition, like the definition of density, we aren't refining, or changing
+%   that definition, we are just using it.}
 
-\plt{The same information can be a TM in one problem and a DD in another.  It is
-  about how the information is used.  In one problem the definition of
-  acceleration can be a TM, in another it would be a DD.}
+% \plt{The same information can be a TM in one problem and a DD in another.  It is
+%   about how the information is used.  In one problem the definition of
+%   acceleration can be a TM, in another it would be a DD.}
 
-\plt{There is repetition between the information given in the different chunks
-  (TM, GDs etc) with other information in the document.  For instance, the
-  meaning of the symbols, the units etc are repeated.  This is so that the
-  chunks can stand on their own when being read by a reviewer/user.  It also
-  facilitates reuse of the models in a different context.}
+% \plt{There is repetition between the information given in the different chunks
+%   (TM, GDs etc) with other information in the document.  For instance, the
+%   meaning of the symbols, the units etc are repeated.  This is so that the
+%   chunks can stand on their own when being read by a reviewer/user.  It also
+%   facilitates reuse of the models in a different context.}
 
-\noindent \plt{The relationships between the parts of the document are show in
-  the following figure.  In this diagram ``may ref'' has the same role as
-  ``uses'' above.  The figure adds ``Likely Changes,'' which are able to
-  reference (use) Assumptions.}
+% \noindent \plt{The relationships between the parts of the document are show in
+%   the following figure.  In this diagram ``may ref'' has the same role as
+%   ``uses'' above.  The figure adds ``Likely Changes,'' which are able to
+%   reference (use) Assumptions.}
 
-\begin{figure}[H]
-  \includegraphics[scale=0.9]{RelationsBetweenTM_GD_IM_DD_A.pdf}
-\end{figure}
+% \begin{figure}[H]
+%   \includegraphics[scale=0.9]{RelationsBetweenTM_GD_IM_DD_A.pdf}
+% \end{figure}
 
 The instance models that govern \progname{} are presented in
 Subsection~\ref{sec_instance}.  The information to understand the meaning of the
 instance models and their derivation is also presented, so that the instance
 models can be verified.
 
-\subsubsection{Types}
+% \subsubsection{Types}
 
-\plt{This section is optional. Defining types can make the document easier to
-understand.}
+% \plt{This section is optional. Defining types can make the document easier to
+% understand.}
 
-\subsubsection{Scope Decisions}
+% \subsubsection{Scope Decisions}
 
-\plt{This section is optional.}
-\subsubsection{Modelling Decisions}
+% \plt{This section is optional.}
+% \subsubsection{Modelling Decisions}
 
-\plt{This section is optional.}
+% \plt{This section is optional.}
 
 \subsubsection{Assumptions} \label{sec_assumpt}
 
-\plt{The assumptions are a refinement of the scope.  The scope is general, where
-  the assumptions are specific.  All assumptions should be listed, even those
-  that domain experts know so well that they are rarely (if ever) written down.}
-\plt{The document should not take for granted that the reader knows which
-  assumptions have been made. In the case of unusual assumptions, it is
-  recommended that the documentation either include, or point to, an explanation
-  and justification for the assumption.} 
-\plt{If it helps with the organization and understandability, the assumptions
-can be presented as sub sections.  The following sub-sections are options:
-background theory assumptions, helper theory assumptions, generic theory
-assumptions, problem specific assumptions, and rationale assumptions}
+% \plt{The assumptions are a refinement of the scope.  The scope is general, where
+%   the assumptions are specific.  All assumptions should be listed, even those
+%   that domain experts know so well that they are rarely (if ever) written down.}
+% \plt{The document should not take for granted that the reader knows which
+%   assumptions have been made. In the case of unusual assumptions, it is
+%   recommended that the documentation either include, or point to, an explanation
+%   and justification for the assumption.} 
+% \plt{If it helps with the organization and understandability, the assumptions
+% can be presented as sub sections.  The following sub-sections are options:
+% background theory assumptions, helper theory assumptions, generic theory
+% assumptions, problem specific assumptions, and rationale assumptions}
 
-This section simplifies the original problem and helps in developing the
-theoretical model by filling in the missing information for the physical system.
-The numbers given in the square brackets refer to the theoretical model [TM],
-general definition [GD], data definition [DD], instance model [IM], or likely
-change [LC], in which the respective assumption is used.
+% This section simplifies the original problem and helps in developing the
+% theoretical model by filling in the missing information for the physical system.
+% The numbers given in the square brackets refer to the theoretical model [TM],
+% general definition [GD], data definition [DD], instance model [IM], or likely
+% change [LC], in which the respective assumption is used.
+
+% \begin{itemize}
+
+% \item[A\refstepcounter{assumpnum}\theassumpnum \label{A_meaningfulLabel}:]
+%   \plt{Short description of each assumption.  Each assumption
+%     should have a meaningful label.  Use cross-references to identify the
+%     appropriate traceability to TM, GD, DD etc., using commands like dref, ddref
+%     etc.  Each assumption should be atomic - that is, there should not be an
+%     explicit (or implicit) ``and'' in the text of an assumption.}
+
+% \end{itemize}
+
+
 
 \begin{itemize}
+  \item[A\refstepcounter{assumpnum}\theassumpnum \label{A_preprocessed}:]
+  Neural recordings are available in a usable preprocessed form with an explicit
+  time base and sampling rate. [IM]
 
-\item[A\refstepcounter{assumpnum}\theassumpnum \label{A_meaningfulLabel}:]
-  \plt{Short description of each assumption.  Each assumption
-    should have a meaningful label.  Use cross-references to identify the
-    appropriate traceability to TM, GD, DD etc., using commands like dref, ddref
-    etc.  Each assumption should be atomic - that is, there should not be an
-    explicit (or implicit) ``and'' in the text of an assumption.}
+  \item[A\refstepcounter{assumpnum}\theassumpnum \label{A_linearencoding}:]
+  A linear time-lagged encoding model is an appropriate approximation for
+  quantifying predictor--neural relationships over the chosen lag window. [IM]
 
+  \item[A\refstepcounter{assumpnum}\theassumpnum \label{A_stationarity}:]
+  Within an analysis segment, the mapping from predictors to neural responses is
+  treated as time-invariant for the purposes of model fitting. [IM]
+
+  \item[A\refstepcounter{assumpnum}\theassumpnum \label{A_labels}:]
+  When supervised training is used, the speech dataset provides sufficient
+  labeling quality for training models to yield stable representations. [IM]
 \end{itemize}
+
+
+
+
+
+
 
 \subsubsection{Theoretical Models}\label{sec_theoretical}
 
-\plt{Theoretical models are sets of abstract mathematical equations or axioms
-  for solving the problem described in Section ``Physical System Description''
-  (Section~\ref{sec_phySystDescrip}). Examples of theoretical models are
-  physical laws, constitutive equations, relevant conversion factors, etc.}
+% \plt{Theoretical models are sets of abstract mathematical equations or axioms
+%   for solving the problem described in Section ``Physical System Description''
+%   (Section~\ref{sec_phySystDescrip}). Examples of theoretical models are
+%   physical laws, constitutive equations, relevant conversion factors, etc.}
 
-\plt{Optionally the theory section could be divided into subsections to provide
-more structure and improve understandability and reusability.  Potential
-subsections include the following: Context theories, background theories, helper
-theories, generic theories, problem specific theories, final theories and
-rationale theories.}
+% \plt{Optionally the theory section could be divided into subsections to provide
+% more structure and improve understandability and reusability.  Potential
+% subsections include the following: Context theories, background theories, helper
+% theories, generic theories, problem specific theories, final theories and
+% rationale theories.}
 
 This section focuses on the general equations and laws that \progname{} is based
-on.  \plt{Modify the examples below for your problem, and add additional models
-  as appropriate.}
+on.  
+% \plt{Modify the examples below for your problem, and add additional models
+%   as appropriate.}
 
 ~\newline
 
+% \plt{``Ref.\ By'' is used repeatedly with the different types of information.
+%   This stands for Referenced By.  It means that the models, definitions and
+%   assumptions listed reference the current model, definition or assumption.
+%   This information is given for traceability.  Ref. By provides a pointer in the
+%   opposite direction to what we commonly do.  You still need to have a reference
+%   in the other direction pointing to the current model, definition or
+%   assumption.  As an example, if TM1 is referenced by GD2, that means that GD2 will
+%   explicitly include a reference to TM1.}
+
+
 \noindent
 \deftheory
-% #2 refname of theory
-{TM:COE}
-% #3 label
-{Conservation of thermal energy}
-% #4 equation
+{TM:ERM}
+{Empirical risk minimization for speech model training}
 {
-  $-{\bf \nabla \cdot q} + g$ = $\rho C \frac{\partial T}{\partial t}$
+  $
+  \boldsymbol{\theta}^{\ast}
+  = \arg\min_{\boldsymbol{\theta}}
+  \ \mathbb{E}_{(\boldsymbol{a}, \boldsymbol{s}^{\star}) \sim \mathcal{D}_{\text{train}}}
+  \left[\mathcal{L}_{\mathrm{ASR}}\!\left(f_{\boldsymbol{\theta}}(\boldsymbol{a}), \boldsymbol{s}^{\star}\right)\right]
+  $
 }
-% #5 description
 {
-  The above equation gives the conservation of energy for transient heat transfer in a material
-  of specific heat capacity $C$ (\si{\joule\per\kilogram\per\celsius}) and density $\rho$ 
-  (\si{\kilogram\per\cubic\metre}), where $\bf q$ is the thermal flux vector (\si{\watt\per\square\metre}),
-  $g$ is the volumetric heat generation
-  (\si{\watt\per\cubic\metre}), $T$ is the temperature
-  (\si{\celsius}),  $t$ is time (\si{\second}), and $\nabla$ is
-  the gradient operator.  For this equation to apply, other forms
-  of energy, such as mechanical energy, are assumed to be negligible in the
-  system (\aref{A_OnlyThermalEnergy}).  In general, the material properties ($\rho$ and $C$) depend on temperature.
+  This theoretical model states that training a speech model can be expressed as
+  minimizing an expected task loss over a training distribution.
+  Here $\boldsymbol{a}$ denotes speech input,
+  $\boldsymbol{s}^{\star}$ denotes the target labels, $f_{\boldsymbol{\theta}}$
+  is the model parameterized by $\boldsymbol{\theta}$, and $\mathcal{L}_{\mathrm{ASR}}$
+  is a task loss appropriate for sequence prediction. The purpose of training in \progname{} is not to optimize for a single
+  benchmark, but to produce stable internal representations that can be extracted
+  and compared in the neural encoding analysis.
 }
-% #6 Notes
+{None.}
 {
-None.
+  \url{https://docs.pytorch.org/docs/stable/optim.html}
 }
-% #7 Source
 {
-  \url{http://www.efunda.com/formulae/heat_transfer/conduction/overview_cond.cfm}
+  None
 }
-% #8 Referenced by
 {
-  \dref{ROCT}
+  Training data $\mathcal{D}_{\text{train}}$ and a corresponding loss function
+  $\mathcal{L}_{\mathrm{ASR}}$ are defined.
 }
-% #9 Preconditions
-{
-None
-}
-% #1 derivation - not applicable by default
 {}
 
-\plt{``Ref.\ By'' is used repeatedly with the different types of information.
-  This stands for Referenced By.  It means that the models, definitions and
-  assumptions listed reference the current model, definition or assumption.
-  This information is given for traceability.  Ref. By provides a pointer in the
-  opposite direction to what we commonly do.  You still need to have a reference
-  in the other direction pointing to the current model, definition or
-  assumption.  As an example, if TM1 is referenced by GD2, that means that GD2 will
-  explicitly include a reference to TM1.}
+
+
+
+\noindent
+\deftheory
+{TM:Representation}
+{Model-extracted representations as candidate predictors}
+{
+  $
+  \boldsymbol{r}^{(\ell)}(t) = g\!\left(\boldsymbol{h}^{(\ell)}(t)\right)
+  \in \mathbb{R}^{D}
+  $
+}
+{
+  This theoretical model defines a candidate predictor as a time-indexed feature
+  vector derived from an internal model representation.
+  The hidden features of layer $\ell$ is denoted by
+  $\boldsymbol{h}^{(\ell)}(t)$, and $g(\cdot)$ is an optional transformation
+  used to obtain a consistent   predictor dimension $D$ across models and layers. After time alignment to the MEG sampling grid, $\boldsymbol{r}^{(\ell)}(t)$ is treated as an explanatory signal in the speech model.
+}
+{None.}
+{
+  \url{https://doi.org/10.1371/journal.pcbi.1013244}
+}
+{
+  None
+}
+{
+  A trained model and a well-defined layer index $\ell$ exist for the stimulus.
+}
+{}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ~\newline
 
 \subsubsection{General Definitions}\label{sec_gendef}
 
-\plt{General Definitions (GDs) are a refinement of one or more TMs, and/or of
-  other GDs.  The GDs are less abstract than the TMs.  Generally the reduction
-  in abstraction is possible through invoking (using/referencing) Assumptions.
-  For instance, the TM could be Newton's Law of Cooling stated abstracting.  The
-  GD could take the general law and apply it to get a 1D equation.}
+% \plt{General Definitions (GDs) are a refinement of one or more TMs, and/or of
+%   other GDs.  The GDs are less abstract than the TMs.  Generally the reduction
+%   in abstraction is possible through invoking (using/referencing) Assumptions.
+%   For instance, the TM could be Newton's Law of Cooling stated abstracting.  The
+%   GD could take the general law and apply it to get a 1D equation.}
 
 This section collects the laws and equations that will be used in building the
 instance models.
 
-\plt{Some projects may not have any content for this section, but the section
-  heading should be kept.}  \plt{Modify the examples below for your problem, and
-  add additional definitions as appropriate.}
+% \plt{Some projects may not have any content for this section, but the section
+%   heading should be kept.}  \plt{Modify the examples below for your problem, and
+%   add additional definitions as appropriate.}
 
-~\newline
+% ~\newline
 
-\noindent
-\begin{minipage}{\textwidth}
-\renewcommand*{\arraystretch}{1.5}
-\begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
-\hline
-\rowcolor[gray]{0.9}
-Number& GD\refstepcounter{defnum}\thedefnum \label{NL}\\
-\hline
-Label &\bf Newton's law of cooling \\
-\hline
-% Units&$MLt^{-3}T^0$\\
+% \noindent
+% \begin{minipage}{\textwidth}
+% \renewcommand*{\arraystretch}{1.5}
+% \begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
 % \hline
-SI Units&\si{\watt\per\square\metre}\\
-\hline
-Equation&$ q(t) = h \Delta T(t)$  \\
-\hline
-Description &
-Newton's law of cooling describes convective cooling from a surface.  The law is
-stated as: the rate of heat loss from a body is proportional to the difference
-in temperatures between the body and its surroundings.
-\\
-& $q(t)$ is the thermal flux (\si{\watt\per\square\metre}).\\
-& $h$ is the heat transfer coefficient, assumed independent of $T$ (\aref{A_hcoeff})
-	(\si{\watt\per\square\metre\per\celsius}).\\
-&$\Delta T(t)$= $T(t) - T_{\text{env}}(t)$ is the time-dependent thermal gradient
-between the environment and the object (\si{\celsius}).
-\\
-\hline
-  Source & Citation here \\
-  \hline
-  Ref.\ By & \ddref{FluxCoil}, \ddref{FluxPCM}\\
-  \hline
-\end{tabular}
-\end{minipage}\\
+% \rowcolor[gray]{0.9}
+% Number& GD\refstepcounter{defnum}\thedefnum \label{NL}\\
+% \hline
+% Label &\bf Newton's law of cooling \\
+% \hline
+% % Units&$MLt^{-3}T^0$\\
+% % \hline
+% SI Units&\si{\watt\per\square\metre}\\
+% \hline
+% Equation&$ q(t) = h \Delta T(t)$  \\
+% \hline
+% Description &
+% Newton's law of cooling describes convective cooling from a surface.  The law is
+% stated as: the rate of heat loss from a body is proportional to the difference
+% in temperatures between the body and its surroundings.
+% \\
+% & $q(t)$ is the thermal flux (\si{\watt\per\square\metre}).\\
+% & $h$ is the heat transfer coefficient, assumed independent of $T$ (\aref{A_hcoeff})
+% 	(\si{\watt\per\square\metre\per\celsius}).\\
+% &$\Delta T(t)$= $T(t) - T_{\text{env}}(t)$ is the time-dependent thermal gradient
+% between the environment and the object (\si{\celsius}).
+% \\
+% \hline
+%   Source & Citation here \\
+%   \hline
+%   Ref.\ By & \ddref{FluxCoil}, \ddref{FluxPCM}\\
+%   \hline
+% \end{tabular}
+% \end{minipage}\\
 
-\subsubsection*{Detailed derivation of simplified rate of change of temperature}
+% \subsubsection*{Detailed derivation of simplified rate of change of temperature}
 
-\plt{This may be necessary when the necessary information does not fit in the
-  description field.}
-\plt{Derivations are important for justifying a given GD.  You want it to be
-  clear where the equation came from.}
+% \plt{This may be necessary when the necessary information does not fit in the
+%   description field.}
+% \plt{Derivations are important for justifying a given GD.  You want it to be
+%   clear where the equation came from.}
 
 \subsubsection{Data Definitions}\label{sec_datadef}
 
-\plt{The Data Definitions are definitions of symbols and equations that are
-  given for the problem.  They are not derived; they are simply used by other
-  models.  For instance, if a problem depends on density, there may be a data
-  definition for the equation defining density.  The DDs are given information
-  that you can use in your other modules.}
+% \plt{The Data Definitions are definitions of symbols and equations that are
+%   given for the problem.  They are not derived; they are simply used by other
+%   models.  For instance, if a problem depends on density, there may be a data
+%   definition for the equation defining density.  The DDs are given information
+%   that you can use in your other modules.}
 
-\plt{All Data Definitions should be used (referenced) by at least one other
-  model.}
+% \plt{All Data Definitions should be used (referenced) by at least one other
+%   model.}
 
 This section collects and defines all the data needed to build the instance
-models. The dimension of each quantity is also given.  \plt{Modify the examples
-  below for your problem, and add additional definitions as appropriate.}
+models. 
+% The dimension of each quantity is also given.  \plt{Modify the examples
+%   below for your problem, and add additional definitions as appropriate.}
 
 ~\newline
 
@@ -840,140 +1311,500 @@ models. The dimension of each quantity is also given.  \plt{Modify the examples
 \begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
 \hline
 \rowcolor[gray]{0.9}
-Number& DD\refstepcounter{datadefnum}\thedatadefnum \label{FluxCoil}\\
+Number& DD\refstepcounter{datadefnum}\thedatadefnum \label{DD_sampling}\\
 \hline
-Label& \bf Heat flux out of coil\\
+Label& \bf Sampling interval of MEG signals\\
 \hline
-Symbol &$q_C$\\
+Symbol & $\Delta t$\\
 \hline
-% Units& $Mt^{-3}$\\
-% \hline
-  SI Units & \si{\watt\per\square\metre}\\
-  \hline
-  Equation&$q_C(t) = h_C (T_C - T_W(t))$, over area $A_C$\\
-  \hline
-  Description & 
-                $T_C$ is the temperature of the coil (\si{\celsius}).  $T_W$ is the temperature of the water (\si{\celsius}).  
-                The heat flux out of the coil, $q_C$ (\si{\watt\per\square\metre}), is found by
-                assuming that Newton's Law of Cooling applies (\aref{A_Newt_coil}).  This law (\dref{NL}) is used on the 
-                surface of the coil, which has area $A_C$ (\si{\square\metre}) and heat 
-                transfer coefficient $h_C$ (\si{\watt\per\square\metre\per\celsius}).  This equation
-                assumes that the temperature of the coil is constant over time (\aref{A_tcoil}) and that it does not vary along the length
-                of the coil (\aref{A_tlcoil}).
-  \\
-  \hline
-  Sources& Citation here \\
-  \hline
-  Ref.\ By & \iref{ewat}\\
-  \hline
+SI Units & \si{\second}\\
+\hline
+Equation& $\Delta t = 1/f_s$ \\
+\hline
+Description &
+The neural sampling interval $\Delta t$ is defined by the neural sampling rate
+$f_s$. This quantity determines the discrete-time grid used for alignment and
+TRF lag discretization.
+\\
+\hline
+Sources& None \\
+\hline
+Ref.\ By & Section \ref{sec_DataConstraints}\\
+\hline
 \end{tabular}
 \end{minipage}\\
 
-\subsubsection{Data Types}\label{sec_datatypes}
 
-\plt{This section is optional.  In many scientific computing programs it isn't
-  necessary, since the inputs and outpus are straightforward types, like reals,
-  integers, and sequences of reals and integers.  However, for some problems it
-  is very helpful to capture the type information.}
-
-\plt{The data types are not derived; they are simply stated and used by other
-  models.}
-
-\plt{All data types must be used by at least one of the models.}
-
-\plt{For the mathematical notation for expressing types, the recommendation is
-  to use the notation of~\citet{HoffmanAndStrooper1995}.}
-
-This section collects and defines all the data types needed to document the
-models. \plt{Modify the examples below for your problem, and add additional
-  definitions as appropriate.}
 
 ~\newline
+
 
 \noindent
 \begin{minipage}{\textwidth}
 \renewcommand*{\arraystretch}{1.5}
 \begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
-  \hline
-  \rowcolor[gray]{0.9}
-  Type Name & Name for Type\\
-  \hline
-  Type Def & mathematical definition of the type\\
-  \hline
-  Description & description here
-  \\
-  \hline
-  Sources & Citation here, if the type is borrowed from another source\\
-  \hline
+\hline
+\rowcolor[gray]{0.9}
+Number& DD\refstepcounter{datadefnum}\thedatadefnum \label{DD_lag_grid}\\
+\hline
+Label& \bf Discretized TRF lag grid\\
+\hline
+Symbol & $\{\tau_k\}_{k=1}^{K}$\\
+\hline
+SI Units & \si{\second}\\
+\hline
+Equation&
+$\tau_k = \tau_{\min} + (k-1)\Delta t,\ \ k=1,\dots,K$\\
+\hline
+Description &
+The continuous lag variable $\tau$ is restricted to the lag window
+$[\tau_{\min}, \tau_{\max}]$ and discretized onto the MEG sampling grid with
+step size $\Delta t$. The number of lags $K$ is chosen such that
+$\tau_1=\tau_{\min}$ and $\tau_K \le \tau_{\max}$.\\
+\hline
+Sources& None\\
+\hline
+Ref.\ By & Section \ref{sec_DataConstraints}\\
+\hline
 \end{tabular}
 \end{minipage}\\
 
+~\newline
+
+
+
+
+\noindent
+\begin{minipage}{\textwidth}
+\renewcommand*{\arraystretch}{1.5}
+\begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
+\hline
+\rowcolor[gray]{0.9}
+Number& DD\refstepcounter{datadefnum}\thedatadefnum \label{DD_trf_prediction}\\
+\hline
+Label& \bf Discrete mTRF prediction\\
+\hline
+Symbol & $\hat{\mathbf{Y}}$\\
+\hline
+SI Units & \si{\tesla}/\si{\femto\tesla}\\
+\hline
+Equation& $\hat{\mathbf{Y}} = \mathbf{X}\mathbf{W}$\\
+\hline
+Description &
+Let $\mathbf{Y}\in\mathbb{R}^{N\times C}$ be the observed MEG response matrix
+over $C$ sensors and $N$ time samples. The predicted MEG responses $\hat{\mathbf{Y}}$ are obtained by applying a linear mapping from the lagged design matrix $\mathbf{X}$ to MEG channels using the TRF weight matrix $\mathbf{W}\in\mathbb{R}^{(KD)\times C}$.\\
+\hline
+Sources& None\\
+\hline
+Ref.\ By & Section \ref{sec_DataConstraints}\\
+\hline
+\end{tabular}
+\end{minipage}\\
+
+
+
+
+~\newline
+
+
+\noindent
+\begin{minipage}{\textwidth}
+\renewcommand*{\arraystretch}{1.5}
+\begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
+\hline
+\rowcolor[gray]{0.9}
+Number& DD\refstepcounter{datadefnum}\thedatadefnum \label{DD_ridge_objective}\\
+\hline
+Label& \bf Ridge objective for TRF fitting\\
+\hline
+Symbol & $\mathcal{L}$\\
+\hline
+SI Units & --\\
+\hline
+Equation&
+$\mathcal{L}(\mathbf{W}) = \left\lVert \mathbf{Y} - \mathbf{X}\mathbf{W} \right\rVert_F^2
++ \lambda \left\lVert \mathbf{W} \right\rVert_F^2$\\
+\hline
+Description &
+The objective $\mathcal{L}$ defines TRF parameter estimation as ridge-regularized least squares. The scalar $\lambda\ge 0$ controls the strength of $\ell_2$ regularization. Minimizing $\mathcal{L}$ yields fitted weights $\mathbf{W}$ used in the prediction equation (\ddref{DD_trf_prediction}).\\
+\hline
+Sources& None\\
+\hline
+Ref.\ By & \ddref{DD_score_corr}, \ddref{DD_cv_score}\\
+\hline
+\end{tabular}
+\end{minipage}\\
+
+~\newline
+
+% -------------------------
+% DD6: Encoding score (Pearson correlation)
+% -------------------------
+\noindent
+\begin{minipage}{\textwidth}
+\renewcommand*{\arraystretch}{1.5}
+\begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
+\hline
+\rowcolor[gray]{0.9}
+Number& DD\refstepcounter{datadefnum}\thedatadefnum \label{DD_score_corr}\\
+\hline
+Label& \bf Prediction score\\
+\hline
+Symbol & $\rho$\\
+\hline
+SI Units & --\\
+\hline
+Equation&
+$\rho = \mathrm{corr}\!\left(\hat{\mathbf{Y}}, \mathbf{Y}\right)$\\
+\hline
+Description &
+The prediction score $\rho$ summarizes model performance by computing the Pearson
+correlation between predicted MEG responses $\hat{\mathbf{Y}}$ and observed MEG
+responses $\mathbf{Y}$. Correlation may be computed per sensor  and optionally aggregated over sensors or ROIs using a fixed rule
+defined by the experiment specification.\\
+\hline
+Sources& None\\
+\hline
+Ref.\ By & \ddref{DD_cv_score}\\
+\hline
+\end{tabular}
+\end{minipage}\\
+
+~\newline
+
+
+\noindent
+\begin{minipage}{\textwidth}
+\renewcommand*{\arraystretch}{1.5}
+\begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
+\hline
+\rowcolor[gray]{0.9}
+Number& DD\refstepcounter{datadefnum}\thedatadefnum \label{DD_cv_score}\\
+\hline
+Label& \bf Cross-validation score aggregation\\
+\hline
+Symbol & $\rho_{\mathrm{CV}}$\\
+\hline
+SI Units & --\\
+\hline
+Equation&
+$\rho_{\mathrm{CV}} = \frac{1}{J}\sum_{j=1}^{J} \rho^{(j)}$\\
+\hline
+Description &
+Cross-validation estimates generalization performance by evaluating a score on held-out data across $J$ folds. Let $\rho^{(j)}$ be the score computed on the test split of fold $j$ using the same lag window $[\tau_{\min},\tau_{\max}]$ and egularization-selection procedure for all predictors. The aggregate score $\rho_{\mathrm{CV}}$ is the mean across folds.\\
+\hline
+Sources& None\\
+\hline
+Ref.\ By & Section \ref{sec_DataConstraints}\\
+\hline
+\end{tabular}
+\end{minipage}\\
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+% \subsubsection{Data Types}\label{sec_datatypes}
+
+% \plt{This section is optional.  In many scientific computing programs it isn't
+%   necessary, since the inputs and outpus are straightforward types, like reals,
+%   integers, and sequences of reals and integers.  However, for some problems it
+%   is very helpful to capture the type information.}
+
+% \plt{The data types are not derived; they are simply stated and used by other
+%   models.}
+
+% \plt{All data types must be used by at least one of the models.}
+
+% \plt{For the mathematical notation for expressing types, the recommendation is
+%   to use the notation of~\citet{HoffmanAndStrooper1995}.}
+
+% This section collects and defines all the data types needed to document the
+% models. 
+% \plt{Modify the examples below for your problem, and add additional
+%   definitions as appropriate.}
+
+% ~\newline
+
+% \noindent
+% \begin{minipage}{\textwidth}
+% \renewcommand*{\arraystretch}{1.5}
+% \begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
+%   \hline
+%   \rowcolor[gray]{0.9}
+%   Type Name & Name for Type\\
+%   \hline
+%   Type Def & mathematical definition of the type\\
+%   \hline
+%   Description & description here
+%   \\
+%   \hline
+%   Sources & Citation here, if the type is borrowed from another source\\
+%   \hline
+% \end{tabular}
+% \end{minipage}\\
+
 \subsubsection{Instance Models} \label{sec_instance}    
 
-\plt{The motivation for this section is to reduce the problem defined in
-  ``Physical System Description'' (Section~\ref{sec_phySystDescrip}) to one
-  expressed in mathematical terms. The IMs are built by refining the TMs and/or
-  GDs.  This section should remain abstract.  The SRS should specify the
-  requirements without considering the implementation.}
+% \plt{The motivation for this section is to reduce the problem defined in
+%   ``Physical System Description'' (Section~\ref{sec_phySystDescrip}) to one
+%   expressed in mathematical terms. The IMs are built by refining the TMs and/or
+%   GDs.  This section should remain abstract.  The SRS should specify the
+%   requirements without considering the implementation.}
 
 This section transforms the problem defined in Section~\ref{Sec_pd} into 
 one which is expressed in mathematical terms. It uses concrete symbols defined 
 in Section~\ref{sec_datadef} to replace the abstract symbols in the models 
 identified in Sections~\ref{sec_theoretical} and~\ref{sec_gendef}.
 
-The goals \plt{reference your goals} are solved by \plt{reference your instance
-  models}.  \plt{other details, with cross-references where appropriate.}
-\plt{Modify the examples below for your problem, and add additional models as
-  appropriate.}
+% The goals \ref{GS_reproCompare} are solved by \plt{reference your instance
+%   models}.  \plt{other details, with cross-references where appropriate.}
+% \plt{Modify the examples below for your problem, and add additional models as
+%   appropriate.}
+
+The goals GS\ref{G_reproCompare}--GS\ref{G_traceableArtifacts} are solved by the
+instance models IM\ref{IM_predictor_align}--IM\ref{IM_cv_score}, which define
+(i) how predictors are aligned and assembled into TRF-ready inputs, (ii) how TRF
+models are fit under a fixed protocol, (iii) how performance is evaluated fairly
+using cross-validation, (iv) how baseline-referenced gains are computed, and (v)
+how artifacts are defined for reproducibility.
+
+
+
 
 ~\newline
 
-%Instance Model 1
-
+% ---------------------------------------------------------
+% IM1: Alignment and predictor standardization
+% Solves: GS_reproCompare, GS_fairEval (alignment consistency)
+% ---------------------------------------------------------
 \noindent
 \begin{minipage}{\textwidth}
 \renewcommand*{\arraystretch}{1.5}
 \begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
   \hline
   \rowcolor[gray]{0.9}
-  Number& IM\refstepcounter{instnum}\theinstnum \label{ewat}\\
+  Number& IM\refstepcounter{instnum}\theinstnum \label{IM_predictor_align}\\
   \hline
-  Label& \bf Energy balance on water to find $T_W$\\
+  Label& \bf Time alignment and standardization of predictors\\
   \hline
-  Input&$m_W$, $C_W$, $h_C$, $A_C$, $h_P$, $A_P$, $t_\text{final}$, $T_C$, 
-  $T_\text{init}$, $T_P(t)$ from \iref{epcm}\\
-  & The input is constrained so that $T_\text{init} \leq T_C$ (\aref{A_charge})\\
+  Input&
+  Predictor stream $\boldsymbol{x}(t)$ MEG sampling
+  frequency $f_s$.\\
   \hline
-  Output&$T_W(t)$, $0\leq t \leq t_\text{final}$, such that\\
-  &$\frac{dT_W}{dt} = \frac{1}{\tau_W}[(T_C - T_W(t)) + {\eta}(T_P(t) - T_W(t))]$,\\
-  &$T_W(0) = T_P(0) = T_\text{init}$ (\aref{A_InitTemp}) and $T_P(t)$ from \iref{epcm} \\
+  Output&
+  Time-aligned predictor matrix $\tilde{\mathbf{R}}\in\mathbb{R}^{N\times D}$ on
+  the MEG sampling grid\\
   \hline
-  Description&$T_W$ is the water temperature (\si{\celsius}).\\
-  &$T_P$ is the PCM temperature (\si{\celsius}).\\
-  &$T_C$ is the coil temperature (\si{\celsius}).\\
-  &$\tau_W = \frac{m_W C_W}{h_C A_C}$ is a constant (\si{\second}).\\
-  &$\eta = \frac{h_P A_P}{h_C A_C}$ is a constant (dimensionless).\\
-  & The above equation applies as long as the water is in liquid form,
-  $0<T_W<100^o\text{C}$, where $0^o\text{C}$ and $100^o\text{C}$ are the melting
-  and boiling points of water, respectively (\aref{A_OpRange}, \aref{A_Pressure}).
-  \\
+  Description&
+  This model instantiates the definition of a time-aligned predictor by mapping candidate representations onto the MEG time base. The alignment procedure is applied identically for all predictors to ensure fair comparison.\\
   \hline
-  Sources& Citation here \\
+  Sources& https://eelbrain.readthedocs.io/en/stable/generated/eelbrain.align.html\\
   \hline
-  Ref.\ By & \iref{epcm}\\
+  Ref.\ By & \iref{IM_design_matrix}\\
   \hline
 \end{tabular}
 \end{minipage}\\
 
-%~\newline
+~\newline
 
-\subsubsection*{Derivation of ...}
+% ---------------------------------------------------------
+% IM2: Design matrix construction from aligned predictors
+% Solves: GS_fairEval (shared lag window / lagging procedure)
+% ---------------------------------------------------------
+\noindent
+\begin{minipage}{\textwidth}
+\renewcommand*{\arraystretch}{1.5}
+\begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
+  \hline
+  \rowcolor[gray]{0.9}
+  Number& IM\refstepcounter{instnum}\theinstnum \label{IM_design_matrix}\\
+  \hline
+  Label& \bf Lagged design matrix for TRF fitting\\
+  \hline
+  Input&
+  Time-aligned predictor matrix $\tilde{\mathbf{R}}$ (\iref{IM_predictor_align}),
+  lag window $[\tau_{\min},\tau_{\max}]$, and discretized lag grid
+  $\{\tau_k\}_{k=1}^{K}$ (\ddref{DD_lag_grid}).\\
+  \hline
+  Output&
+  Lagged design matrix $\mathbf{X}\in\mathbb{R}^{N\times (KD)}$.\\
+  \hline
+  Description&
+  This model operationalizes the lagged design matrix definition using the common lag window and discretization shared across all predictors.\\
+  \hline
+  Sources& https://doi.org/10.7554/eLife.85012\\
+  \hline
+  Ref.\ By & \iref{IM_ridge_fit}\\
+  \hline
+\end{tabular}
+\end{minipage}\\
 
-\plt{The derivation shows how the IM is derived from the TMs/GDs.  In cases
-  where the derivation cannot be described under the Description field, it will
-  be necessary to include this subsection.}
+~\newline
+
+% ---------------------------------------------------------
+% IM3: Ridge-regularized TRF fitting
+% Solves: GS_fairEval (shared fitting rule)
+% ---------------------------------------------------------
+\noindent
+\begin{minipage}{\textwidth}
+\renewcommand*{\arraystretch}{1.5}
+\begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
+  \hline
+  \rowcolor[gray]{0.9}
+  Number& IM\refstepcounter{instnum}\theinstnum \label{IM_ridge_fit}\\
+  \hline
+  Label& \bf Ridge-regularized mTRF fitting\\
+  \hline
+  Input&
+  Design matrix $\mathbf{X}$ (\iref{IM_design_matrix}), observed MEG responses
+  $\mathbf{Y}\in\mathbb{R}^{N\times C}$, and regularization coefficient
+  $\lambda$ (\ddref{DD_ridge_objective}).\\
+  \hline
+  Output&
+  Fitted TRF weights $\mathbf{W}^{\ast}\in\mathbb{R}^{(KD)\times C}$ that minimize
+  the ridge objective:
+  $
+  \mathbf{W}^{\ast}=\arg\min_{\mathbf{W}}
+  \|\mathbf{Y}-\mathbf{X}\mathbf{W}\|_F^2+\lambda\|\mathbf{W}\|_F^2.
+  $\\
+  \hline
+  Description&
+  This model specifies the fitting rule for TRF weights using ridge-regularized
+  least squares. The same estimation formulation is used for all predictors to ensure comparability.\\
+  \hline
+  Sources& https://doi.org/10.7554/eLife.85012\\
+  \hline
+  Ref.\ By & \iref{IM_trf_predict}\\
+  \hline
+\end{tabular}
+\end{minipage}\\
+
+~\newline
+
+% ---------------------------------------------------------
+% IM4: TRF prediction from fitted weights
+% Solves: GS_reproCompare (standard prediction step)
+% ---------------------------------------------------------
+\noindent
+\begin{minipage}{\textwidth}
+\renewcommand*{\arraystretch}{1.5}
+\begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
+  \hline
+  \rowcolor[gray]{0.9}
+  Number& IM\refstepcounter{instnum}\theinstnum \label{IM_trf_predict}\\
+  \hline
+  Label& \bf Predicted MEG responses from fitted TRF\\
+  \hline
+  Input&
+  Design matrix $\mathbf{X}$ and fitted weights $\mathbf{W}^{\ast}$
+  (\iref{IM_ridge_fit}).\\
+  \hline
+  Output&
+  Predicted MEG responses $\hat{\mathbf{Y}}$ given by
+  $\hat{\mathbf{Y}}=\mathbf{X}\mathbf{W}^{\ast}$ (\ddref{DD_trf_prediction}).\\
+  \hline
+  Description&
+  This model defines the deterministic prediction step used before computing
+  evaluation metrics.\\
+  \hline
+  Sources& https://doi.org/10.1371/journal.pcbi.1013244\\
+  \hline
+  Ref.\ By & \iref{IM_cv_score}\\
+  \hline
+\end{tabular}
+\end{minipage}\\
+
+~\newline
+
+% ---------------------------------------------------------
+% IM5: Cross-validated encoding score
+% Solves: GS_reproCompare, GS_fairEval (common CV + metric)
+% ---------------------------------------------------------
+\noindent
+\begin{minipage}{\textwidth}
+\renewcommand*{\arraystretch}{1.5}
+\begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
+  \hline
+  \rowcolor[gray]{0.9}
+  Number& IM\refstepcounter{instnum}\theinstnum \label{IM_cv_score}\\
+  \hline
+  Label& \bf Cross-validated encoding score for a predictor\\
+  \hline
+  Input&
+  Predictor definition, MEG responses $\mathbf{Y}$, cross-validation procedure $\rho_{\mathrm{CV}}$ (\ddref{DD_cv_score}),
+  lag window parameters, and score definition $\rho$ (\ddref{DD_score_corr}).\\
+  \hline
+  Output&
+  Cross-validated score $\rho_{\mathrm{CV}}$ for the predictor, computed as the
+  mean of fold-wise scores $\rho^{(j)}$ over $J$ folds.\\
+  \hline
+  Description&
+  For each fold $j$, compute aligned predictors (IM\ref{IM_predictor_align}),
+  construct $\mathbf{X}$ (IM\ref{IM_design_matrix}), fit weights on training data
+  (IM\ref{IM_ridge_fit}), predict held-out responses (IM\ref{IM_trf_predict}),
+  then compute $\rho^{(j)}$ as correlation between $\hat{\mathbf{Y}}$ and
+  $\mathbf{Y}$ on held-out data. Using an identical CV protocol and lag window
+  across predictors enforces fair evaluation.\\
+  \hline
+  Sources& https://doi.org/10.7554/eLife.85012\\
+  \hline
+  Ref.\ By & None\\
+  \hline
+\end{tabular}
+\end{minipage}\\
+
+
+
+~\newline
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+% \subsubsection*{Derivation of ...}
+
+% \plt{The derivation shows how the IM is derived from the TMs/GDs.  In cases
+%   where the derivation cannot be described under the Description field, it will
+%   be necessary to include this subsection.}
 
 \subsubsection{Input Data Constraints} \label{sec_DataConstraints}    
+
+
 
 Table~\ref{TblInputVar} shows the data constraints on the input output
 variables.  The column for physical constraints gives the physical limitations
@@ -987,71 +1818,191 @@ provides an estimate of the confidence with which the physical quantities can be
 measured.  This information would be part of the input if one were performing an
 uncertainty quantification exercise.
 
-The specification parameters in Table~\ref{TblInputVar} are listed in
-Table~\ref{TblSpecParams}.
 
-\begin{table}[!h]
-  \caption{Input Variables} \label{TblInputVar}
-  \renewcommand{\arraystretch}{1.2}
-\noindent \begin{longtable*}{l l l l c} 
+
+
+
+
+% The specification parameters in Table~\ref{TblInputVar} are listed in
+% Table~\ref{TblSpecParams}.
+
+\renewcommand{\arraystretch}{1.2}
+\begin{longtable}{l l l l c}
+\caption{Input Variables}\label{TblInputVar}\\
   \toprule
   \textbf{Var} & \textbf{Physical Constraints} & \textbf{Software Constraints} &
-                             \textbf{Typical Value} & \textbf{Uncertainty}\\
-  \midrule 
-  $L$ & $L > 0$ & $L_{\text{min}} \leq L \leq L_{\text{max}}$ & 1.5 \si[per-mode=symbol] {\metre} & 10\%
-  \\
-  \bottomrule
-\end{longtable*}
-\end{table}
+  \textbf{Typical Value} & \textbf{Uncertainty}\\
+  \midrule
+  $f_s$ & $f_s>0$ &
+  $10 \le f_s \le 2000$ \si{\hertz} &
+  $100$ \si{\hertz} &
+  low\\
 
-\noindent 
-\begin{description}
-\item[(*)] \plt{you might need to add some notes or clarifications}
-\end{description}
+  $f_a$ & $f_a>0$ &
+  $8000 \le f_a \le 96000$ \si{\hertz} &
+  $16000$ \si{\hertz} &
+  low\\
 
-\begin{table}[!h]
-\caption{Specification Parameter Values} \label{TblSpecParams}
-\renewcommand{\arraystretch}{1.2}
-\noindent \begin{longtable*}{l l} 
-  \toprule
-  \textbf{Var} & \textbf{Value} \\
-  \midrule 
-  $L_\text{min}$ & 0.1 \si{\metre}\\
+  $N$ & $N \in \mathbb{N},\ N>0$ &
+  $N \ge N_{\min}$ &
+  dataset-dependent &
+  medium\\
+
+  $C$ & $C \in \mathbb{N},\ C>0$ &
+  $1 \le C \le C_{\max}$ &
+  dataset-dependent &
+  low\\
+
+  $D$ & $D \in \mathbb{N},\ D>0$ &
+  $1 \le D \le D_{\max}$ &
+  dataset-dependent &
+  low\\
+
+  $L$ & $L \in \mathbb{N},\ L>0$ &
+  $1 \le L \le L_{\max}$ &
+  3--10 &
+  low\\
+
+  $\tau_{\min}$ & $\tau_{\min}<\tau_{\max}$ &
+  $-0.5 \le \tau_{\min} \le 0$ \si{\second} &
+  $-0.1$ \si{\second} &
+  low\\
+
+  $\tau_{\max}$ & $\tau_{\max}>\tau_{\min}$ &
+  $0.05 \le \tau_{\max} \le 2.0$ \si{\second} &
+  $1.0$ \si{\second} &
+  low\\
+
+  $K$ & $K \in \mathbb{N},\ K>0$ &
+  $K = \left\lfloor\frac{\tau_{\max}-\tau_{\min}}{\Delta t}\right\rfloor + 1$ &
+  implied by $f_s,\tau_{\min},\tau_{\max}$ &
+  low\\
+
+  $\lambda$ & $\lambda \ge 0$ &
+  $\lambda \in [\lambda_{\min},\lambda_{\max}]$ &
+  selected by CV &
+  medium\\
+
+  $\rho_{\mathrm{CV}}$ & defined partitioning &
+  $2 \le J \le 20$ folds/partitions &
+  $J=4$ &
+  low\\
+
   \bottomrule
-\end{longtable*}
-\end{table}
+\end{longtable}
+
+
+
+
+
+
+
+% The specification parameters in Table~\ref{TblInputVar} are listed in
+% Table~\ref{TblSpecParams}.
+
+% \begin{table}[!h]
+%   \caption{Input Variables} \label{TblInputVar}
+%   \renewcommand{\arraystretch}{1.2}
+% \noindent \begin{longtable*}{l l l l c} 
+%   \toprule
+%   \textbf{Var} & \textbf{Physical Constraints} & \textbf{Software Constraints} &
+%                              \textbf{Typical Value} & \textbf{Uncertainty}\\
+%   \midrule 
+%   $L$ & $L > 0$ & $L_{\text{min}} \leq L \leq L_{\text{max}}$ & 1.5 \si[per-mode=symbol] {\metre} & 10\%
+%   \\
+%   \bottomrule
+% \end{longtable*}
+% \end{table}
+
+% \noindent 
+% \begin{description}
+% \item[(*)] \plt{you might need to add some notes or clarifications}
+% \end{description}
+
+% \begin{table}[!h]
+% \caption{Specification Parameter Values} \label{TblSpecParams}
+% \renewcommand{\arraystretch}{1.2}
+% \noindent \begin{longtable*}{l l} 
+%   \toprule
+%   \textbf{Var} & \textbf{Value} \\
+%   \midrule 
+%   $L_\text{min}$ & 0.1 \si{\metre}\\
+%   \bottomrule
+% \end{longtable*}
+% \end{table}
 
 \subsubsection{Properties of a Correct Solution} \label{sec_CorrectSolution}
 
 \noindent
-A correct solution must exhibit \plt{fill in the details}.  \plt{These
-  properties are in addition to the stated requirements.  There is no need to
-  repeat the requirements here.  These additional properties may not exist for
-  every problem.  Examples include conservation laws (like conservation of
-  energy or mass) and known constraints on outputs, which are usually summarized
-  in tabular form.  A sample table is shown in Table~\ref{TblOutputVar}}
+A correct solution must exhibit: 
+% \plt{fill in the details}.  
+% \plt{These
+%   properties are in addition to the stated requirements.  There is no need to
+%   repeat the requirements here.  These additional properties may not exist for
+%   every problem.  Examples include conservation laws (like conservation of
+%   energy or mass) and known constraints on outputs, which are usually summarized
+%   in tabular form.  A sample table is shown in Table~\ref{TblOutputVar}}
 
-\begin{table}[!h]
-\caption{Output Variables} \label{TblOutputVar}
+
+% \plt{This section is not for test cases or techniques for verification and
+%   validation.  Those topics will be addressed in the Verification and Validation
+%   plan.}
+
+
+\begin{itemize}
+  \item \textbf{Time-base consistency:} Any predictor and neural response used
+  together must be defined on the same sampling grid after alignment. 
+
+  \item \textbf{Protocol invariance across predictors:} When comparing multiple
+  predictors, the lag window, lag discretization, cross-validation procedure, and regularization selection over $\lambda$ must be identical across predictors so that differences in scores reflect predictor information rather than evaluation artifacts.
+
+  \item \textbf{Numerical validity:} All reported fitted weights, predictions,
+  and evaluation scores must be well-defined for every evaluated partition.
+
+  \item \textbf{Traceability of results:} Each reported score must be uniquely
+  attributable to a specific predictor definition, lag window, CV partitioning,
+  and regularization setting, so that the evaluation can be repeated under the
+  same specification.
+\end{itemize}
+
+
+
+
+% \begin{table}[!h]
+% \caption{Output Variables} \label{TblOutputVar}
+% \renewcommand{\arraystretch}{1.2}
+% \noindent \begin{longtable*}{l l} 
+%   \toprule
+%   \textbf{Var} & \textbf{Physical Constraints} \\
+%   \midrule 
+%   $T_W$ & $T_\text{init} \leq T_W \leq T_C$ (by~\aref{A_charge})
+%   \\
+%   \bottomrule
+% \end{longtable*}
+% \end{table}
+
+
 \renewcommand{\arraystretch}{1.2}
-\noindent \begin{longtable*}{l l} 
+\begin{longtable}{l l}
+\caption{Output Variables}\label{TblOutputVar}\\
   \toprule
   \textbf{Var} & \textbf{Physical Constraints} \\
-  \midrule 
-  $T_W$ & $T_\text{init} \leq T_W \leq T_C$ (by~\aref{A_charge})
-  \\
+  \midrule
+  $\rho$ & $-1 \le \rho \le 1$ (by DD\ref{DD_score_corr})\\
+  $\rho_{\mathrm{CV}}$ & $-1 \le \rho_{\mathrm{CV}} \le 1$ (by DD\ref{DD_cv_score})\\
+  $\Delta \rho$ & $-2 \le \Delta \rho \le 2$\\
   \bottomrule
-\end{longtable*}
-\end{table}
+\end{longtable}
 
-\plt{This section is not for test cases or techniques for verification and
-  validation.  Those topics will be addressed in the Verification and Validation
-  plan.}
 
-\section{Requirements}
 
-\plt{The requirements refine the goal statement.  They will make heavy use of
-  references to the instance models.}
+
+
+
+\section{Requirements} \label{Requirements}
+
+% \plt{The requirements refine the goal statement.  They will make heavy use of
+%   references to the instance models.}
 
 This section provides the functional requirements, the business tasks that the
 software is expected to complete, and the nonfunctional requirements, the
@@ -1061,95 +2012,112 @@ qualities that the software is expected to exhibit.
 
 \noindent \begin{itemize}
 
-\item[R\refstepcounter{reqnum}\thereqnum \label{R_Inputs}:] \plt{Requirements
-    for the inputs that are supplied by the user.  This information has to be
-    explicit.}
+\item[R\refstepcounter{reqnum}\thereqnum \label{R_Inputs}:]
+The system should accept speech stimuli and MEG signals as inputs. 
 
-\item[R\refstepcounter{reqnum}\thereqnum \label{R_OutputInputs}:] \plt{It isn't
-    always required, but often echoing the inputs as part of the output is a
-    good idea.}
+\item[R\refstepcounter{reqnum}\thereqnum \label{R_InputValidation}:]
+The system shall validate that the provided inputs are internally consistent
+before model fitting.
 
-\item[R\refstepcounter{reqnum}\thereqnum \label{R_Calculate}:] \plt{Calculation
-    related requirements.}
+\item[R\refstepcounter{reqnum}\thereqnum \label{R_OutputInputs}:]
+For each experiment, the system shall record the complete experiment specification alongside produced outputs, including predictors, alignment settings, lag window parameters, CV partitions.
+
+\item[R\refstepcounter{reqnum}\thereqnum \label{R_ConstructPredictors}:]
+Given a predictor definition, the system shall construct a time-aligned predictor
+matrix on the MEG sampling grid.
+
+\item[R\refstepcounter{reqnum}\thereqnum \label{R_TRFFit}:]
+For each predictor, the system shall fit TRF weights using the ridge objective
+ and shall apply the same fitting formulation across all predictors in the experiment.
+
+
+\item[R\refstepcounter{reqnum}\thereqnum \label{R_FairEval}:]
+The system shall evaluate all candidate predictors under a consistent protocol.
+
+\item[R\refstepcounter{reqnum}\thereqnum \label{R_Scoring}:]
+For each predictor, the system shall compute an encoding score.
+
+\item[R\refstepcounter{reqnum}\thereqnum \label{R_QuantifyGain}:]
+The system shall compute baseline-referenced improvement for each candidate predictor relative to a specified acoustic baseline predictor.
+
+\item[R\refstepcounter{reqnum}\thereqnum \label{R_Output}:]
+For each experiment, the system shall produce outputs sufficient to support
+reproducible scientific inspection.
 
 \item[R\refstepcounter{reqnum}\thereqnum \label{R_VerifyOutput}:]
-  \plt{Verification related requirements.}
-
-\item[R\refstepcounter{reqnum}\thereqnum \label{R_Output}:] \plt{Output related
-    requirements.}
+The system shall check basic correctness conditions on produced outputs.
 
 \end{itemize}
 
-\plt{Every IM should map to at least one requirement, but not every requirement
-  has to map to a corresponding IM.}
+% \plt{Every IM should map to at least one requirement, but not every requirement
+%   has to map to a corresponding IM.}
 
 \subsection{Nonfunctional Requirements}
 
-\plt{List your nonfunctional requirements.  You may consider using a fit
-  criterion to make them verifiable.}
-\plt{The goal is for the nonfunctional requirements to be unambiguous, abstract
-  and verifiable.  This isn't easy to show succinctly, so a good strategy may be
-to give a ``high level'' view of the requirement, but allow for the details to
-be covered in the Verification and Validation document.}
-\plt{An absolute requirement on a quality of the system is rarely needed.  For
-  instance, an accuracy of 0.0101 \% is likely fine, even if the requirement is
-  for 0.01 \% accuracy.  Therefore, the emphasis will often be more on
-  describing now well the quality is achieved, through experimentation, and
-  possibly theory, rather than meeting some bar that was defined a priori.}
-\plt{You do not need an entry for correctness in your NFRs.  The purpose of the
-  SRS is to record the requirements that need to be satisfied for correctness.
-  Any statement of correctness would just be redundant. Rather than discuss
-  correctness, you can characterize how far away from the correct (true)
-  solution you are allowed to be.  This is discussed under accuracy.}
+% \plt{List your nonfunctional requirements.  You may consider using a fit
+%   criterion to make them verifiable.}
+% \plt{The goal is for the nonfunctional requirements to be unambiguous, abstract
+%   and verifiable.  This isn't easy to show succinctly, so a good strategy may be
+% to give a ``high level'' view of the requirement, but allow for the details to
+% be covered in the Verification and Validation document.}
+% \plt{An absolute requirement on a quality of the system is rarely needed.  For
+%   instance, an accuracy of 0.0101 \% is likely fine, even if the requirement is
+%   for 0.01 \% accuracy.  Therefore, the emphasis will often be more on
+%   describing now well the quality is achieved, through experimentation, and
+%   possibly theory, rather than meeting some bar that was defined a priori.}
+% \plt{You do not need an entry for correctness in your NFRs.  The purpose of the
+%   SRS is to record the requirements that need to be satisfied for correctness.
+%   Any statement of correctness would just be redundant. Rather than discuss
+%   correctness, you can characterize how far away from the correct (true)
+%   solution you are allowed to be.  This is discussed under accuracy.}
 
 \noindent \begin{itemize}
 
 \item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Accuracy}:]
-  \textbf{Accuracy} \plt{Characterize the accuracy by giving the context/use for
-    the software.  Maybe something like, ``The accuracy of the computed
-    solutions should meet the level needed for $<$engineering or scientific
-    application$>$.  The level of accuracy achieved by \progname{} shall be
-    described following the procedure given in Section~X of the Verification and
-    Validation Plan.''  A link to the VnV plan would be a nice extra.}
+\textbf{Accuracy} 
+The accuracy of results produced by \progname{} shall meet the level required for
+scientific comparison of predictors in neural speech encoding. 
 
-\item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Usability}:] \textbf{Usability}
-  \plt{Characterize the usability by giving the context/use for the software.
-    You should likely reference the user characteristics section.  The level of
-    usability achieved by the software shall be described following the
-    procedure given in Section~X of the Verification and Validation Plan.  A
-    link to the VnV plan would be a nice extra.}
+\item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Usability}:]
+\textbf{Usability} 
+\progname{} shall support intended users (researchers and students with experience in scientific Python and neural data workflows.
 
 \item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Maintainability}:]
-  \textbf{Maintainability} \plt{The effort required to make any of the likely
-    changes listed for \progname{} should be less than FRACTION of the original
-    development time.  FRACTION is then a symbolic constant that can be defined
-    at the end of the report.}
+\textbf{Maintainability} 
+The effort required to implement any of the likely changes shall be less than 0.5 of the original development effort.
 
 \item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Portability}:]
-  \textbf{Portability} \plt{This NFR is easier to write than the others.  The
-    systems that \progname{} should run on should be listed here.  When possible
-    the specific versions of the potential operating environments should be
-    given.  To make the NFR verifiable a statement could be made that the tests
-    from a given section of the VnV plan can be successfully run on all of the
-    possible operating environments.}
+\textbf{Portability} 
+\progname{} shall run on modern Windows, macOS, and Linux systems. The procedures
+in the Verification and Validation Plan shall be executable on all supported
+operating environments.
 
-\item Other NFRs that might be discussed include verifiability,
-  understandability and reusability.
 
 \end{itemize}
 
 \subsection{Rationale}
 
-\plt{Provide a rationale for the decisions made in the documentation.  Rationale
-should be provided for scope decisions, modelling decisions, assumptions and
-typical values.}
+% \plt{Provide a rationale for the decisions made in the documentation.  Rationale
+% should be provided for scope decisions, modelling decisions, assumptions and
+% typical values.}
+
+The requirements emphasize protocol consistency and traceability because the primary scientific objective is to compare predictors under controlled conditions (GS\ref{G_reproCompare}, GS\ref{G_fairEval}). 
+In particular, the choice to formalize the workflow around time alignment, shared lag windows, and cross-validation ensures that differences in $\rho_{\mathrm{CV}}$ and
+$\Delta\rho$ reflect differences in predictor information content rather than
+differences in evaluation settings. 
+Typical parameter ranges in Section~\ref{sec_DataConstraints} are conservative to avoid unstable regression fits and to support practical runtimes while still permitting exploratory experiments.
 
 \section{Likely Changes}    
 
 \noindent \begin{itemize}
 
-\item[LC\refstepcounter{lcnum}\thelcnum\label{LC_meaningfulLabel}:] \plt{Give
-    the likely changes, with a reference to the related assumption (aref), as appropriate.}
+\item[LC\refstepcounter{lcnum}\thelcnum\label{LC_meaningfulLabel}:] Support more deep learning-based speech models.
+
+\item[LC\refstepcounter{lcnum}\thelcnum\label{LC_meaningfulLabel}:] Support more biological inspired models.
+
+\item[LC\refstepcounter{lcnum}\thelcnum\label{LC_meaningfulLabel}:] Support BIDS data.
+
+\item[LC\refstepcounter{lcnum}\thelcnum\label{LC_meaningfulLabel}:] Support convect audio data to gammatone filterbank.
 
 \end{itemize}
 
@@ -1157,9 +2125,9 @@ typical values.}
 
 \noindent \begin{itemize}
 
-\item[LC\refstepcounter{lcnum}\thelcnum\label{LC_meaningfulLabel}:] \plt{Give
-    the unlikely changes.  The design can assume that the changes listed will
-    not occur.}
+\item[LC\refstepcounter{lcnum}\thelcnum\label{LC_meaningfulLabel}:] The format of input experiment configuration will not change.
+
+\item[LC\refstepcounter{lcnum}\thelcnum\label{LC_meaningfulLabel}:] The input dataset format for raw data will not change.
 
 \end{itemize}
 
@@ -1176,42 +2144,43 @@ other. Table~\ref{Table:A_trace} shows the dependencies of theoretical models,
 general definitions, data definitions, instance models, and likely changes on
 the assumptions.
 
-\plt{You will have to modify these tables for your problem.}
 
-\plt{The traceability matrix is not generally symmetric.  If GD1 uses A1, that
-  means that GD1's derivation or presentation requires invocation of A1.  A1
-  does not use GD1.  A1 is ``used by'' GD1.}
 
-\plt{The traceability matrix is challenging to maintain manually.  Please do
-  your best.  In the future tools (like Drasil) will make this much easier.}
 
+
+
+
+
+
+
+
+
+% ---------------------------------------------------------
+% A-trace: Assumptions vs other items
+% (Keep it conservative: only mark "X" where the assumption is truly invoked)
+% ---------------------------------------------------------
 \afterpage{
 \begin{landscape}
 \begin{table}[h!]
 \centering
-\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+\renewcommand{\arraystretch}{1.1}
+\begin{tabular}{|c|c|c|c|c|}
 \hline
-	& \aref{A_OnlyThermalEnergy}& \aref{A_hcoeff}& \aref{A_mixed}& \aref{A_tpcm}& \aref{A_const_density}& \aref{A_const_C}& \aref{A_Newt_coil}& \aref{A_tcoil}& \aref{A_tlcoil}& \aref{A_Newt_pcm}& \aref{A_charge}& \aref{A_InitTemp}& \aref{A_OpRangePCM}& \aref{A_OpRange}& \aref{A_htank}& \aref{A_int_heat}& \aref{A_vpcm}& \aref{A_PCM_state}& \aref{A_Pressure} \\
+ & \aref{A_preprocessed} & \aref{A_linearencoding} & \aref{A_stationarity} & \aref{A_labels} \\
 \hline
-\tref{T_COE}        & X& & & & & & & & & & & & & & & & & & \\ \hline
-\tref{T_SHE}        & & & & & & & & & & & & & & & & & & & \\ \hline
-\tref{T_LHE}        & & & & & & & & & & & & & & & & & & & \\ \hline
-\dref{NL}           & & X& & & & & & & & & & & & & & & & & \\ \hline
-\dref{ROCT}         & & & X& X& X& X& & & & & & & & & & & & & \\ \hline
-\ddref{FluxCoil}    & & & & & & & X& X& X& & & & & & & & & & \\ \hline
-\ddref{FluxPCM}     & & & X& X& & & & & & X& & & & & & & & & \\ \hline
-\ddref{D_HOF}       & & & & & & & & & & & & & & & & & & & \\ \hline
-\ddref{D_MF}        & & & & & & & & & & & & & & & & & & & \\ \hline
-\iref{ewat}         & & & & & & & & & & & X& X& & X& X& X& & & X \\ \hline
-\iref{epcm}         & & & & & & & & & & & & X& X& & & X& X& X& \\ \hline
-\iref{I_HWAT}       & & & & & & & & & & & & & & X& & & & & X \\ \hline
-\iref{I_HPCM}       & & & & & & & & & & & & & X& & & & & X & \\ \hline
-\lcref{LC_tpcm}     & & & & X& & & & & & & & & & & & & & & \\ \hline
-\lcref{LC_tcoil}    & & & & & & & & X& & & & & & & & & & & \\ \hline
-\lcref{LC_tlcoil}   & & & & & & & & & X& & & & & & & & & & \\ \hline
-\lcref{LC_charge}   & & & & & & & & & & & X& & & & & & & & \\ \hline
-\lcref{LC_InitTemp} & & & & & & & & & & & & X& & & & & & & \\ \hline
-\lcref{LC_htank}    & & & & & & & & & & & & & & & X& & & & \\
+\tref{TM:ERM}               &  &  &  & X \\ \hline
+\tref{TM:Representation}    & X &  &  &  \\ \hline
+\ddref{DD_sampling}         & X &  &  &  \\ \hline
+\ddref{DD_lag_grid}         & X & X &  &  \\ \hline
+\ddref{DD_trf_prediction}   & X & X & X &  \\ \hline
+\ddref{DD_ridge_objective}  & X & X & X &  \\ \hline
+\ddref{DD_score_corr}       & X &  &  &  \\ \hline
+\ddref{DD_cv_score}         & X &  &  &  \\ \hline
+\iref{IM_predictor_align}   & X &  &  &  \\ \hline
+\iref{IM_design_matrix}     & X & X &  &  \\ \hline
+\iref{IM_ridge_fit}         & X & X & X &  \\ \hline
+\iref{IM_trf_predict}       & X & X & X &  \\ \hline
+\iref{IM_cv_score}          & X & X & X &  \\ \hline
 \hline
 \end{tabular}
 \caption{Traceability Matrix Showing the Connections Between Assumptions and Other Items}
@@ -1220,67 +2189,179 @@ the assumptions.
 \end{landscape}
 }
 
+% ---------------------------------------------------------
+% Cross-trace: TM/GD/DD/IM dependencies (who uses whom)
+% Rows depend on columns. Put X when row uses/refines the column.
+% ---------------------------------------------------------
 \begin{table}[h!]
 \centering
-\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
-\hline        
-	& \tref{T_COE}& \tref{T_SHE}& \tref{T_LHE}& \dref{NL}& \dref{ROCT} & \ddref{FluxCoil}& \ddref{FluxPCM} & \ddref{D_HOF}& \ddref{D_MF}& \iref{ewat}& \iref{epcm}& \iref{I_HWAT}& \iref{I_HPCM} \\
+\renewcommand{\arraystretch}{1.1}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
 \hline
-\tref{T_COE}     & & & & & & & & & & & & & \\ \hline
-\tref{T_SHE}     & & & X& & & & & & & & & & \\ \hline
-\tref{T_LHE}     & & & & & & & & & & & & & \\ \hline
-\dref{NL}        & & & & & & & & & & & & & \\ \hline
-\dref{ROCT}      & X& & & & & & & & & & & & \\ \hline
-\ddref{FluxCoil} & & & & X& & & & & & & & & \\ \hline
-\ddref{FluxPCM}  & & & & X& & & & & & & & & \\ \hline
-\ddref{D_HOF}    & & & & & & & & & & & & & \\ \hline
-\ddref{D_MF}     & & & & & & & & X& & & & & \\ \hline
-\iref{ewat}      & & & & & X& X& X& & & & X& & \\ \hline
-\iref{epcm}      & & & & & X& & X& & X& X& & & X \\ \hline
-\iref{I_HWAT}    & & X& & & & & & & & & & & \\ \hline
-\iref{I_HPCM}    & & X& X& & & & X& X& X& & X& & \\
+ & \tref{TM:ERM} & \tref{TM:Representation} & \ddref{DD_sampling} & \ddref{DD_lag_grid} &
+ \ddref{DD_trf_prediction} & \ddref{DD_ridge_objective} & \ddref{DD_score_corr} & \ddref{DD_cv_score} \\
+\hline
+\tref{TM:ERM}               &  &  &  &  &  &  &  &  \\ \hline
+\tref{TM:Representation}    &  &  &  &  &  &  &  &  \\ \hline
+\ddref{DD_sampling}         &  &  &  &  &  &  &  &  \\ \hline
+\ddref{DD_lag_grid}         &  &  & X &  &  &  &  &  \\ \hline
+\ddref{DD_trf_prediction}   &  &  & X & X &  &  &  &  \\ \hline
+\ddref{DD_ridge_objective}  &  &  & X & X & X &  &  &  \\ \hline
+\ddref{DD_score_corr}       &  &  &  &  &  &  &  &  \\ \hline
+\ddref{DD_cv_score}         &  &  &  &  &  & X & X &  \\ \hline
+\iref{IM_predictor_align}   &  & X & X &  &  &  &  &  \\ \hline
+\iref{IM_design_matrix}     &  & X & X & X &  &  &  &  \\ \hline
+\iref{IM_ridge_fit}         &  &  &  &  & X & X &  &  \\ \hline
+\iref{IM_trf_predict}       &  &  &  &  & X &  &  &  \\ \hline
+\iref{IM_cv_score}          &  &  &  &  & X & X & X & X \\ \hline
 \hline
 \end{tabular}
 \caption{Traceability Matrix Showing the Connections Between Items of Different Sections}
 \label{Table:trace}
 \end{table}
 
+% ---------------------------------------------------------
+% R-trace: Requirements vs IMs and DataConstraints
+% Rows depend on columns (i.e., requirement uses IM / section).
+% ---------------------------------------------------------
 \begin{table}[h!]
 \centering
+\renewcommand{\arraystretch}{1.1}
 \begin{tabular}{|c|c|c|c|c|c|c|c|}
 \hline
-	& \iref{ewat}& \iref{epcm}& \iref{I_HWAT}& \iref{I_HPCM}& \ref{sec_DataConstraints}& \rref{R_RawInputs}& \rref{R_MassInputs} \\
+ & \iref{IM_predictor_align} & \iref{IM_design_matrix} & \iref{IM_ridge_fit} &
+ \iref{IM_trf_predict} & \iref{IM_cv_score} & \ref{sec_DataConstraints} \\
 \hline
-\iref{ewat}            & & X& & & & X& X \\ \hline
-\iref{epcm}            & X& & & X& & X& X \\ \hline
-\iref{I_HWAT}          & & & & & & X& X \\ \hline
-\iref{I_HPCM}          & & X& & & & X& X \\ \hline
-\rref{R_RawInputs}     & & & & & & & \\ \hline
-\rref{R_MassInputs}    & & & & & & X& \\ \hline
-\rref{R_CheckInputs}   & & & & & X& & \\ \hline
-\rref{R_OutputInputs}  & X& X& & & & X& X \\ \hline
-\rref{R_TempWater}     & X& & & & & & \\ \hline 
-\rref{R_TempPCM}       & & X& & & & & \\ \hline
-\rref{R_EnergyWater}   & & & X& & & & \\ \hline
-\rref{R_EnergyPCM}     & & & & X& & & \\ \hline
-\rref{R_VerifyOutput}  & & & X& X& & & \\ \hline
-\rref{R_timeMeltBegin} & & X& & & & & \\ \hline
-\rref{R_timeMeltEnd}   & & X& & & & & \\ 
+\rref{R_Inputs}             & X &  &  &  &  & X \\ \hline
+\rref{R_InputValidation}    & X & X &  &  &  & X \\ \hline
+\rref{R_OutputInputs}       &  &  &  &  &  &  \\ \hline
+\rref{R_ConstructPredictors} & X & X &  &  &  & X \\ \hline
+\rref{R_TRFFit}             &  & X & X &  &  &  \\ \hline
+\rref{R_FairEval}           & X & X & X & X & X &  \\ \hline
+\rref{R_Scoring}            &  &  &  & X & X &  \\ \hline
+\rref{R_QuantifyGain}       &  &  &  &  & X &  \\ \hline
+\rref{R_Output}             & X & X & X & X & X &  \\ \hline
+\rref{R_VerifyOutput}       &  & X & X & X & X & X \\ \hline
 \hline
 \end{tabular}
 \caption{Traceability Matrix Showing the Connections Between Requirements and Instance Models}
 \label{Table:R_trace}
 \end{table}
 
-The purpose of the traceability graphs is also to provide easy references on
-what has to be additionally modified if a certain component is changed.  The
-arrows in the graphs represent dependencies. The component at the tail of an
-arrow is depended on by the component at the head of that arrow. Therefore, if a
-component is changed, the components that it points to should also be
-changed. Figure~\ref{Fig_ATrace} shows the dependencies of theoretical models,
-general definitions, data definitions, instance models, likely changes, and
-assumptions on each other. Figure~\ref{Fig_RTrace} shows the dependencies of
-instance models, requirements, and data constraints on each other.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+% \plt{You will have to modify these tables for your problem.}
+
+% \plt{The traceability matrix is not generally symmetric.  If GD1 uses A1, that
+%   means that GD1's derivation or presentation requires invocation of A1.  A1
+%   does not use GD1.  A1 is ``used by'' GD1.}
+
+% \plt{The traceability matrix is challenging to maintain manually.  Please do
+%   your best.  In the future tools (like Drasil) will make this much easier.}
+
+% \afterpage{
+% \begin{landscape}
+% \begin{table}[h!]
+% \centering
+% \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+% \hline
+% 	& \aref{A_OnlyThermalEnergy}& \aref{A_hcoeff}& \aref{A_mixed}& \aref{A_tpcm}& \aref{A_const_density}& \aref{A_const_C}& \aref{A_Newt_coil}& \aref{A_tcoil}& \aref{A_tlcoil}& \aref{A_Newt_pcm}& \aref{A_charge}& \aref{A_InitTemp}& \aref{A_OpRangePCM}& \aref{A_OpRange}& \aref{A_htank}& \aref{A_int_heat}& \aref{A_vpcm}& \aref{A_PCM_state}& \aref{A_Pressure} \\
+% \hline
+% \tref{T_COE}        & X& & & & & & & & & & & & & & & & & & \\ \hline
+% \tref{T_SHE}        & & & & & & & & & & & & & & & & & & & \\ \hline
+% \tref{T_LHE}        & & & & & & & & & & & & & & & & & & & \\ \hline
+% \dref{NL}           & & X& & & & & & & & & & & & & & & & & \\ \hline
+% \dref{ROCT}         & & & X& X& X& X& & & & & & & & & & & & & \\ \hline
+% \ddref{FluxCoil}    & & & & & & & X& X& X& & & & & & & & & & \\ \hline
+% \ddref{FluxPCM}     & & & X& X& & & & & & X& & & & & & & & & \\ \hline
+% \ddref{D_HOF}       & & & & & & & & & & & & & & & & & & & \\ \hline
+% \ddref{D_MF}        & & & & & & & & & & & & & & & & & & & \\ \hline
+% \iref{ewat}         & & & & & & & & & & & X& X& & X& X& X& & & X \\ \hline
+% \iref{epcm}         & & & & & & & & & & & & X& X& & & X& X& X& \\ \hline
+% \iref{I_HWAT}       & & & & & & & & & & & & & & X& & & & & X \\ \hline
+% \iref{I_HPCM}       & & & & & & & & & & & & & X& & & & & X & \\ \hline
+% \lcref{LC_tpcm}     & & & & X& & & & & & & & & & & & & & & \\ \hline
+% \lcref{LC_tcoil}    & & & & & & & & X& & & & & & & & & & & \\ \hline
+% \lcref{LC_tlcoil}   & & & & & & & & & X& & & & & & & & & & \\ \hline
+% \lcref{LC_charge}   & & & & & & & & & & & X& & & & & & & & \\ \hline
+% \lcref{LC_InitTemp} & & & & & & & & & & & & X& & & & & & & \\ \hline
+% \lcref{LC_htank}    & & & & & & & & & & & & & & & X& & & & \\
+% \hline
+% \end{tabular}
+% \caption{Traceability Matrix Showing the Connections Between Assumptions and Other Items}
+% \label{Table:A_trace}
+% \end{table}
+% \end{landscape}
+% }
+
+% \begin{table}[h!]
+% \centering
+% \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+% \hline        
+% 	& \tref{T_COE}& \tref{T_SHE}& \tref{T_LHE}& \dref{NL}& \dref{ROCT} & \ddref{FluxCoil}& \ddref{FluxPCM} & \ddref{D_HOF}& \ddref{D_MF}& \iref{ewat}& \iref{epcm}& \iref{I_HWAT}& \iref{I_HPCM} \\
+% \hline
+% \tref{T_COE}     & & & & & & & & & & & & & \\ \hline
+% \tref{T_SHE}     & & & X& & & & & & & & & & \\ \hline
+% \tref{T_LHE}     & & & & & & & & & & & & & \\ \hline
+% \dref{NL}        & & & & & & & & & & & & & \\ \hline
+% \dref{ROCT}      & X& & & & & & & & & & & & \\ \hline
+% \ddref{FluxCoil} & & & & X& & & & & & & & & \\ \hline
+% \ddref{FluxPCM}  & & & & X& & & & & & & & & \\ \hline
+% \ddref{D_HOF}    & & & & & & & & & & & & & \\ \hline
+% \ddref{D_MF}     & & & & & & & & X& & & & & \\ \hline
+% \iref{ewat}      & & & & & X& X& X& & & & X& & \\ \hline
+% \iref{epcm}      & & & & & X& & X& & X& X& & & X \\ \hline
+% \iref{I_HWAT}    & & X& & & & & & & & & & & \\ \hline
+% \iref{I_HPCM}    & & X& X& & & & X& X& X& & X& & \\
+% \hline
+% \end{tabular}
+% \caption{Traceability Matrix Showing the Connections Between Items of Different Sections}
+% \label{Table:trace}
+% \end{table}
+
+% \begin{table}[h!]
+% \centering
+% \begin{tabular}{|c|c|c|c|c|c|c|c|}
+% \hline
+% 	& \iref{ewat}& \iref{epcm}& \iref{I_HWAT}& \iref{I_HPCM}& \ref{sec_DataConstraints}& \rref{R_RawInputs}& \rref{R_MassInputs} \\
+% \hline
+% \iref{ewat}            & & X& & & & X& X \\ \hline
+% \iref{epcm}            & X& & & X& & X& X \\ \hline
+% \iref{I_HWAT}          & & & & & & X& X \\ \hline
+% \iref{I_HPCM}          & & X& & & & X& X \\ \hline
+% \rref{R_RawInputs}     & & & & & & & \\ \hline
+% \rref{R_MassInputs}    & & & & & & X& \\ \hline
+% \rref{R_CheckInputs}   & & & & & X& & \\ \hline
+% \rref{R_OutputInputs}  & X& X& & & & X& X \\ \hline
+% \rref{R_TempWater}     & X& & & & & & \\ \hline 
+% \rref{R_TempPCM}       & & X& & & & & \\ \hline
+% \rref{R_EnergyWater}   & & & X& & & & \\ \hline
+% \rref{R_EnergyPCM}     & & & & X& & & \\ \hline
+% \rref{R_VerifyOutput}  & & & X& X& & & \\ \hline
+% \rref{R_timeMeltBegin} & & X& & & & & \\ \hline
+% \rref{R_timeMeltEnd}   & & X& & & & & \\ 
+% \hline
+% \end{tabular}
+% \caption{Traceability Matrix Showing the Connections Between Requirements and Instance Models}
+% \label{Table:R_trace}
+% \end{table}
+
+
 
 % \begin{figure}[h!]
 % 	\begin{center}
@@ -1303,82 +2384,82 @@ instance models, requirements, and data constraints on each other.
 % 	\end{center}
 % \end{figure}
 
-\section{Development Plan}
+% \section{Development Plan}
 
-\plt{This section is optional.  It is used to explain the plan for developing
-  the software.  In particular, this section gives a list of the order in which
-  the requirements will be implemented.  In the context of a course  this is
-  where you can indicate which requirements will be implemented as part of the
-  course, and which will be ``faked'' as future work.  This section can be
-  organized as a prioritized list of requirements, or it could should the
-  requirements that will be implemented for ``phase 1'', ``phase 2'', etc.}
+% \plt{This section is optional.  It is used to explain the plan for developing
+%   the software.  In particular, this section gives a list of the order in which
+%   the requirements will be implemented.  In the context of a course  this is
+%   where you can indicate which requirements will be implemented as part of the
+%   course, and which will be ``faked'' as future work.  This section can be
+%   organized as a prioritized list of requirements, or it could should the
+%   requirements that will be implemented for ``phase 1'', ``phase 2'', etc.}
 
-\section{Values of Auxiliary Constants}
+% \section{Values of Auxiliary Constants}
 
-\plt{Show the values of the symbolic parameters introduced in the report.}
+% \plt{Show the values of the symbolic parameters introduced in the report.}
 
-\plt{The definition of the requirements will likely call for SYMBOLIC\_CONSTANTS.
-Their values are defined in this section for easy maintenance.}
+% \plt{The definition of the requirements will likely call for SYMBOLIC\_CONSTANTS.
+% Their values are defined in this section for easy maintenance.}
 
-\plt{The value of FRACTION, for the Maintainability NFR would be given here.}
+% \plt{The value of FRACTION, for the Maintainability NFR would be given here.}
 
-\newpage
+% \newpage
 
-\bibliographystyle {plainnat}
-\bibliography {../../refs/References}
+% \bibliographystyle {plainnat}
+% \bibliography {../../refs/References}
 
-\newpage
+% \newpage
 
-\noindent \plt{The following is not part of the template, just some things to consider
-  when filing in the template.}
+% \noindent \plt{The following is not part of the template, just some things to consider
+%   when filing in the template.}
 
-\noindent \plt{Grammar, flow and \LaTeX advice:
-\begin{itemize}
-\item For Mac users \texttt{*.DS\_Store} should be in \texttt{.gitignore}
-\item \LaTeX{} and formatting rules
-\begin{itemize}
-\item Variables are italic, everything else not, includes subscripts (link to
-  document)
-\begin{itemize}
-\item \href{https://physics.nist.gov/cuu/pdf/typefaces.pdf}{Conventions}
-\item Watch out for implied multiplication
-\end{itemize}
-\item Use BibTeX
-\item Use cross-referencing
-\end{itemize}
-\item Grammar and writing rules
-\begin{itemize}
-\item Acronyms expanded on first usage (not just in table of acronyms)
-\item ``In order to'' should be ``to''
-\end{itemize}
-\end{itemize}}
+% \noindent \plt{Grammar, flow and \LaTeX advice:
+% \begin{itemize}
+% \item For Mac users \texttt{*.DS\_Store} should be in \texttt{.gitignore}
+% \item \LaTeX{} and formatting rules
+% \begin{itemize}
+% \item Variables are italic, everything else not, includes subscripts (link to
+%   document)
+% \begin{itemize}
+% \item \href{https://physics.nist.gov/cuu/pdf/typefaces.pdf}{Conventions}
+% \item Watch out for implied multiplication
+% \end{itemize}
+% \item Use BibTeX
+% \item Use cross-referencing
+% \end{itemize}
+% \item Grammar and writing rules
+% \begin{itemize}
+% \item Acronyms expanded on first usage (not just in table of acronyms)
+% \item ``In order to'' should be ``to''
+% \end{itemize}
+% \end{itemize}}
 
-\noindent \plt{Advice on using the template:
-\begin{itemize}
-\item Difference between physical and software constraints
-\item Properties of a correct solution means \emph{additional} properties, not
-  a restating of the requirements (may be ``not applicable'' for your problem).
-  If you have a table of output constraints, then these are properties of a
-  correct solution.
-\item Assumptions have to be invoked somewhere
-\item ``Referenced by'' implies that there is an explicit reference
-\item Think of traceability matrix, list of assumption invocations and list of
-  reference by fields as automatically generatable
-\item If you say the format of the output (plot, table etc), then your
-  requirement could be more abstract
-\end{itemize}
-}
+% \noindent \plt{Advice on using the template:
+% \begin{itemize}
+% \item Difference between physical and software constraints
+% \item Properties of a correct solution means \emph{additional} properties, not
+%   a restating of the requirements (may be ``not applicable'' for your problem).
+%   If you have a table of output constraints, then these are properties of a
+%   correct solution.
+% \item Assumptions have to be invoked somewhere
+% \item ``Referenced by'' implies that there is an explicit reference
+% \item Think of traceability matrix, list of assumption invocations and list of
+%   reference by fields as automatically generatable
+% \item If you say the format of the output (plot, table etc), then your
+%   requirement could be more abstract
+% \end{itemize}
+% }
 
-\newpage{}
-\section*{Appendix --- Reflection}
+% \newpage{}
+% \section*{Appendix --- Reflection}
 
-\wss{Not required for CAS 741}
+% \wss{Not required for CAS 741}
 
-The information in this section will be used to evaluate the team members on the
-graduate attribute of Lifelong Learning.  
+% The information in this section will be used to evaluate the team members on the
+% graduate attribute of Lifelong Learning.  
 
-\input{../Reflection.text}
+% \input{../Reflection.text}
 
-\input{../SRS_Reflection.text}
+% \input{../SRS_Reflection.text}
 
 \end{document}
