@@ -13,7 +13,7 @@ from network.rnnt import RNNTModel
 from speech_dataset.vocab import build_librispeech_char_vocab, CharVocab
 from speech_dataset.librispeech import LibriSpeechASR, collate_rnnt
 from train.eva_rnnt import rnnt_greedy_decode, eval_metrics
-from utils import AverageMeter, count_parameters, save_json, set_seed, setup_logger
+from utils.utils import AverageMeter, count_parameters, save_json, set_seed, setup_logger
 
 
 def _build_rnnt_loss(blank_idx: int):
