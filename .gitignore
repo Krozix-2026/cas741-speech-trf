@@ -5,6 +5,9 @@ Thumbs.db
 .vscode/
 .idea/
 
+# AppleSeed
+C:\linux_project\CAS741\cas741-speech-trf\src\appleseed_eelbrain\Appleseed-main\*
+
 # =========================
 # Python cache / build
 # =========================
