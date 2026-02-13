@@ -2019,16 +2019,12 @@ The system should accept speech stimuli and MEG signals as inputs.
 The system shall validate that the provided inputs are internally consistent
 before model fitting.
 
-\item[R\refstepcounter{reqnum}\thereqnum \label{R_OutputInputs}:]
-For each experiment, the system shall record the complete experiment specification alongside produced outputs, including predictors, alignment settings, lag window parameters, CV partitions.
 
 \item[R\refstepcounter{reqnum}\thereqnum \label{R_ConstructPredictors}:]
 Given a predictor definition, the system shall construct a time-aligned predictor
 matrix on the MEG sampling grid.
 
-\item[R\refstepcounter{reqnum}\thereqnum \label{R_TRFFit}:]
-For each predictor, the system shall fit TRF weights using the ridge objective
- and shall apply the same fitting formulation across all predictors in the experiment.
+
 
 
 \item[R\refstepcounter{reqnum}\thereqnum \label{R_FairEval}:]
@@ -2040,12 +2036,7 @@ For each predictor, the system shall compute an encoding score.
 \item[R\refstepcounter{reqnum}\thereqnum \label{R_QuantifyGain}:]
 The system shall compute baseline-referenced improvement for each candidate predictor relative to a specified acoustic baseline predictor.
 
-\item[R\refstepcounter{reqnum}\thereqnum \label{R_Output}:]
-For each experiment, the system shall produce outputs sufficient to support
-reproducible scientific inspection.
 
-\item[R\refstepcounter{reqnum}\thereqnum \label{R_VerifyOutput}:]
-The system shall check basic correctness conditions on produced outputs.
 
 \end{itemize}
 
@@ -2073,11 +2064,6 @@ The system shall check basic correctness conditions on produced outputs.
 
 \noindent \begin{itemize}
 
-\item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Accuracy}:]
-\textbf{Accuracy} 
-The accuracy of results produced by \progname{} shall meet the level required for
-scientific comparison of predictors in neural speech encoding. 
-
 \item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Usability}:]
 \textbf{Usability} 
 \progname{} shall support intended users (researchers and students with experience in scientific Python and neural data workflows.
@@ -2088,9 +2074,14 @@ The effort required to implement any of the likely changes shall be less than 0.
 
 \item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Portability}:]
 \textbf{Portability} 
-\progname{} shall run on modern Windows, macOS, and Linux systems. The procedures
-in the Verification and Validation Plan shall be executable on all supported
-operating environments.
+\progname{} shall run on modern Windows, macOS, and Linux systems. The procedures in the Verification and Validation Plan shall be executable on all supported operating environments.
+
+\item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Accuracy}:]
+\textbf{Accuracy} 
+The accuracy of results produced by \progname{} shall meet the level required for scientific comparison of predictors in neural speech encoding. 
+
+
+
 
 
 \end{itemize}
@@ -2234,14 +2225,9 @@ the assumptions.
 \hline
 \rref{R_Inputs}             & X &  &  &  &  & X \\ \hline
 \rref{R_InputValidation}    & X & X &  &  &  & X \\ \hline
-\rref{R_OutputInputs}       &  &  &  &  &  &  \\ \hline
 \rref{R_ConstructPredictors} & X & X &  &  &  & X \\ \hline
-\rref{R_TRFFit}             &  & X & X &  &  &  \\ \hline
-\rref{R_FairEval}           & X & X & X & X & X &  \\ \hline
 \rref{R_Scoring}            &  &  &  & X & X &  \\ \hline
 \rref{R_QuantifyGain}       &  &  &  &  & X &  \\ \hline
-\rref{R_Output}             & X & X & X & X & X &  \\ \hline
-\rref{R_VerifyOutput}       &  & X & X & X & X & X \\ \hline
 \hline
 \end{tabular}
 \caption{Traceability Matrix Showing the Connections Between Requirements and Instance Models}
