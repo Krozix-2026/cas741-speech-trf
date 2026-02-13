@@ -30,450 +30,784 @@
 \begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
 \toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
 \midrule
-Date 1 & 1.0 & Notes\\
-Date 2 & 1.1 & Notes\\
+Feb 10, 2026 & 1.0 & Initial draft\\
+Feb 13, 2026 & 1.1 & Adjust according to feedback\\
+% Date 2 & 1.1 & Notes\\
 \bottomrule
 \end{tabularx}
 
 ~\\
-\wss{The intention of the VnV plan is to increase confidence in the software.
-However, this does not mean listing every verification and validation technique
-that has ever been devised.  The VnV plan should also be a \textbf{feasible}
-plan. Execution of the plan should be possible with the time and team available.
-If the full plan cannot be completed during the time available, it can either be
-modified to ``fake it'', or a better solution is to add a section describing
-what work has been completed and what work is still planned for the future.}
+% \wss{The intention of the VnV plan is to increase confidence in the software.
+% However, this does not mean listing every verification and validation technique
+% that has ever been devised.  The VnV plan should also be a \textbf{feasible}
+% plan. Execution of the plan should be possible with the time and team available.
+% If the full plan cannot be completed during the time available, it can either be
+% modified to ``fake it'', or a better solution is to add a section describing
+% what work has been completed and what work is still planned for the future.}
 
-\wss{The VnV plan is typically started after the requirements stage, but before
-the design stage.  This means that the sections related to unit testing cannot
-initially be completed.  The sections will be filled in after the design stage
-is complete.  the final version of the VnV plan should have all sections filled
-in.}
+% \wss{The VnV plan is typically started after the requirements stage, but before
+% the design stage.  This means that the sections related to unit testing cannot
+% initially be completed.  The sections will be filled in after the design stage
+% is complete.  the final version of the VnV plan should have all sections filled
+% in.}
 
 \newpage
 
 \tableofcontents
 
-\listoftables
-\wss{Remove this section if it isn't needed}
+% \listoftables
+% \wss{Remove this section if it isn't needed}
 
-\listoffigures
-\wss{Remove this section if it isn't needed}
+% \listoffigures
+% \wss{Remove this section if it isn't needed}
 
 \newpage
 
 \section{Symbols, Abbreviations, and Acronyms}
 
-\renewcommand{\arraystretch}{1.2}
-\begin{tabular}{l l} 
-  \toprule		
-  \textbf{symbol} & \textbf{description}\\
-  \midrule 
-  T & Test\\
-  \bottomrule
-\end{tabular}\\
+Identical to the same section in SRS document \citep{SRS}.
 
-\wss{symbols, abbreviations, or acronyms --- you can simply reference the SRS
-  \citep{SRS} tables, if appropriate}
+% \renewcommand{\arraystretch}{1.2}
+% \begin{tabular}{l l} 
+%   \toprule		
+%   \textbf{symbol} & \textbf{description}\\
+%   \midrule 
+%   T & Test\\
+%   \bottomrule
+% \end{tabular}\\
 
-\wss{Remove this section if it isn't needed}
+% \wss{symbols, abbreviations, or acronyms --- you can simply reference the SRS
+%   \citep{SRS} tables, if appropriate}
+
+% \wss{Remove this section if it isn't needed}
 
 \newpage
 
 \pagenumbering{arabic}
 
-This document ... \wss{provide an introductory blurb and roadmap of the
-  Verification and Validation plan}
+This document presents the Verification and Validation (V\&V) plan for \progname{}. 
+It explains how the software and related artifacts will be reviewed, tested, and evaluated to provide confidence that the implemented pipeline satisfies its documented requirements and is suitable for its intended use.
 
 \section{General Information}
 
 \subsection{Summary}
 
-\wss{Say what software is being tested.  Give its name and a brief overview of
-  its general functions.}
+% \wss{Say what software is being tested.  Give its name and a brief overview of
+%   its general functions.}
+
+This project is for comparing candidate speech representations by how well they predict neural responses during speech recognition. 
+Given speech stimuli and corresponding MEG recordings, the system constructs time-aligned predictors from multiple
+sources, fits ridge-regularized multivariate Temporal Response Function (mTRF) encoding models over a specified lag window, and produces quantitative scores and summaries to support reproducible scientific interpretation.
+
+
 
 \subsection{Objectives}
 
-\wss{State what is intended to be accomplished.  The objective will be around
-  the qualities that are most important for your project.  You might have
-  something like: ``build confidence in the software correctness,''
-  ``demonstrate adequate usability.'' etc.  You won't list all of the qualities,
-  just those that are most important.}
+% \wss{State what is intended to be accomplished.  The objective will be around
+%   the qualities that are most important for your project.  You might have
+%   something like: ``build confidence in the software correctness,''
+%   ``demonstrate adequate usability.'' etc.  You won't list all of the qualities,
+%   just those that are most important.}
 
-\wss{You should also list the objectives that are out of scope.  You don't have 
-the resources to do everything, so what will you be leaving out.  For instance, 
-if you are not going to verify the quality of usability, state this.  It is also 
-worthwhile to justify why the objectives are left out.}
+% \wss{You should also list the objectives that are out of scope.  You don't have 
+% the resources to do everything, so what will you be leaving out.  For instance, 
+% if you are not going to verify the quality of usability, state this.  It is also 
+% worthwhile to justify why the objectives are left out.}
 
-\wss{The objectives are important because they highlight that you are aware of 
-limitations in your resources for verification and validation.  You can't do everything, 
-so what are you going to prioritize?  As an example, if your system depends on an 
-external library, you can explicitly state that you will assume that external library 
-has already been verified by its implementation team.}
+% \wss{The objectives are important because they highlight that you are aware of 
+% limitations in your resources for verification and validation.  You can't do everything, 
+% so what are you going to prioritize?  As an example, if your system depends on an 
+% external library, you can explicitly state that you will assume that external library 
+% has already been verified by its implementation team.}
+The primary objectives of this Verification and Validation (V\&V) plan are to:
+
+\begin{itemize}
+  \item Build confidence that correctly performs the end-to-end
+  workflow specified in the SRS. 
+  \item Demonstrate that comparisons across predictors are fair and reproducible under a consistent protocol.
+  \item Provide evidence that the produced outputs are traceable and inspectable, enabling experiments to be repeated and extended with minimal ambiguity.
+\end{itemize}
+
+The following objectives are explicitly out of scope for this project:
+
+\begin{itemize}
+  \item \textbf{Biological validity claims:} \progname{} will not validate neuroscientific claims beyond what is implied by predictive performance. In particular, this project will not claim that higher prediction performance implies a true mechanistic explanation of the brain.
+  \item \textbf{Formal verification:} This project will not provide formal proofs of correctness. 
+  The project resources are insufficient for a formal-methods effort.
+  \item \textbf{Independent verification of external libraries:} This project assume that widely used scientific libraries ( NumPy/SciPy, PyTorch, MNE-Python, Eelbrain) have been verified by their development
+  communities.
+  \item \textbf{Clinical-grade security:} The system is research
+  software. Security hardening and clinical deployment requirements are out of scope.
+\end{itemize}
+
+
+
+
+
+
 
 \subsection{Extras}
 
-\wss{Summarize the extras (if any) that were tackled by this project.  Extras
-can include usability testing, code walkthroughs, user documentation, formal
-proof, GenderMag personas, Design Thinking, etc.  Extras should have already
-been approved by the course instructor as included in your problem statement.
-You can use a pull request to update your extras (in TeamComposition.csv or
-Repos.csv) if your plan changes as a result of the VnV planning exercise.}
+% \wss{Summarize the extras (if any) that were tackled by this project.  Extras
+% can include usability testing, code walkthroughs, user documentation, formal
+% proof, GenderMag personas, Design Thinking, etc.  Extras should have already
+% been approved by the course instructor as included in your problem statement.
+% You can use a pull request to update your extras (in TeamComposition.csv or
+% Repos.csv) if your plan changes as a result of the VnV planning exercise.}
+
+\begin{itemize}
+  \item \textbf{Code walkthrough:} A structured walkthrough   presentation to explain test coverage, main modures, and traceability from SRS requirements to tests.
+  \item \textbf{User manual:} Provides installation steps, and small example workflows to help new users set up the environment, run the \progname{}.
+\end{itemize}
+
+
+
 
 \subsection{Relevant Documentation}
 
-\wss{Reference relevant documentation.  This will definitely include your SRS
-  and your other project documents (design documents, like MG, MIS, etc).  You
-  can include these even before they are written, since by the time the project
-  is done, they will be written.  You can create BibTeX entries for your
-  documents and within those entries include a hyperlink to the documents.}
+% \wss{Reference relevant documentation.  This will definitely include your SRS
+%   and your other project documents (design documents, like MG, MIS, etc).  You
+%   can include these even before they are written, since by the time the project
+%   is done, they will be written.  You can create BibTeX entries for your
+%   documents and within those entries include a hyperlink to the documents.}
 
-\citet{SRS}
+% \citet{SRS}
 
-\wss{Don't just list the other documents.  You should explain why they are relevant and 
-how they relate to your VnV efforts.}
+% \wss{Don't just list the other documents.  You should explain why they are relevant and 
+% how they relate to your VnV efforts.}
+
+\begin{itemize}
+  \item Software Requirements Specification (SRS) \citep{SRS}.
+  \item Module Guide (MG).
+  \item Module Interface Specification (MIS).
+\end{itemize}
+
+
+
 
 \section{Plan}
 
-\wss{Introduce this section.  You can provide a roadmap of the sections to
-  come.}
+% \wss{Introduce this section.  You can provide a roadmap of the sections to
+%   come.}
+This section describes the people and processes used to verify and validate \progname{}. 
+It covers document reviews, implementation verification, automated tools, and the approach to validating that the software meets stakeholder needs for reproducible scientific comparison.
+
+
 
 \subsection{Verification and Validation Team}
 
-\wss{Your teammates.  Maybe your supervisor.
-  You should do more than list names.  You should say what each person's role is
-  for the project's verification.  A table is a good way to summarize this information.}
+\begin{table}[]
+\begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
+\toprule 
+    \textbf{Member} & \textbf{Role} & \textbf{Responsibilities} \\
+\midrule
+    Xiao Shao & Developer & Produce the VnV Plan and refine based on feedback \\
+    Dr. Spencer Smith & Course Instructor & Provides feedback on engineering principles \\
+    Dr. Christian Brodbeck & Domain Expert & Provides domain-specific information on requirements and validation \\
+    Yanyu Wu & Reviewer & Provides feedback on VnV plan \\
+\bottomrule
+\end{tabularx}
+\caption{Verification and Validation Team}
+\end{table}
+
+
 
 \subsection{SRS Verification}
 
-\wss{List any approaches you intend to use for SRS verification.  This may
-  include ad hoc feedback from reviewers, like your classmates (like your
-  primary reviewer), or you may plan for something more rigorous/systematic.}
+% \wss{List any approaches you intend to use for SRS verification.  This may
+%   include ad hoc feedback from reviewers, like your classmates (like your
+%   primary reviewer), or you may plan for something more rigorous/systematic.}
 
-\wss{If you have a supervisor for the project, you shouldn't just say they will
-read over the SRS.  You should explain your structured approach to the review.
-Will you have a meeting?  What will you present?  What questions will you ask?
-Will you give them instructions for a task-based inspection?  Will you use your
-issue tracker?}
+% \wss{If you have a supervisor for the project, you shouldn't just say they will
+% read over the SRS.  You should explain your structured approach to the review.
+% Will you have a meeting?  What will you present?  What questions will you ask?
+% Will you give them instructions for a task-based inspection?  Will you use your
+% issue tracker?}
 
-\wss{Maybe create an SRS checklist?}
+% \wss{Maybe create an SRS checklist?}
+
+SRS verification will be conducted through a structured review process:
+
+\begin{itemize}
+  \item \textbf{Checklist-based inspection:} The SRS will be checked against the course SRS checklist and a project-specific checklist emphasizing.
+  \item \textbf{Peer review:} A classmate reviewer will perform a pass focused on: missing assumptions, ambiguous terms, requirement issues, and inconsistencies between requirements and instance models.
+  \item \textbf{Supervisor Review:} The SRS will be walked through in a scheduled meeting to familiarize the supervisor with the document structure and the purpose of each section. 
+\end{itemize}
+
+
+
+
+
+
 
 \subsection{Design Verification}
 
-\wss{Plans for design verification}
+% \wss{Plans for design verification}
 
-\wss{The review will include reviews by your classmates}
+% \wss{The review will include reviews by your classmates}
 
-\wss{Create a checklists?}
+% \wss{Create a checklists?}
+
+A classmate will review the MG and MIS document in detail using corresponding checklists in course repo and make comments by creating issues in the project repository.
+
+
+
 
 \subsection{Verification and Validation Plan Verification}
 
-\wss{The verification and validation plan is an artifact that should also be
-verified.  Techniques for this include review and mutation testing.}
+% \wss{The verification and validation plan is an artifact that should also be
+% verified.  Techniques for this include review and mutation testing.}
 
-\wss{The review will include reviews by your classmates}
+% \wss{The review will include reviews by your classmates}
 
-\wss{Create a checklists?}
+% \wss{Create a checklists?}
+A classmate will review the VnV Plan in detail using checklist in course repo and make comments by creating issues in the project repository.
+
+
+
 
 \subsection{Implementation Verification}
 
-\wss{You should at least point to the tests listed in this document and the unit
-  testing plan.}
+% \wss{You should at least point to the tests listed in this document and the unit
+%   testing plan.}
 
-\wss{In this section you would also give any details of any plans for static
-  verification of the implementation.  Potential techniques include code
-  walkthroughs, code inspection, static analyzers, etc.}
+% \wss{In this section you would also give any details of any plans for static
+%   verification of the implementation.  Potential techniques include code
+%   walkthroughs, code inspection, static analyzers, etc.}
 
-\wss{The final class presentation in CAS 741 could be used as a code
-walkthrough.  There is also a possibility of using the final presentation (in
-CAS741) for a partial usability survey.}
+% \wss{The final class presentation in CAS 741 could be used as a code
+% walkthrough.  There is also a possibility of using the final presentation (in
+% CAS741) for a partial usability survey.}
+
+\begin{itemize}
+  \item \textbf{Unit testing:} Automated tests for core modules (alignment, lagged design matrix, ridge fit, scoring, artifact logging). 
+  Unit tests target both normal behavior and edge cases (shape errors, invalid inputs, NaNs).
+  \item \textbf{Integration testing:} End-to-end pipeline tests on small reference datasets to verify correct wiring.
+\end{itemize}
+
+
+
 
 \subsection{Automated Testing and Verification Tools}
 
-\wss{What tools are you using for automated testing.  Likely a unit testing
-  framework and maybe a profiling tool, like ValGrind.  Other possible tools
-  include a static analyzer, make, continuous integration tools, test coverage
-  tools, etc.  Explain your plans for summarizing code coverage metrics.
-  Linters are another important class of tools.  For the programming language
-  you select, you should look at the available linters.  There may also be tools
-  that verify that coding standards have been respected, like flake9 for
-  Python.}
+% \wss{What tools are you using for automated testing.  Likely a unit testing
+%   framework and maybe a profiling tool, like ValGrind.  Other possible tools
+%   include a static analyzer, make, continuous integration tools, test coverage
+%   tools, etc.  Explain your plans for summarizing code coverage metrics.
+%   Linters are another important class of tools.  For the programming language
+%   you select, you should look at the available linters.  There may also be tools
+%   that verify that coding standards have been respected, like flake9 for
+%   Python.}
 
-\wss{If you have already done this in the development plan, you can point to
-that document.}
+% \wss{If you have already done this in the development plan, you can point to
+% that document.}
 
-\wss{The details of this section will likely evolve as you get closer to the
-  implementation.}
+% \wss{The details of this section will likely evolve as you get closer to the
+%   implementation.}
+
+\begin{itemize}
+  \item \textbf{pytest} for unit and integration tests, with markers for slow tests.
+  \item \textbf{GitHub Actions} to automates CI/CD workflows to run tests, checks, and deployments on every push or pull request.
+  \item \textbf{flake8} for linting and black for formatting to
+  enforce coding standards.
+  \item \textbf{Continuous Integration} on the repository to run tests and checks on each merge request, ensuring regressions are caught early.
+\end{itemize}
+
+
+
+
 
 \subsection{Software Validation}
 
-\wss{If there is any external data that can be used for validation, you should
-  point to it here.  If there are no plans for validation, you should state that
-  here.}
+% \wss{If there is any external data that can be used for validation, you should
+%   point to it here.  If there are no plans for validation, you should state that
+%   here.}
 
-\wss{You might want to use review sessions with the stakeholder to check that
-the requirements document captures the right requirements.  Maybe task based
-inspection?}
+% \wss{You might want to use review sessions with the stakeholder to check that
+% the requirements document captures the right requirements.  Maybe task based
+% inspection?}
 
-\wss{For those capstone teams with an external supervisor, the Rev 0 demo should 
-be used as an opportunity to validate the requirements.  You should plan on 
-demonstrating your project to your supervisor shortly after the scheduled Rev 0 demo.  
-The feedback from your supervisor will be very useful for improving your project.}
+% \wss{For those capstone teams with an external supervisor, the Rev 0 demo should 
+% be used as an opportunity to validate the requirements.  You should plan on 
+% demonstrating your project to your supervisor shortly after the scheduled Rev 0 demo.  
+% The feedback from your supervisor will be very useful for improving your project.}
 
-\wss{For teams without an external supervisor, user testing can serve the same purpose 
-as a Rev 0 demo for the supervisor.}
+% \wss{For teams without an external supervisor, user testing can serve the same purpose 
+% as a Rev 0 demo for the supervisor.}
 
-\wss{This section might reference back to the SRS verification section.}
+% \wss{This section might reference back to the SRS verification section.}
+
+Out of scope for this project.
+
+
 
 \section{System Tests}
 
-\wss{There should be text between all headings, even if it is just a roadmap of
-the contents of the subsections.}
+% \wss{There should be text between all headings, even if it is just a roadmap of
+% the contents of the subsections.}
+
+This section lists system-level tests that collectively cover the functional and nonfunctional requirements in the SRS. 
+Tests are grouped by major workflow areas: input/validation, predictor construction and alignment, TRF fitting, evaluation
+and gain computation.
+
 
 \subsection{Tests for Functional Requirements}
 
-\wss{Subsets of the tests may be in related, so this section is divided into
-  different areas.  If there are no identifiable subsets for the tests, this
-  level of document structure can be removed.}
+% \wss{Subsets of the tests may be in related, so this section is divided into
+%   different areas.  If there are no identifiable subsets for the tests, this
+%   level of document structure can be removed.}
 
-\wss{Include a blurb here to explain why the subsections below
-  cover the requirements.  References to the SRS would be good here.}
+% \wss{Include a blurb here to explain why the subsections below
+%   cover the requirements.  References to the SRS would be good here.}
+The functional tests below cover the end-to-end workflow implied by the SRS requirements. 
 
-\subsubsection{Area of Testing1}
 
-\wss{It would be nice to have a blurb here to explain why the subsections below
-  cover the requirements.  References to the SRS would be good here.  If a section
-  covers tests for input constraints, you should reference the data constraints
-  table in the SRS.}
+
+% \subsubsection{Area of Testing1}
+
+% \wss{It would be nice to have a blurb here to explain why the subsections below
+%   cover the requirements.  References to the SRS would be good here.  If a section
+%   covers tests for input constraints, you should reference the data constraints
+%   table in the SRS.}
 		
-\paragraph{Title for Test}
+% \paragraph{Title for Test}
+
+% \begin{enumerate}
+
+% \item{test-id1\\}
+
+% Control: Manual versus Automatic
+					
+% Initial State: 
+					
+% Input: 
+					
+% Output: \wss{The expected result for the given inputs.  Output is not how you
+% are going to return the results of the test.  The output is the expected
+% result.}
+
+% Test Case Derivation: \wss{Justify the expected value given in the Output field}
+					
+% How test will be performed: 
+					
+% \item{test-id2\\}
+
+% Control: Manual versus Automatic
+					
+% Initial State: 
+					
+% Input: 
+					
+% Output: \wss{The expected result for the given inputs}
+
+% Test Case Derivation: \wss{Justify the expected value given in the Output field}
+
+% How test will be performed: 
+
+% \end{enumerate}
+
+% \subsubsection{Area of Testing2}
+
+\subsubsection{Input and Configuration Validation}
+
+\paragraph{Input schema and basic validity checks}
 
 \begin{enumerate}
 
-\item{test-id1\\}
+\item{FR-01 (Invalid MEG sampling frequency)\\}
+Control: Automatic \\
+Initial State: Clean environment; default configuration template available. \\
+Input: Provide MEG metadata with $f_s \le 0$ (e.g., $f_s = 0$). \\
+Output: System rejects the run with a clear error message indicating invalid
+sampling frequency. \\
+Test Case Derivation: R1 \\
+How test will be performed: In pytest, add assertions to check valid or invalid file paths.
 
-Control: Manual versus Automatic
-					
-Initial State: 
-					
-Input: 
-					
-Output: \wss{The expected result for the given inputs.  Output is not how you
-are going to return the results of the test.  The output is the expected
-result.}
 
-Test Case Derivation: \wss{Justify the expected value given in the Output field}
-					
-How test will be performed: 
-					
-\item{test-id2\\}
+\item{FR-02 (Unsupported deep model type)\\}
+Control: Automatic \\
+Initial State: Clean environment; model config loaded. \\
+Input: Set model type to an unsupported identifier. \\
+Output: System rejects the configuration and lists supported model types (e.g., RNN, LSTM, GRU, Transformer). \\
+Test Case Derivation: R2 \\
+How test will be performed: In pytest, access pipeline attributes related to model entities. Assertions will check that the set of correct model entities.
 
-Control: Manual versus Automatic
-					
-Initial State: 
-					
-Input: 
-					
-Output: \wss{The expected result for the given inputs}
+\item{FR-03 (Invalid model architecture hyperparameters)\\}
+Control: Automatic \\
+Initial State: Clean environment; model config loaded. \\
+Input: Set any of the following invalid values:
+\texttt{num\_layers} $\le 0$, \texttt{hidden\_size} $\le 0$, 
+\texttt{dropout} $\notin [0,1)$. \\
+Output: System rejects the configuration with a precise error message indicating
+which hyperparameter is invalid. \\
+Test Case Derivation: R2 \\
+How test will be performed: In pytest, run config validation; assert failure and message.
 
-Test Case Derivation: \wss{Justify the expected value given in the Output field}
+\item{FR-04 (Model input feature dimension mismatch)\\}
+Control: Automatic \\
+Initial State: A feature extractor produces input tensors matches the model expects. \\
+Input: Provide data with wrong feature dimension (e.g., wrong number of gammatone channels or acoustic features). \\
+Output: System rejects training and extraction with a clear error specifying expected and observed input dimensions. \\
+Test Case Derivation: R2 \\
+How test will be performed: Construct a small batch with mismatched dimension and
+assert exception before any optimizer step.
 
-How test will be performed: 
+
+\item{FR-05 (LibriSpeech manifest integrity)\\}
+Control: Automatic \\
+Initial State: LibriSpeech subset path configured (e.g., \texttt{train-clean-100}). \\
+Input: Provide a manifest/metadata table that references at least one missing
+audio file or transcript. \\
+Output: System rejects dataset loading and reports the missing file and the manifest row identifiers. \\
+Test Case Derivation: R2 \\
+How test will be performed: In pytest, run the pipeline to check the missing audio file. Assertions will check return object types and missing data.
+
+
+
+\item{FR-06 (Time-aligned predictor matrix)\\}
+Control: Automatic \\
+Initial State: Clean environment; MEG data loaded with a known MEG sampling rate. \\
+Input: Provide a predictor time series whose timestamps are off-grid or at a different sampling rate than MEG.\\
+Output: System rejects the run with a clear error indicating that the predictor is not aligned to the MEG grid. \\
+Test Case Derivation: R3 \\
+How test will be performed: In pytest, create a small synthetic MEG time axis and a predictor with mismatched time axis.
+
+
+
+\item{FR-07 (Inconsistent evaluation protocol across predictors)\\}
+Control: Automatic \\
+Initial State: Clean environment; at least two predictor definitions configured (e.g., gammatone baseline + model hidden states). \\
+Input: Run an experiment where one predictor is evaluated with different protocol settings than another.\\
+Output: System rejects the run and reports which protocol fields differ. \\
+Test Case Derivation: R4 \\
+How test will be performed: In pytest, define two predictors and intentionally set a conflicting per-predictor evaluation setting.
+
+
+
+\item{FR-08 (Encoding score computation returns invalid or missing results)} \\
+Initial State: Clean environment; one predictor matrix and MEG response are available on the same time grid. \\
+Input: Provide a case where the score would be undefined or invalid.\\
+Output: System rejects scoring with a clear error message. \\
+Test Case Derivation: R5 \\
+How test will be performed: In pytest, construct a tiny dataset with (a) constant MEG signal or (b) NaN in predictor.
+
+
+
+
 
 \end{enumerate}
 
-\subsubsection{Area of Testing2}
 
-...
+
+
+
+
+
+
 
 \subsection{Tests for Nonfunctional Requirements}
 
-\wss{The nonfunctional requirements for accuracy will likely just reference the
-  appropriate functional tests from above.  The test cases should mention
-  reporting the relative error for these tests.  Not all projects will
-  necessarily have nonfunctional requirements related to accuracy.}
+% \wss{The nonfunctional requirements for accuracy will likely just reference the
+%   appropriate functional tests from above.  The test cases should mention
+%   reporting the relative error for these tests.  Not all projects will
+%   necessarily have nonfunctional requirements related to accuracy.}
 
-\wss{For some nonfunctional tests, you won't be setting a target threshold for
-passing the test, but rather describing the experiment you will do to measure
-the quality for different inputs.  For instance, you could measure speed versus
-the problem size.  The output of the test isn't pass/fail, but rather a summary
-table or graph.}
+% \wss{For some nonfunctional tests, you won't be setting a target threshold for
+% passing the test, but rather describing the experiment you will do to measure
+% the quality for different inputs.  For instance, you could measure speed versus
+% the problem size.  The output of the test isn't pass/fail, but rather a summary
+% table or graph.}
 
-\wss{Tests related to usability could include conducting a usability test and
-  survey.  The survey will be in the Appendix.}
+% \wss{Tests related to usability could include conducting a usability test and
+%   survey.  The survey will be in the Appendix.}
 
-\wss{Static tests, review, inspections, and walkthroughs, will not follow the
-format for the tests given below.}
+% \wss{Static tests, review, inspections, and walkthroughs, will not follow the
+% format for the tests given below.}
 
-\wss{If you introduce static tests in your plan, you need to provide details.
-How will they be done?  In cases like code (or document) walkthroughs, who will
-be involved? Be specific.}
+% \wss{If you introduce static tests in your plan, you need to provide details.
+% How will they be done?  In cases like code (or document) walkthroughs, who will
+% be involved? Be specific.}
 
-\subsubsection{Area of Testing1}
+% \subsubsection{Area of Testing1}
 		
-\paragraph{Title for Test}
+% \paragraph{Title for Test}
+
+% \begin{enumerate}
+
+% \item{test-id1\\}
+
+% Type: Functional, Dynamic, Manual, Static etc.
+					
+% Initial State: 
+					
+% Input/Condition: 
+					
+% Output/Result: 
+					
+% How test will be performed: 
+					
+% \item{test-id2\\}
+
+% Type: Functional, Dynamic, Manual, Static etc.
+					
+% Initial State: 
+					
+% Input: 
+					
+% Output: 
+					
+% How test will be performed: 
+
+% \end{enumerate}
+
+% \subsubsection{Area of Testing2}
+
+\subsubsection{Usability}
+
+\paragraph{Usability survey acceptance test}
 
 \begin{enumerate}
 
-\item{test-id1\\}
-
-Type: Functional, Dynamic, Manual, Static etc.
-					
-Initial State: 
-					
-Input/Condition: 
-					
-Output/Result: 
-					
-How test will be performed: 
-					
-\item{test-id2\\}
-
-Type: Functional, Dynamic, Manual, Static etc.
-					
-Initial State: 
-					
-Input: 
-					
-Output: 
-					
-How test will be performed: 
+\item{NFR-01\\}
+Type: Manual \\
+Initial State: An alpha version of \progname{} is available; a user group consisting of graduate students or researchers familiar with speech/MEG analysis is selected. \\
+Input/Condition: Participants complete a short end-to-end task (configure paths, run one training-or-load step, extract representations as predictors, fit mTRF, and open the final comparison summary) and then complete a usability survey questionnaire. \\
+Output/Result: At least 80\% of respondents rate the software as easy to use. \\
+How test will be performed: Collect questionnaire results; compute the percentage of ``easy to use'' responses and verify it is larger than 80\%.
 
 \end{enumerate}
 
-\subsubsection{Area of Testing2}
+\subsubsection{Maintainability}
 
-...
+\paragraph{Likely-change effort threshold test}
+
+\begin{enumerate}
+
+\item{NFR-02\\}
+Type: Automatic, Manual \\
+Initial State: Baseline development time is recorded for the original implementation; the codebase is under version control and includes a basic test suite. \\
+Input/Condition: Select one likely change (e.g., adding one new deep model type, or adding one new predictor extraction option such as an additional layer output) and implement it by a developer with relevant domain knowledge. \\
+Output/Result: The measured effort to implement the chosen likely change is less than 10 lines of the code, and existing tests still pass. \\
+How test will be performed: Track engineering time using commits/issues; compare total effort against the recorded baseline and confirm it satisfies the threshold.
+
+\end{enumerate}
+
+\subsubsection{Portability}
+
+\paragraph{Cross-platform installation and execution test}
+
+\begin{enumerate}
+
+\item{NFR-03\\}
+Type: Manual \\
+Initial State: Clean Windows, macOS, and Linux environments prepared. \\
+Input/Condition: Install \progname{} and run a small smoke-test workflow on each OS using a bundled demo configuration and a small public dataset subset (or a tiny packaged sample). \\
+Output/Result: The pipeline installs and runs successfully on Windows, macOS, and Linux and produces the expected output files for the workflow. \\
+How test will be performed: Create different workflows for each OS on GitHub Actions (or run the same documented steps manually if CI is unavailable) and record pass/fail logs.
+
+\end{enumerate}
+
+\subsubsection{Reproducibility}
+
+\paragraph{Repeat-run consistency test}
+
+\begin{enumerate}
+
+\item{NFR-04\\}
+Type: Automatic \\
+Initial State: A fixed configuration file is available; the run uses a fixed random seed; the same input data are used. \\
+Input/Condition: Run the same end-to-end workflow twice (training-or-load, predictor extraction, mTRF fitting, report generation) without changing any configuration. \\
+Output/Result: The two runs produce consistent results for the reported summary metrics and the same set of output artifacts (same filenames and structure). \\
+How test will be performed: Run the pipeline twice and compare the generated summary files for consistency.
+
+\end{enumerate}
+
+\subsubsection{Performance}
+
+\paragraph{End-to-end runtime baseline benchmark}
+
+\begin{enumerate}
+
+\item{NFR-05\\}
+Type: Automatic \\
+Initial State: A small benchmark configuration is prepared (short audio duration, small MEG segment, minimal cross-validation). \\
+Input/Condition: Run the full workflow on the benchmark configuration. \\
+Output/Result: The workflow completes successfully within a reasonable amount of time on a standard workstation without running out of memory. \\
+How test will be performed: Record wall-clock time and check that the run completes and produces the expected outputs; store the timing log with the run artifacts.
+
+\end{enumerate}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 \subsection{Traceability Between Test Cases and Requirements}
 
-\wss{Provide a table that shows which test cases are supporting which
-  requirements.}
+% \wss{Provide a table that shows which test cases are supporting which
+%   requirements.}
+
+\begin{table}[h]
+\centering
+\begin{tabularx}{0.85\textwidth}{p{2.2cm}X}
+\toprule
+\textbf{Requir.} & \textbf{Test Cases} \\
+\midrule
+R1  & FR-01 \\
+R2  & FR-02 - FR-05 \\
+R3  & FR-06 \\
+R4  & FR-07 \\
+R5  & FR-08 \\
+\midrule
+NFR1 & NFR-01 \\
+NFR2 & NFR-02 \\
+NFR3 & NFR-03 \\
+NFR4 & NFR-03 \\
+\bottomrule
+\end{tabularx}
+\caption{Traceability Between Requirements and Test Cases}
+\label{Table:Req_Test_Trace}
+\end{table}
+
+
 
 \section{Unit Test Description}
 
-\wss{This section should not be filled in until after the MIS (detailed design
-  document) has been completed.}
+% \wss{This section should not be filled in until after the MIS (detailed design
+%   document) has been completed.}
 
-\wss{Reference your MIS (detailed design document) and explain your overall
-philosophy for test case selection.}  
+% \wss{Reference your MIS (detailed design document) and explain your overall
+% philosophy for test case selection.}  
 
-\wss{To save space and time, it may be an option to provide less detail in this section.  
-For the unit tests you can potentially layout your testing strategy here.  That is, you 
-can explain how tests will be selected for each module.  For instance, your test building 
-approach could be test cases for each access program, including one test for normal behaviour 
-and as many tests as needed for edge cases.  Rather than create the details of the input 
-and output here, you could point to the unit testing code.  For this to work, you code 
-needs to be well-documented, with meaningful names for all of the tests.}
+% \wss{To save space and time, it may be an option to provide less detail in this section.  
+% For the unit tests you can potentially layout your testing strategy here.  That is, you 
+% can explain how tests will be selected for each module.  For instance, your test building 
+% approach could be test cases for each access program, including one test for normal behaviour 
+% and as many tests as needed for edge cases.  Rather than create the details of the input 
+% and output here, you could point to the unit testing code.  For this to work, you code 
+% needs to be well-documented, with meaningful names for all of the tests.}
 
 \subsection{Unit Testing Scope}
 
-\wss{What modules are outside of the scope.  If there are modules that are
-  developed by someone else, then you would say here if you aren't planning on
-  verifying them.  There may also be modules that are part of your software, but
-  have a lower priority for verification than others.  If this is the case,
-  explain your rationale for the ranking of module importance.}
+% \wss{What modules are outside of the scope.  If there are modules that are
+%   developed by someone else, then you would say here if you aren't planning on
+%   verifying them.  There may also be modules that are part of your software, but
+%   have a lower priority for verification than others.  If this is the case,
+%   explain your rationale for the ranking of module importance.}
 
-\subsection{Tests for Functional Requirements}
+% \subsection{Tests for Functional Requirements}
 
-\wss{Most of the verification will be through automated unit testing.  If
-  appropriate specific modules can be verified by a non-testing based
-  technique.  That can also be documented in this section.}
+% \wss{Most of the verification will be through automated unit testing.  If
+%   appropriate specific modules can be verified by a non-testing based
+%   technique.  That can also be documented in this section.}
 
-\subsubsection{Module 1}
+% \subsubsection{Module 1}
 
-\wss{Include a blurb here to explain why the subsections below cover the module.
-  References to the MIS would be good.  You will want tests from a black box
-  perspective and from a white box perspective.  Explain to the reader how the
-  tests were selected.}
+% \wss{Include a blurb here to explain why the subsections below cover the module.
+%   References to the MIS would be good.  You will want tests from a black box
+%   perspective and from a white box perspective.  Explain to the reader how the
+%   tests were selected.}
 
-\begin{enumerate}
+% \begin{enumerate}
 
-\item{test-id1\\}
+% \item{test-id1\\}
 
-Type: \wss{Functional, Dynamic, Manual, Automatic, Static etc. Most will
-  be automatic}
+% Type: \wss{Functional, Dynamic, Manual, Automatic, Static etc. Most will
+%   be automatic}
 					
-Initial State: 
+% Initial State: 
 					
-Input: 
+% Input: 
 					
-Output: \wss{The expected result for the given inputs}
+% Output: \wss{The expected result for the given inputs}
 
-Test Case Derivation: \wss{Justify the expected value given in the Output field}
+% Test Case Derivation: \wss{Justify the expected value given in the Output field}
 
-How test will be performed: 
+% How test will be performed: 
 					
-\item{test-id2\\}
+% \item{test-id2\\}
 
-Type: \wss{Functional, Dynamic, Manual, Automatic, Static etc. Most will
-  be automatic}
+% Type: \wss{Functional, Dynamic, Manual, Automatic, Static etc. Most will
+%   be automatic}
 					
-Initial State: 
+% Initial State: 
 					
-Input: 
+% Input: 
 					
-Output: \wss{The expected result for the given inputs}
+% Output: \wss{The expected result for the given inputs}
 
-Test Case Derivation: \wss{Justify the expected value given in the Output field}
+% Test Case Derivation: \wss{Justify the expected value given in the Output field}
 
-How test will be performed: 
+% How test will be performed: 
 
-\item{...\\}
+% \item{...\\}
     
-\end{enumerate}
+% \end{enumerate}
 
-\subsubsection{Module 2}
+% \subsubsection{Module 2}
 
-...
+
 
 \subsection{Tests for Nonfunctional Requirements}
 
-\wss{If there is a module that needs to be independently assessed for
-  performance, those test cases can go here.  In some projects, planning for
-  nonfunctional tests of units will not be that relevant.}
+% \wss{If there is a module that needs to be independently assessed for
+%   performance, those test cases can go here.  In some projects, planning for
+%   nonfunctional tests of units will not be that relevant.}
 
-\wss{These tests may involve collecting performance data from previously
-  mentioned functional tests.}
+% \wss{These tests may involve collecting performance data from previously
+%   mentioned functional tests.}
 
-\subsubsection{Module ?}
+% \subsubsection{Module ?}
 		
-\begin{enumerate}
+% \begin{enumerate}
 
-\item{test-id1\\}
+% \item{test-id1\\}
 
-Type: \wss{Functional, Dynamic, Manual, Automatic, Static etc. Most will
-  be automatic}
+% Type: \wss{Functional, Dynamic, Manual, Automatic, Static etc. Most will
+%   be automatic}
 					
-Initial State: 
+% Initial State: 
 					
-Input/Condition: 
+% Input/Condition: 
 					
-Output/Result: 
+% Output/Result: 
 					
-How test will be performed: 
+% How test will be performed: 
 					
-\item{test-id2\\}
+% \item{test-id2\\}
 
-Type: Functional, Dynamic, Manual, Static etc.
+% Type: Functional, Dynamic, Manual, Static etc.
 					
-Initial State: 
+% Initial State: 
 					
-Input: 
+% Input: 
 					
-Output: 
+% Output: 
 					
-How test will be performed: 
+% How test will be performed: 
 
-\end{enumerate}
+% \end{enumerate}
 
-\subsubsection{Module ?}
+% \subsubsection{Module ?}
 
-...
+
 
 \subsection{Traceability Between Test Cases and Modules}
 
-\wss{Provide evidence that all modules have been considered.}
+% \wss{Provide evidence that all modules have been considered.}
 				
 \bibliographystyle{plainnat}
 
@@ -481,42 +815,42 @@ How test will be performed:
 
 \newpage
 
-\section{Appendix}
+% \section{Appendix}
 
-This is where you can place additional information.
+% This is where you can place additional information.
 
-\subsection{Symbolic Parameters}
+% \subsection{Symbolic Parameters}
 
-The definition of the test cases will call for SYMBOLIC\_CONSTANTS.
-Their values are defined in this section for easy maintenance.
+% The definition of the test cases will call for SYMBOLIC\_CONSTANTS.
+% Their values are defined in this section for easy maintenance.
 
-\subsection{Usability Survey Questions?}
+% \subsection{Usability Survey Questions?}
 
-\wss{This is a section that would be appropriate for some projects.}
+% \wss{This is a section that would be appropriate for some projects.}
 
-\newpage{}
-\section*{Appendix --- Reflection}
+% \newpage{}
+% \section*{Appendix --- Reflection}
 
-\wss{This section is not required for CAS 741}
+% \wss{This section is not required for CAS 741}
 
-The information in this section will be used to evaluate the team members on the
-graduate attribute of Lifelong Learning.
+% The information in this section will be used to evaluate the team members on the
+% graduate attribute of Lifelong Learning.
 
-\input{../Reflection.text}
+% \input{../Reflection.text}
 
-\begin{enumerate}
-  \item What went well while writing this deliverable? 
-  \item What pain points did you experience during this deliverable, and how
-    did you resolve them?
-  \item What knowledge and skills will the team collectively need to acquire to
-  successfully complete the verification and validation of your project?
-  Examples of possible knowledge and skills include dynamic testing knowledge,
-  static testing knowledge, specific tool usage, Valgrind etc.  You should look to
-  identify at least one item for each team member.
-  \item For each of the knowledge areas and skills identified in the previous
-  question, what are at least two approaches to acquiring the knowledge or
-  mastering the skill?  Of the identified approaches, which will each team
-  member pursue, and why did they make this choice?
-\end{enumerate}
+% \begin{enumerate}
+%   \item What went well while writing this deliverable? 
+%   \item What pain points did you experience during this deliverable, and how
+%     did you resolve them?
+%   \item What knowledge and skills will the team collectively need to acquire to
+%   successfully complete the verification and validation of your project?
+%   Examples of possible knowledge and skills include dynamic testing knowledge,
+%   static testing knowledge, specific tool usage, Valgrind etc.  You should look to
+%   identify at least one item for each team member.
+%   \item For each of the knowledge areas and skills identified in the previous
+%   question, what are at least two approaches to acquiring the knowledge or
+%   mastering the skill?  Of the identified approaches, which will each team
+%   member pursue, and why did they make this choice?
+% \end{enumerate}
 
 \end{document}
