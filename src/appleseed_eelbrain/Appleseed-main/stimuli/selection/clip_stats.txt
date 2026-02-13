@@ -1,0 +1,33 @@
+(file ch01a)
+00:21 - 04:05: 03:45
+Stimulus 1 - Ohio River (03:45)
+08:53 - 10:17: 01:24
+10:56 - 14:52: 03:56
+Stimulus 2 - Queer (05:20)
+14:54 - 18:27: 03:33
+Stimulus 3 - Heterozygosity (03:33)
+18:27 - 21:57: 03:30
+Stimulus 4 - Old to new world (03:30)
+(file ch01b)
+02:30 - 05:41: 03:11
+06:15 - 06:60: 00:45
+Stimulus 5 - Frontier (03:55)
+06:60 - 13:32: 06:32
+Stimulus 6 - Sweetness (06:32)
+16:48 - 20:39: 03:52
+Stimulus 7 - Alcohol (03:52)
+(file ch01c)
+06:23 - 07:32: 01:09
+09:22 - 12:23: 03:02
+Stimulus 8 - Religion (04:10)
+(file ch01e)
+00:00 - 01:40: 01:40
+15:12 - 19:03: 03:51
+Stimulus 9 - Modern lack of variety (05:31)
+(file ch01f)
+00:00 - 03:52: 03:52
+Stimulus 10 - Forsline's project (03:52)
+03:53 - 08:38: 04:45
+Stimulus 11 - Back to Kazakhstan (04:45)
+-----------------------
+Total: 48:46

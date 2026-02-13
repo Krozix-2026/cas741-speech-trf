@@ -217,14 +217,26 @@ def run_once(cfg: TrainConfig, device: str) -> None:
 
         for it, batch in enumerate(train_loader, start=1):
             feats = batch.feats.to(device)
+            # print("feats:", feats.shape)#32, 1658, 64]
             feat_lens = batch.feat_lens.to(device)
+            # print("feat_lens:", feat_lens.shape)#32
             targets = batch.targets.to(device)
+            print("targets:", targets.shape)#[32, 1658]
 
+            t = batch.targets.to(device)
+            # print("unique:", torch.unique(t)[:20], " ... n_unique=", torch.unique(t).numel())
+            # print("labeled_frames:", (t != -100).sum().item())
+            # print("any_labeled:", bool((t != -100).any().item()))
+            
+            
             optimizer.zero_grad(set_to_none=True)
 
             with torch.amp.autocast("cuda", enabled=(cfg.use_amp and device.startswith("cuda"))):
                 logits, out_lens = model(feats, feat_lens)
+                # print("logits:", logits)#[32, 1658, 20001]
+                # print("out_lens:", out_lens)#[32]
                 B, T, V = logits.shape
+                # print("logits.reshape(-1, V):", logits.reshape(-1, V).shape)#[32x1658, 20001]
                 loss = loss_fn(logits.reshape(-1, V), targets.reshape(-1))
 
             scaler.scale(loss).backward()
