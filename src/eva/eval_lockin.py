@@ -1,29 +1,6 @@
 # eval_lockin.py
 # ------------------------------------------------------------
 # Evaluate "lexical lock-in" dynamics for word-aligned LSTM model.
-#
-# What it measures (per word token):
-#   - lock-in time: earliest time after word onset when margin stays > delta
-#                  for m consecutive frames (stability criterion)
-#   - early accuracy: whether top-1 prediction equals target word at fixed lags
-#
-# Outputs:
-#   out_dir/
-#     token_metrics.csv
-#     summary.json
-#     lockin_cdf.png
-#     mean_margin_curve.png
-#
-# Usage (PowerShell example):
-#   python eval\eval_lockin.py `
-#     --manifest C:\Dataset\manifest_librispeech_coch_align.jsonl `
-#     --ckpt C:\linux_project\CAS741\cas741-speech-trf\runs\librispeech_LSTM_WORD_baseline_s000\ckpt\best.pt `
-#     --subset dev-clean `
-#     --topk 20000 `
-#     --env_sr 100 `
-#     --delta 1.0 `
-#     --m 5 `
-#     --max_utts 2000
 # ------------------------------------------------------------
 
 from __future__ import annotations
@@ -71,25 +48,49 @@ class TokenMetric:
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser()
-    p.add_argument("--manifest", type=str, default=r"C:\Dataset\LibriSpeech\manifest_librispeech_coch_align.jsonl", help="Path to manifest_librispeech_coch_align.jsonl")
-    p.add_argument("--ckpt", type=str, default=r"C:\linux_project\CAS741\cas741-speech-trf\runs\librispeech_LSTM_WORD_baseline_s000\ckpt\best.pt", help="Path to best.pt (or last.pt)")
-    p.add_argument("--subset", type=str, default="dev-clean", choices=["train-clean-100", "dev-clean", "test-clean"])
-    p.add_argument("--out_dir", type=str, default=None, help="Output dir (default: alongside ckpt -> ../eval_lockin_SUBSET)")
-    p.add_argument("--device", type=str, default="cuda", help="cuda|cpu (auto fallback if cuda unavailable)")
-    p.add_argument("--topk", type=int, default=20000, help="Word vocab topK (must match training)")
-    p.add_argument("--env_sr", type=int, default=100, help="Cochleagram env sample rate in Hz (frames/s)")
-    p.add_argument("--feat_dim", type=int, default=64, help="Cochleagram feature dim (channels)")
-    p.add_argument("--hidden", type=int, default=None, help="Override hidden size (default from config.json if found)")
-    p.add_argument("--layers", type=int, default=None, help="Override layers (default from config.json if found)")
-    p.add_argument("--dropout", type=float, default=None, help="Override dropout (default from config.json if found)")
-    p.add_argument("--max_utts", type=int, default=None, help="Limit number of utterances (debug/speed)")
-    p.add_argument("--skip_unk", action="store_true", help="Skip <unk> targets in evaluation")
-    p.add_argument("--min_word_frames", type=int, default=5, help="Skip words shorter than this (in frames)")
-    p.add_argument("--delta", type=float, default=1.0, help="Margin threshold for lock-in: logit(correct)-logit(comp) > delta")
-    p.add_argument("--m", type=int, default=5, help="Consecutive frames required for lock-in stability")
-    p.add_argument("--delays_ms", type=str, default="50,100,200,300", help="Comma-separated early-eval delays in ms")
-    p.add_argument("--curve_bins", type=int, default=60, help="Bins for mean margin curve (relative position 0..1)")
-    p.add_argument("--plot_examples", type=int, default=0, help="Plot N random example word curves (optional)")
+    p.add_argument("--manifest", type=str, default=r"C:\Dataset\LibriSpeech\manifest_librispeech_coch_align.jsonl",
+                   help="Path to manifest_librispeech_coch_align.jsonl")
+    p.add_argument("--ckpt", type=str,
+                   default=r"C:\linux_project\CAS741\cas741-speech-trf\runs\librispeech_LSTM_WORD_baseline_s000\ckpt\best.pt",
+                   help="Path to best.pt (or last.pt)")
+    p.add_argument("--subset", type=str, default="dev-clean",
+                   choices=["train-clean-100", "dev-clean", "test-clean"])
+    p.add_argument("--out_dir", type=str, default=None,
+                   help="Output dir (default: alongside ckpt -> ../eval_lockin_SUBSET)")
+    p.add_argument("--device", type=str, default="cuda",
+                   help="cuda|cpu (auto fallback if cuda unavailable)")
+    p.add_argument("--topk", type=int, default=20000,
+                   help="Word vocab topK (must match training)")
+    p.add_argument("--env_sr", type=int, default=100,
+                   help="Cochleagram env sample rate in Hz (frames/s)")
+    p.add_argument("--feat_dim", type=int, default=64,
+                   help="Cochleagram feature dim (channels)")
+    p.add_argument("--hidden", type=int, default=None,
+                   help="Override hidden size (default from config.json if found)")
+    p.add_argument("--layers", type=int, default=None,
+                   help="Override layers (default from config.json if found)")
+    p.add_argument("--dropout", type=float, default=None,
+                   help="Override dropout (default from config.json if found)")
+    p.add_argument("--max_utts", type=int, default=None,
+                   help="Limit number of utterances (debug/speed)")
+    p.add_argument("--skip_unk", action="store_true",
+                   help="Skip <unk> targets in evaluation")
+    p.add_argument("--min_word_frames", type=int, default=5,
+                   help="Skip words shorter than this (in frames)")
+    p.add_argument("--delta", type=float, default=1.0,
+                   help="Margin threshold for lock-in: logit(correct)-logit(comp) > delta")
+    p.add_argument("--m", type=int, default=5,
+                   help="Consecutive frames required for lock-in stability")
+    p.add_argument("--delays_ms", type=str, default="50,100,200,300",
+                   help="Comma-separated early-eval delays in ms")
+    p.add_argument("--curve_bins", type=int, default=60,
+                   help="Bins for mean margin curve (relative position 0..1)")
+
+    # ===== CHANGED: controls for example competition plots =====
+    p.add_argument("--plot_examples", type=int, default=5,
+                   help="Plot N example word curves (competition + margin). 0 to disable.")
+    p.add_argument("--example_seed", type=int, default=0,
+                   help="Random seed for sampling examples.")
     return p.parse_args()
 
 
@@ -103,10 +104,6 @@ def ensure_dir(p: Path) -> None:
 
 
 def load_config_near_ckpt(ckpt_path: Path) -> Optional[Dict[str, Any]]:
-    """
-    training saved config.json at run_dir/config.json
-    run_dir is parent of ckpt_dir: run_dir/ckpt/best.pt
-    """
     try:
         ckpt_dir = ckpt_path.parent
         run_dir = ckpt_dir.parent
@@ -119,11 +116,7 @@ def load_config_near_ckpt(ckpt_path: Path) -> Optional[Dict[str, Any]]:
 
 
 def build_vocab(manifest_path: Path, topk: int) -> Tuple[Dict[str, int], List[str], int]:
-    """
-    Returns (stoi, itos, unk_id)
-    """
     if build_word_vocab_from_manifest is None:
-        # Fallback: simple topK count across whole manifest
         from collections import Counter
         cnt = Counter()
         with open(manifest_path, "r", encoding="utf-8") as f:
@@ -136,7 +129,6 @@ def build_vocab(manifest_path: Path, topk: int) -> Tuple[Dict[str, int], List[st
         return stoi, itos, 0
     else:
         vocab = build_word_vocab_from_manifest(manifest_path, topk=topk)
-        # vocab has .stoi dict, .itos list, .unk_id
         return vocab.stoi, vocab.itos, vocab.unk_id
 
 
@@ -184,11 +176,6 @@ def load_manifest_subset(manifest_path: Path, subset: str, max_utts: Optional[in
 
 
 def lockin_time_from_margin(margin: torch.Tensor, delta: float, m: int) -> int:
-    """
-    margin: (L,) tensor on any device
-    Returns earliest index i such that margin[i:i+m] > delta for all m frames.
-    If not found, returns -1.
-    """
     L = int(margin.numel())
     if L < m:
         return -1
@@ -201,16 +188,7 @@ def lockin_time_from_margin(margin: torch.Tensor, delta: float, m: int) -> int:
     return int(idx[0].item())
 
 
-def update_mean_curve(
-    accum: np.ndarray,
-    count: np.ndarray,
-    y: np.ndarray,
-    bins: int,
-) -> None:
-    """
-    y: 1D array length L (margin over word frames)
-    Resample to [0..1] bins and accumulate mean curve
-    """
+def update_mean_curve(accum: np.ndarray, count: np.ndarray, y: np.ndarray, bins: int) -> None:
     L = len(y)
     if L < 2:
         return
@@ -221,26 +199,7 @@ def update_mean_curve(
     count += 1
 
 
-def save_csv(path: Path, rows: List[TokenMetric], delays: List[int]) -> None:
-    ensure_dir(path.parent)
-    fields = [
-        "utt_id", "word", "wid", "sf", "ef",
-        "dur_frames", "dur_ms", "lockin_ms",
-        "end_correct", "unk",
-    ] + [f"acc_at_{d}ms" for d in delays]
-    with open(path, "w", newline="", encoding="utf-8") as f:
-        w = csv.DictWriter(f, fieldnames=fields)
-        w.writeheader()
-        for r in rows:
-            d = asdict(r)
-            # acc_at_* fields already embedded by us before writing
-            w.writerow(d)
-
-
 def plot_and_save(fig_path: Path, kind: str, data: Dict[str, Any]) -> None:
-    """
-    Helper that imports matplotlib lazily to keep script lightweight.
-    """
     import matplotlib.pyplot as plt  # noqa
 
     ensure_dir(fig_path.parent)
@@ -272,17 +231,36 @@ def plot_and_save(fig_path: Path, kind: str, data: Dict[str, Any]) -> None:
         plt.close()
 
     elif kind == "examples":
-        examples = data["examples"]  # list of dict
-        plt.figure(figsize=(8, 4))
+        examples = data["examples"]
+
+        # 1) probability curves: p(correct) vs p(best competitor)
+        plt.figure(figsize=(9, 5))
         for ex in examples:
-            plt.plot(ex["t_ms"], ex["p_correct"], alpha=0.9, label=ex["label"])
+            plt.plot(ex["t_ms"], ex["p_correct"], alpha=0.9)
+            plt.plot(ex["t_ms"], ex["p_comp"], alpha=0.9, linestyle="--")
         plt.xlabel("Time from word onset (ms)")
-        plt.ylabel("p(correct)")
-        plt.title("Example p(correct) curves")
+        plt.ylabel("Probability")
+        plt.title("Competition: p(correct) (solid) vs p(best competitor) (dashed)")
         plt.grid(True, alpha=0.3)
         plt.tight_layout()
         plt.savefig(fig_path, dpi=160)
         plt.close()
+
+        # 2) margin curves with legend
+        fig_path2 = fig_path.with_name("example_margin_curves.png")
+        plt.figure(figsize=(9, 5))
+        for ex in examples:
+            plt.plot(ex["t_ms"], ex["margin"], alpha=0.9, label=ex["label"])
+        plt.axhline(0.0, linewidth=1)
+        plt.xlabel("Time from word onset (ms)")
+        plt.ylabel("Margin (logit_correct - logit_best_comp)")
+        plt.title("Margin curves (with competitor label)")
+        plt.grid(True, alpha=0.3)
+        plt.legend(fontsize=7, loc="best")
+        plt.tight_layout()
+        plt.savefig(fig_path2, dpi=160)
+        plt.close()
+
     else:
         raise ValueError(f"Unknown plot kind: {kind}")
 
@@ -340,11 +318,11 @@ def main() -> None:
     mean_margin_accum = np.zeros((bins,), dtype=np.float64)
     mean_margin_count = np.zeros((bins,), dtype=np.float64)
 
-    # Optional examples
-    ex_curves: List[Dict[str, Any]] = []
+    # ===== CHANGED: examples sampling =====
     want_examples = int(args.plot_examples)
+    rng = np.random.default_rng(int(args.example_seed))
+    ex_curves: List[Dict[str, Any]] = []
 
-    # Iterate utterances
     n_utts = 0
     n_tokens = 0
     n_skipped_unk = 0
@@ -354,11 +332,12 @@ def main() -> None:
         utt_id = obj["utt_id"]
         coch_path = Path(obj["coch_path"])
         words = obj.get("words", [])
+
         if not coch_path.exists():
             print(f"[Skip] missing coch: {coch_path}")
             continue
 
-        arr = np.load(str(coch_path))  # (64, T) float16
+        arr = np.load(str(coch_path))
         if arr.ndim != 2 or arr.shape[0] != int(args.feat_dim):
             print(f"[Skip] bad shape {arr.shape} for {coch_path}")
             continue
@@ -370,21 +349,20 @@ def main() -> None:
 
         with torch.inference_mode():
             logits_bt, out_lens = model(x, x_lens)  # (1,T,V)
+
         logits = logits_bt[0]  # (T,V)
 
-        # Precompute per-frame top1/top2 logits+idx for fast competitor margin
+        # Precompute top1/top2 for competitor margin
         top2_val, top2_idx = torch.topk(logits, k=2, dim=-1)  # (T,2)
-        top1_idx = top2_idx[:, 0]  # (T,)
+        top1_idx = top2_idx[:, 0]
         top1_val = top2_val[:, 0]
         top2_val2 = top2_val[:, 1]
-        top2_idx2 = top2_idx[:, 1]
 
-        # log-softmax only if we need example p(correct) curves
+        # log-softmax only if we will sample examples
         logp = None
         if want_examples > 0:
             logp = torch.log_softmax(logits, dim=-1)
 
-        # Process word tokens
         for w, sf, ef in words:
             sf = int(sf)
             ef = int(ef)
@@ -416,7 +394,6 @@ def main() -> None:
                 lock_ms = (lock_idx / float(args.env_sr)) * 1000.0
                 lockin_ms_all.append(lock_ms)
 
-            # end correctness at last frame of word
             end_pred = int(top1_idx[ef - 1].item())
             end_correct = 1 if end_pred == wid else 0
 
@@ -434,22 +411,17 @@ def main() -> None:
             )
 
             # early accuracies at delays
-            # We'll store as extra keys by mutating asdict during CSV writing:
-            # easiest: attach attributes dynamically (CSV writer uses asdict -> won't include),
-            # so instead store them in tm.__dict__ directly.
             for dms in delays:
                 t = sf + int(round((dms / 1000.0) * float(args.env_sr)))
-                key = f"acc_at_{dms}ms"
                 if t < ef:
                     pred = int(top1_idx[t].item())
-                    tm.__dict__[key] = 1 if pred == wid else 0
+                    tm.__dict__[f"acc_at_{dms}ms"] = 1 if pred == wid else 0
                 else:
-                    tm.__dict__[key] = ""  # out of range
+                    tm.__dict__[f"acc_at_{dms}ms"] = ""
 
             token_rows.append(tm)
             n_tokens += 1
 
-            # Update mean margin curve (relative position 0..1)
             update_mean_curve(
                 accum=mean_margin_accum,
                 count=mean_margin_count,
@@ -457,17 +429,48 @@ def main() -> None:
                 bins=bins,
             )
 
-            # Collect example curves (p(correct) over time)
-            if want_examples > 0 and len(ex_curves) < want_examples and logp is not None:
-                # build p(correct) curve inside word
-                lp = logp[sf:ef, wid].detach().to("cpu").numpy().astype(np.float32)
-                p_correct = np.exp(lp)
-                t_ms = (np.arange(dur, dtype=np.float32) / float(args.env_sr)) * 1000.0
-                ex_curves.append({
-                    "t_ms": t_ms,
-                    "p_correct": p_correct,
-                    "label": f"{w} | {utt_id}",
-                })
+            # ===== CHANGED: collect competition examples (ONLY ONE append path) =====
+            if want_examples > 0 and logp is not None and len(ex_curves) < want_examples:
+                # sample tokens stochastically rather than always early tokens in file
+                # this avoids bias (e.g., always capturing first few words)
+                # accept with prob p so we gradually fill the list
+                # (simple scheme: accept if random < 0.02, fallback to fill)
+                accept = (rng.random() < 0.02) or (len(ex_curves) < max(1, want_examples // 3))
+                if accept:
+                    seg_logp = logp[sf:ef, :]  # (dur, V)
+
+                    # p(correct)
+                    p_correct = torch.exp(seg_logp[:, wid]).detach().cpu().numpy().astype(np.float32)
+
+                    # best competitor per frame (exclude wid)
+                    seg_logp2 = seg_logp.clone()
+                    seg_logp2[:, wid] = -1e9
+                    comp_wid = torch.argmax(seg_logp2, dim=-1)  # (dur,)
+                    p_comp = torch.exp(
+                        seg_logp2.gather(1, comp_wid[:, None]).squeeze(1)
+                    ).detach().cpu().numpy().astype(np.float32)
+
+                    # margin in logits space (same competitor definition)
+                    seg_logits = logits[sf:ef, :]
+                    seg_logits2 = seg_logits.clone()
+                    seg_logits2[:, wid] = -1e9
+                    comp_wid_logits = torch.argmax(seg_logits2, dim=-1)
+                    comp_logit = seg_logits2.gather(1, comp_wid_logits[:, None]).squeeze(1)
+                    margin_local = (seg_logits[:, wid] - comp_logit).detach().cpu().numpy().astype(np.float32)
+
+                    # dominant competitor id (mode)
+                    comp_ids = comp_wid.detach().cpu().numpy()
+                    comp_dom = int(np.bincount(comp_ids).argmax()) if comp_ids.size > 0 else -1
+                    comp_word = itos[comp_dom] if 0 <= comp_dom < len(itos) else "<na>"
+
+                    t_ms = (np.arange(dur, dtype=np.float32) / float(args.env_sr)) * 1000.0
+                    ex_curves.append({
+                        "t_ms": t_ms,
+                        "p_correct": p_correct,
+                        "p_comp": p_comp,
+                        "margin": margin_local,
+                        "label": f"{w} vs {comp_word} | {utt_id}",
+                    })
 
         n_utts += 1
         if n_utts % 200 == 0:
@@ -475,12 +478,12 @@ def main() -> None:
 
     # ---- Save per-token CSV ----
     csv_path = out_dir / "token_metrics.csv"
-    # custom CSV writer because TokenMetric is dataclass but we added acc_at_* dynamically
     fields = [
         "utt_id", "word", "wid", "sf", "ef",
         "dur_frames", "dur_ms", "lockin_ms",
         "end_correct", "unk",
     ] + [f"acc_at_{d}ms" for d in delays]
+
     with open(csv_path, "w", newline="", encoding="utf-8") as f:
         wcsv = csv.DictWriter(f, fieldnames=fields)
         wcsv.writeheader()
@@ -500,6 +503,7 @@ def main() -> None:
             for dms in delays:
                 row[f"acc_at_{dms}ms"] = tm.__dict__.get(f"acc_at_{dms}ms", "")
             wcsv.writerow(row)
+
     print(f"[Save] {csv_path}")
 
     # ---- Summary stats ----
@@ -534,7 +538,6 @@ def main() -> None:
         "lockin_ms_p90": percentile(lockin_found, 0.90),
     }
 
-    # early acc summary
     for dms in delays:
         vals = []
         for tm in token_rows:
@@ -547,18 +550,17 @@ def main() -> None:
     summary_path = out_dir / "summary.json"
     with open(summary_path, "w", encoding="utf-8") as f:
         json.dump(summary, f, indent=2)
+
     print(f"[Save] {summary_path}")
     print("[Summary]", json.dumps(summary, indent=2))
 
     # ---- Plots ----
-    # CDF of lock-in times
     if lockin_found:
         xs = np.array(sorted(lockin_found), dtype=np.float32)
         ys = np.arange(1, len(xs) + 1, dtype=np.float32) / float(len(xs))
         plot_and_save(out_dir / "lockin_cdf.png", "cdf", {"xs": xs, "ys": ys})
         print(f"[Plot] {out_dir / 'lockin_cdf.png'}")
 
-    # Mean margin curve
     valid_mask = mean_margin_count > 0
     mean_curve = np.zeros_like(mean_margin_accum, dtype=np.float32)
     mean_curve[valid_mask] = (mean_margin_accum[valid_mask] / mean_margin_count[valid_mask]).astype(np.float32)
@@ -566,10 +568,11 @@ def main() -> None:
     plot_and_save(out_dir / "mean_margin_curve.png", "mean_margin", {"x": x_rel, "y": mean_curve})
     print(f"[Plot] {out_dir / 'mean_margin_curve.png'}")
 
-    # Optional example curves
+    # ===== CHANGED: examples always have p_comp + margin =====
     if ex_curves:
-        plot_and_save(out_dir / "example_pcorrect_curves.png", "examples", {"examples": ex_curves})
-        print(f"[Plot] {out_dir / 'example_pcorrect_curves.png'}")
+        plot_and_save(out_dir / "example_competition_curves.png", "examples", {"examples": ex_curves})
+        print(f"[Plot] {out_dir / 'example_competition_curves.png'}")
+        print(f"[Plot] {out_dir / 'example_margin_curves.png'}")
 
 
 if __name__ == "__main__":
