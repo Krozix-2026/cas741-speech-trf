@@ -1,3 +1,4 @@
+# train_once.py
 import os
 import sys
 from pathlib import Path
@@ -27,8 +28,10 @@ def main():
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
     # cfg = TrainConfig(dataset="burgundy", task_name="LSTM", policy_name="modified_loss", seed=0)
-    cfg = TrainConfig(dataset="librispeech", task_name="LSTM_WORD", policy_name="baseline", seed=0)
+    # cfg = TrainConfig(dataset="librispeech", task_name="LSTM_WORD", policy_name="baseline", seed=0)
+    cfg = TrainConfig(dataset="librispeech", task_name="LAS_MOCHA_WORDS", policy_name="semantic", seed=0)
     cfg.ensure_dirs()
+    
 
     if cfg.dataset == "librispeech":
         if cfg.task_name == "LSTM_WORD":
@@ -37,6 +40,17 @@ def main():
         if cfg.task_name == "LSTM":
             from train.trainer_librispeech import run_once
             run_once(cfg, device)
+        
+        if cfg.task_name == "LAS_MOCHA_WORDS":
+            cfg.batch_size = 4
+            cfg.epoch = 50
+            cfg.lstm_layers = 3
+            cfg.lstm_hidden = 512
+            cfg.las_enc_subsample = 2
+            cfg.las_max_words = 200
+            from train.trainer_librispeech_mocha_words import run_once
+            run_once(cfg, device)
+        
         if cfg.task_name == "RNNT":
             from train.trainer_rnnt import run_once
             run_once(cfg, device)
