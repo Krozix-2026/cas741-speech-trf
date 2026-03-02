@@ -128,7 +128,7 @@
 
 \begin{document}
 
-\title{Software Requirements Specification for \progname: subtitle describing software} 
+\title{Software Requirements Specification for \progname} 
 \author{\authname}
 \date{\today}
 	
@@ -149,6 +149,7 @@
 \midrule
 Jan 29 & 1.0 & Initial draft\\
 Feb 2 & 1.1 & Update data explaniation\\
+Mar 1 & 1.2 & Update based on comments \\
 \bottomrule
 \end{tabularx}
 
@@ -180,11 +181,11 @@ description of the unit and the SI name.
 \textbf{symbol} & \textbf{quantity} & \textbf{SI name}\\
 \midrule
 \si{\second} & time & second\\
-\si{\milli\second} & time & millisecond\\
+% \si{\milli\second} & time & millisecond\\
 \si{\hertz} & sampling rate / frequency & hertz\\
-\si{\kilo\hertz} & audio sampling rate  & kilohertz\\
+% \si{\kilo\hertz} & audio sampling rate  & kilohertz\\
 \si{\tesla} & magnetic flux density & tesla\\
-\si{\femto\tesla} & MEG sensor-level magnitude  & femtotesla\\
+% \si{\femto\tesla} & MEG sensor-level magnitude  & femtotesla\\
 
 \bottomrule
 \end{tabular}
@@ -506,7 +507,7 @@ However, producing trustworthy comparisons across multiple models and predictors
 Without a standardized workflow, comparisons can be confounded by subtle differences in preprocessing, alignment, or evaluation procedures rather than reflecting true representational differences.
 
 
-This project develops a reusable scientific software pipeline for model--to--brain alignment in speech recognition. The software supports training multiple deep learning models on speech dataset (e.g., Burgundy and LibriSpeech), extracting hidden representations as predictors, constructing time-aligned predictor matrices, fitting ridge-regularized mTRF encoding models, and reporting how much each model-derived predictor improves neural prediction relative to an acoustic baseline.
+This project develops a reusable model--to--brain alignment pipeline for speech recognition. The software supports training multiple deep learning models on speech dataset (e.g., Burgundy and LibriSpeech), extracting hidden representations as predictors, constructing time-aligned predictor matrices, fitting ridge-regularized mTRF encoding models, and reporting how much each model-derived predictor improves neural prediction relative to an acoustic baseline.
 
 
 
@@ -588,12 +589,11 @@ The intended readers of this SRS are the stakeholders who will review, maintain,
 \begin{itemize}
   \item \textbf{Software engineering:} Experience designing and implementing scientific computing software in Python, including modular code organization, configuration-driven workflows, and basic familiarity with testing practices and version control.
 
-  \item \textbf{Numerical methods and data handling:} Comfort with linear algebra and numerical computation at the level of an undergraduate course in scientific computing, including matrix and vector operations, regularized linear regression concepts, and handling large arrays. Readers should be familiar with common scientific Python libraries and data formats used in research pipelines.
+  \item \textbf{Numerical methods and data handling:} Comfort with linear algebra and numerical computation at the level of a fourth-year undergraduate course (SFWRENG 4AL3, COMPSCI 4ML3) in machine learning, including matrix and vector operations, regularized linear regression concepts, and handling large arrays. Readers should be familiar with common scientific Python libraries and data formats used in research pipelines.
 
-  \item \textbf{Speech and audio processing engineering:} Practical understanding of digital signal processing at the level of an undergraduate course in signals and systems, sufficient to work with sampling rates, resampling, time--frequency features.
+  \item \textbf{Speech and audio processing engineering:} Practical understanding of digital signal processing at the level of a third-year course in signals and systems (SFWRENG 3MX3), sufficient to work with sampling rates, resampling, time--frequency features.
 
-  \item \textbf{Deep learning technology:} Ability to train and test deep learning-based models for speech at a graduate machine learning level, including familiarity with
-  backpropagation algorithm and extracting hidden representations from trained models.
+  \item \textbf{Deep learning technology:} Ability to train and test deep learning-based models for speech at a graduate machine learning level (CHEM ENG 787), including familiarity with backpropagation algorithm and extracting hidden representations from trained models.
 
   \item \textbf{Neural data analysis:} Familiarity with MEG data as time series measured at multiple sensors and basic preprocessing outcomes. Readers should understand the purpose of encoding models and cross-validation, but do not need expertise in MEG source reconstruction or advanced neurophysiology.
 
@@ -668,7 +668,7 @@ characteristics and lists the system constraints.
 %   the system constraint.}
 
 This system context is shown as inputs and outputs in Figure~\ref{Fig_SystemContext}. 
-This project relies on Eelbrain as an external library for mTRF calculation and visualization.
+This project relies on Eelbrain as an external library for mTRF calculation and visualization \cite{brodbeck2023eelbrain}.
 
 
 
@@ -757,8 +757,8 @@ The software will typically be used for neuroscience research. It will not be us
 The end user of \progname{} should have experience in:
 
 \begin{itemize}
-\item Python programming;
-\item Deep learning programming;
+\item Python programming. Experience in Python programming equivalent to COMPSCI 1MD3 (Introduction to Programming) or SFWRENG 2OP3 (Object-Oriented Programming);
+\item Deep learning programming; Experience in deep learning programming equivalent to SFWRENG 4AL3, COMPSCI 4ML3.
 \item Neuroimaging data, particularly MEG/EEG data and its workflow;
 \end{itemize}
 
@@ -790,7 +790,15 @@ The end user of \progname{} should have experience in:
 
 \begin{itemize}
   \item \textbf{Python program:} \progname{} shall be implemented in Python.
+  \begin{itemize}
+  \item Rationale: Python provides the most comprehensive ecosystem for scientific computing and is the primary language supported by the required neuroimaging libraries (Eelbrain).
+  \end{itemize}
+
   \item \textbf{Deep learning method:} Model training and representation extraction shall use PyTorch.
+  \begin{itemize}
+  \item Rationale: PyTorch offers the flexibility needed for custom neural network architectures and has extensive community support for speech recognition research.
+  \end{itemize}
+
   \item \textbf{TRF backend:} Encoding analysis and visualization shall use the Eelbrain TRF pipeline.
   \item \textbf{MEG dependency:} The Eelbrain pipeline shall delegate MEG data structures and preprocessing operations to MNE-Python.
 
@@ -812,7 +820,7 @@ the instance models.
 
 \subsection{Problem Description} \label{Sec_pd}
 
-\progname{} is intended to solve the problem of reproducibly comparing candidate speech representations by how well they explain neural responses during continuous speech perception. 
+The Model–to–Brain Alignment pipeline is intended to solve the problem of reproducibly comparing candidate speech representations by how well they explain neural responses during continuous speech perception. 
 In practice, researchers often have multiple competing candidate representations (e.g., acoustic features or hidden features from trained speech models). The core scientific
 question is to explore which representations are most predictive of neural measurements, under a fair and consistent evaluation protocol.
 
@@ -841,11 +849,10 @@ easier to correctly understand the requirements:
 
 
 \begin{itemize}
-  \item \textbf{Speech stimulus:} The auditory signal presented to participants, together with associated annotation information.
+  \item \textbf{Speech stimulus:} The auditory signal (wav file) presented to participants, together with associated labeled transcript.
 
   \item \textbf{Neural response:} Time-resolved measurements of brain activity
-  recorded during listening, assumed to be
-  preprocessed into a usable form.
+  recorded during listening, assumed to be preprocessed into a usable form.
 
   \item \textbf{Representation:} A time-indexed representation features derived from
   the stimulus, such as acoustic features and internal states of a deep learning model.
@@ -947,7 +954,20 @@ includes the following elements:
 %   amount of technical language.  They should be understandable by non-domain
 %   experts.}
 
-Given the input peech stimuli, neural responses, the goal statements are:
+Given (i) speech stimuli, (ii) neural responses, and (iii) a set of candidate speech representations (predictors) extracted from acoustic baselines and trained models, the system shall produce the following outputs:
+
+System Outputs:
+\begin{itemize}
+
+\item O1: A standardized, time-aligned predictor set for each candidate representation under a single protocol (same preprocessing, alignment assumptions, lag window, sampling rate).
+
+\item O2: Cross-validated mTRF fit results for each predictor set, including per-subject (and per-ROI, if applicable) prediction scores and model hyperparameters.
+
+\item O3: A baseline-referenced comparison report, including absolute scores, improvement over the acoustic baseline, and statistical tests used for model comparison.
+
+\item O4: A complete, traceable run artifact bundle (configs, code version, seeds, cached intermediates, and generated figures and tables) sufficient to reproduce the reported results.
+
+\end{itemize}
 
 % \begin{itemize}
 
@@ -957,27 +977,40 @@ Given the input peech stimuli, neural responses, the goal statements are:
 
 % \end{itemize}
 
-
+High-level Requirements:
 
 \begin{itemize}
-  \item[GS\refstepcounter{goalnum}\thegoalnum \label{G_reproCompare}:]
-  Enable reproducible comparison of multiple candidate speech representations by
-  their ability to predict neural responses under a consistent protocol.
+  \item[GS\refstepcounter{goalnum}\thegoalnum \label{G_reproCompare}:] 
+  Provide an end-to-end framework to compare speech representations by how well they predict brain responses.
 
   \item[GS\refstepcounter{goalnum}\thegoalnum \label{G_fairEval}:]
-  Ensure fair evaluation across predictors by applying the same alignment
-  assumptions, lag window, regularization selection, and cross-validation
-  procedure.
+  Enable trustworthy scientific conclusions by ensuring results are reproducible, comparable, and traceable.
 
-  \item[GS\refstepcounter{goalnum}\thegoalnum \label{G_quantifyGain}:]
-  Quantify how much each model-extracted representation improves neural prediction
-  relative to an acoustic baseline in a way that supports scientific
-  interpretation.
-
-  \item[GS\refstepcounter{goalnum}\thegoalnum \label{G_traceableArtifacts}:]
-  Produce traceable artifacts and summaries that allow experiments and results
-  to be inspected, repeated, and extended.
 \end{itemize}
+
+% \begin{itemize}
+%   \item[GS\refstepcounter{goalnum}\thegoalnum \label{G_reproCompare}:]
+%   % Enable reproducible comparison of multiple candidate speech representations by
+%   % their ability to predict neural responses under a consistent protocol.
+%   The system shall enable reproducible comparison of multiple candidate speech representations by executing all evaluations under a fully specified and logged protocol, including software versions, configuration files, random seeds, and data identifiers.
+
+%   \item[GS\refstepcounter{goalnum}\thegoalnum \label{G_fairEval}:]
+%   % Ensure fair evaluation across predictors by applying the same alignment
+%   % assumptions, lag window, regularization selection, and cross-validation
+%   % procedure.
+%   The system shall enforce identical evaluation settings across predictors (alignment assumptions, lag window, sampling rate, regularization selection procedure, and cross-validation partitions) to ensure fair comparison.
+
+%   \item[GS\refstepcounter{goalnum}\thegoalnum \label{G_quantifyGain}:]
+%   % Quantify how much each model-extracted representation improves neural prediction
+%   % relative to an acoustic baseline in a way that supports scientific
+%   % interpretation.
+%   The system shall quantify how much each model-extracted representation improves neural prediction relative to an acoustic baseline by reporting (i) the chosen prediction metric, (ii) baseline and candidate scores, (iii) improvement, and (iv) statistical evidence supporting the comparison.
+
+%   \item[GS\refstepcounter{goalnum}\thegoalnum \label{G_traceableArtifacts}:]
+%   % Produce traceable artifacts and summaries that allow experiments and results
+%   % to be inspected, repeated, and extended.
+%   The system shall produce traceable artifacts and summaries that allow experiments and results to be inspected, repeated, and extended, including standardized filenames and a manifest describing all generated outputs.
+% \end{itemize}
 
 
 
@@ -1086,21 +1119,25 @@ models can be verified.
 
 
 \begin{itemize}
-  \item[A\refstepcounter{assumpnum}\theassumpnum \label{A_preprocessed}:]
-  Neural recordings are available in a usable preprocessed form with an explicit
-  time base and sampling rate. [IM]
+  
+  % \item[A\refstepcounter{assumpnum}\theassumpnum \label{A_preprocessed}:]
+  % Neural recordings are available in a usable preprocessed form with an explicit
+  % time base and sampling rate. [IM]
 
   \item[A\refstepcounter{assumpnum}\theassumpnum \label{A_linearencoding}:]
-  A linear time-lagged encoding model is an appropriate approximation for
-  quantifying predictor--neural relationships over the chosen lag window. [IM]
+  % A linear time-lagged encoding model is an appropriate approximation for
+  % quantifying predictor--neural relationships over the chosen lag window. [IM]
+  Within the evaluation protocol, the predictor–neural relationship is approximated by a linear time-lagged encoding model over a predefined lag window.
+
 
   \item[A\refstepcounter{assumpnum}\theassumpnum \label{A_stationarity}:]
-  Within an analysis segment, the mapping from predictors to neural responses is
-  treated as time-invariant for the purposes of model fitting. [IM]
+  % Within an analysis segment, the mapping from predictors to neural responses is
+  % treated as time-invariant for the purposes of model fitting. [IM]
+  Within each analysis segment, the mapping from predictors to neural responses is assumed time-invariant for model fitting.
 
-  \item[A\refstepcounter{assumpnum}\theassumpnum \label{A_labels}:]
-  When supervised training is used, the speech dataset provides sufficient
-  labeling quality for training models to yield stable representations. [IM]
+  % \item[A\refstepcounter{assumpnum}\theassumpnum \label{A_labels}:]
+  % When supervised training is used, the speech dataset provides sufficient
+  % labeling quality for training models to yield stable representations. [IM]
 \end{itemize}
 
 
@@ -1155,7 +1192,7 @@ on.
   This theoretical model states that training a speech model can be expressed as
   minimizing an expected task loss over a training distribution.
   Here $\boldsymbol{a}$ denotes speech input,
-  $\boldsymbol{s}^{\star}$ denotes the target labels, $f_{\boldsymbol{\theta}}$
+  $\boldsymbol{s}^{\star}$ denotes the corresponding text manuscript, $f_{\boldsymbol{\theta}}$
   is the model parameterized by $\boldsymbol{\theta}$, and $\mathcal{L}_{\mathrm{ASR}}$
   is a task loss appropriate for sequence prediction. The purpose of training in \progname{} is not to optimize for a single
   benchmark, but to produce stable internal representations that can be extracted
@@ -1166,7 +1203,7 @@ on.
   \url{https://docs.pytorch.org/docs/stable/optim.html}
 }
 {
-  None
+  IM\ref{IM_predictor_align}
 }
 {
   Training data $\mathcal{D}_{\text{train}}$ and a corresponding loss function
@@ -1199,7 +1236,7 @@ on.
   \url{https://doi.org/10.1371/journal.pcbi.1013244}
 }
 {
-  None
+  \iref{IM_speech_train}
 }
 {
   A trained model and a well-defined layer index $\ell$ exist for the stimulus.
@@ -1228,7 +1265,7 @@ on.
 
 ~\newline
 
-\subsubsection{General Definitions}\label{sec_gendef}
+% \subsubsection{General Definitions}\label{sec_gendef}
 
 % \plt{General Definitions (GDs) are a refinement of one or more TMs, and/or of
 %   other GDs.  The GDs are less abstract than the TMs.  Generally the reduction
@@ -1236,8 +1273,8 @@ on.
 %   For instance, the TM could be Newton's Law of Cooling stated abstracting.  The
 %   GD could take the general law and apply it to get a 1D equation.}
 
-This section collects the laws and equations that will be used in building the
-instance models.
+% This section collects the laws and equations that will be used in building the
+% instance models.
 
 % \plt{Some projects may not have any content for this section, but the section
 %   heading should be kept.}  \plt{Modify the examples below for your problem, and
@@ -1564,14 +1601,14 @@ Ref.\ By & Section \ref{sec_DataConstraints}\\
 This section transforms the problem defined in Section~\ref{Sec_pd} into 
 one which is expressed in mathematical terms. It uses concrete symbols defined 
 in Section~\ref{sec_datadef} to replace the abstract symbols in the models 
-identified in Sections~\ref{sec_theoretical} and~\ref{sec_gendef}.
+identified in Sections~\ref{sec_theoretical}.
 
 % The goals \ref{GS_reproCompare} are solved by \plt{reference your instance
 %   models}.  \plt{other details, with cross-references where appropriate.}
 % \plt{Modify the examples below for your problem, and add additional models as
 %   appropriate.}
 
-The goals GS\ref{G_reproCompare}--GS\ref{G_traceableArtifacts} are solved by the
+The goals GS\ref{G_reproCompare}--GS\ref{G_fairEval} are solved by the
 instance models IM\ref{IM_predictor_align}--IM\ref{IM_cv_score}, which define
 (i) how predictors are aligned and assembled into TRF-ready inputs, (ii) how TRF
 models are fit under a fixed protocol, (iii) how performance is evaluated fairly
@@ -1582,6 +1619,40 @@ how artifacts are defined for reproducibility.
 
 
 ~\newline
+
+% ---------------------------------------------------------
+% IM0: Speech model training (optional but makes TM:ERM used)
+% ---------------------------------------------------------
+\noindent
+\begin{minipage}{\textwidth}
+\renewcommand*{\arraystretch}{1.5}
+\begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
+  \hline
+  \rowcolor[gray]{0.9}
+  Number& IM\refstepcounter{instnum}\theinstnum \label{IM_speech_train}\\
+  \hline
+  Label& \bf Speech model training via empirical risk minimization\\
+  \hline
+  Input&
+  Training data $\mathcal{D}_{\text{train}}$, model family $f_{\boldsymbol{\theta}}$,
+  and loss $\mathcal{L}_{\mathrm{ASR}}$ (TM:\!ERM).\\
+  \hline
+  Output&
+  Trained parameters $\boldsymbol{\theta}^{\ast}$ and a trained model
+  $f_{\boldsymbol{\theta}^{\ast}}$.\\
+  \hline
+  Description&
+  Instantiate TM:\!ERM by optimizing $\boldsymbol{\theta}$ on $\mathcal{D}_{\text{train}}$
+  to obtain $\boldsymbol{\theta}^{\ast}$. The trained model is then used as a source of
+  internal representations for candidate predictors (TM:\!Representation).\\
+  \hline
+  Sources& https://docs.pytorch.org/docs/stable/optim.html\\
+  \hline
+  Ref.\ By & \iref{IM_predictor_align}\\
+  \hline
+\end{tabular}
+\end{minipage}\\
+
 
 % ---------------------------------------------------------
 % IM1: Alignment and predictor standardization
@@ -1826,74 +1897,137 @@ uncertainty quantification exercise.
 % The specification parameters in Table~\ref{TblInputVar} are listed in
 % Table~\ref{TblSpecParams}.
 
+% \renewcommand{\arraystretch}{1.2}
+% \begin{longtable}{l l l l c}
+% \caption{Input Variables}\label{TblInputVar}\\
+%   \toprule
+%   \textbf{Var} & \textbf{Physical Const.} & \textbf{Software Const.} &
+%   \textbf{Typical Value} & \textbf{Uncert.}\\
+%   \midrule
+%   $f_s$ & $f_s>0$ &
+%   $10 \le f_s \le 2000$ \si{\hertz} &
+%   $100$ \si{\hertz} &
+%   low\\
+
+%   $f_a$ & $f_a>0$ &
+%   $8000 \le f_a \le 96000$ \si{\hertz} &
+%   $16000$ \si{\hertz} &
+%   low\\
+
+%   $N$ & $N \in \mathbb{N},\ N>0$ &
+%   $N \ge N_{\min}$ &
+%   dataset-dependent &
+%   medium\\
+
+%   $C$ & $C \in \mathbb{N},\ C>0$ &
+%   $1 \le C \le C_{\max}$ &
+%   dataset-dependent &
+%   low\\
+
+%   $D$ & $D \in \mathbb{N},\ D>0$ &
+%   $1 \le D \le D_{\max}$ &
+%   dataset-dependent &
+%   low\\
+
+%   $L$ & $L \in \mathbb{N},\ L>0$ &
+%   $1 \le L \le L_{\max}$ &
+%   3--10 &
+%   low\\
+
+%   $\tau_{\min}$ & $\tau_{\min}<\tau_{\max}$ &
+%   $-0.5 \le \tau_{\min} \le 0$ \si{\second} &
+%   $-0.1$ \si{\second} &
+%   low\\
+
+%   $\tau_{\max}$ & $\tau_{\max}>\tau_{\min}$ &
+%   $0.05 \le \tau_{\max} \le 2.0$ \si{\second} &
+%   $1.0$ \si{\second} &
+%   low\\
+
+%   $K$ & $K \in \mathbb{N},\ K>0$ &
+%   $K = \left\lfloor\frac{\tau_{\max}-\tau_{\min}}{\Delta t}\right\rfloor + 1$ &
+%   implied by $f_s,\tau_{\min},\tau_{\max}$ &
+%   low\\
+
+%   $\lambda$ & $\lambda \ge 0$ &
+%   $\lambda \in [\lambda_{\min},\lambda_{\max}]$ &
+%   selected by CV &
+%   medium\\
+
+%   $\rho_{\mathrm{CV}}$ & defined partitioning &
+%   $2 \le J \le 20$ folds/partitions &
+%   $J=4$ &
+%   low\\
+
+%   \bottomrule
+% \end{longtable}
+
+
+
 \renewcommand{\arraystretch}{1.2}
 \begin{longtable}{l l l l c}
 \caption{Input Variables}\label{TblInputVar}\\
   \toprule
-  \textbf{Var} & \textbf{Physical Const.} & \textbf{Software Const.} &
+  \textbf{Var} & \textbf{Physical Const.} & \textbf{Software Const.} & 
   \textbf{Typical Value} & \textbf{Uncert.}\\
   \midrule
-  $f_s$ & $f_s>0$ &
-  $10 \le f_s \le 2000$ \si{\hertz} &
-  $100$ \si{\hertz} &
+  $f_s$ & $f_s>0$ & 
+  $f_{s,\min} \le f_s \le f_{s,\max}$ \si{\hertz} & 
+  $100$ \si{\hertz} & 
   low\\
 
-  $f_a$ & $f_a>0$ &
-  $8000 \le f_a \le 96000$ \si{\hertz} &
-  $16000$ \si{\hertz} &
+  $f_a$ & $f_a>0$ & 
+  $f_{a,\min} \le f_a \le f_{a,\max}$ \si{\hertz} & 
+  $16000$ \si{\hertz} & 
   low\\
 
-  $N$ & $N \in \mathbb{N},\ N>0$ &
-  $N \ge N_{\min}$ &
-  dataset-dependent &
+  $N$ & $N \in \mathbb{N},\ N>0$ & 
+  $N \ge N_{\min}$ & 
+  dataset-dependent & 
   medium\\
 
-  $C$ & $C \in \mathbb{N},\ C>0$ &
-  $1 \le C \le C_{\max}$ &
-  dataset-dependent &
+  $C$ & $C \in \mathbb{N},\ C>0$ & 
+  $1 \le C \le C_{\max}$ & 
+  dataset-dependent & 
   low\\
 
-  $D$ & $D \in \mathbb{N},\ D>0$ &
-  $1 \le D \le D_{\max}$ &
-  dataset-dependent &
+  $D$ & $D \in \mathbb{N},\ D>0$ & 
+  $1 \le D \le D_{\max}$ & 
+  dataset-dependent & 
   low\\
 
-  $L$ & $L \in \mathbb{N},\ L>0$ &
-  $1 \le L \le L_{\max}$ &
-  3--10 &
+  $L$ & $L \in \mathbb{N},\ L>0$ & 
+  $1 \le L \le L_{\max}$ & 
+  3--10 & 
   low\\
 
-  $\tau_{\min}$ & $\tau_{\min}<\tau_{\max}$ &
-  $-0.5 \le \tau_{\min} \le 0$ \si{\second} &
-  $-0.1$ \si{\second} &
+  $\tau_{\min}$ & $\tau_{\min}<\tau_{\max}$ & 
+  $\tau_{\text{min,L}} \le \tau_{\min} \le \tau_{\text{min,U}}$ \si{\second} & 
+  $-0.1$ \si{\second} & 
   low\\
 
-  $\tau_{\max}$ & $\tau_{\max}>\tau_{\min}$ &
-  $0.05 \le \tau_{\max} \le 2.0$ \si{\second} &
-  $1.0$ \si{\second} &
+  $\tau_{\max}$ & $\tau_{\max}>\tau_{\min}$ & 
+  $\tau_{\text{max,L}} \le \tau_{\max} \le \tau_{\text{max,U}}$ \si{\second} & 
+  $1.0$ \si{\second} & 
   low\\
 
-  $K$ & $K \in \mathbb{N},\ K>0$ &
-  $K = \left\lfloor\frac{\tau_{\max}-\tau_{\min}}{\Delta t}\right\rfloor + 1$ &
-  implied by $f_s,\tau_{\min},\tau_{\max}$ &
+  $K$ & $K \in \mathbb{N},\ K>0$ & 
+  $K = \left\lfloor\frac{\tau_{\max}-\tau_{\min}}{\Delta t}\right\rfloor + 1$ & 
+  implied by $f_s,\tau_{\min},\tau_{\max}$ & 
   low\\
 
-  $\lambda$ & $\lambda \ge 0$ &
-  $\lambda \in [\lambda_{\min},\lambda_{\max}]$ &
-  selected by CV &
+  $\lambda$ & $\lambda \ge 0$ & 
+  $\lambda \in [\lambda_{\min},\lambda_{\max}]$ & 
+  selected by CV & 
   medium\\
 
-  $\rho_{\mathrm{CV}}$ & defined partitioning &
-  $2 \le J \le 20$ folds/partitions &
-  $J=4$ &
+  $\rho_{\mathrm{CV}}$ & defined partitioning & 
+  $J_{\min} \le J \le J_{\max}$ folds/partitions & 
+  $J=4$ & 
   low\\
 
   \bottomrule
 \end{longtable}
-
-
-
-
 
 
 
@@ -1950,22 +2084,25 @@ A correct solution must exhibit:
 
 
 \begin{itemize}
-  \item \textbf{Time-base consistency:} Any predictor and neural response used
-  together must be defined on the same sampling grid after alignment. 
+  \item \textbf{Time-base consistency:} 
+  % Any predictor and neural response used together must be defined on the same sampling grid after alignment.
+  The system shall verify that the sampling grids of predictors and neural responses are identical before computation, or resample them to a common grid. 
 
-  \item \textbf{Protocol invariance across predictors:} When comparing multiple
-  predictors, the lag window, lag discretization, cross-validation procedure, and regularization selection over $\lambda$ must be identical across predictors so that differences in scores reflect predictor information rather than evaluation artifacts.
+  \item \textbf{Protocol invariance across predictors:} 
+  % When comparing multiple predictors, the lag window, lag discretization, cross-validation procedure, and regularization selection over $\lambda$ must be identical across predictors so that differences in scores reflect predictor information rather than evaluation artifacts.
+  The system shall automate the CV and lag window selection to ensure identical parameters are applied across all candidate predictors.
 
-  \item \textbf{Numerical validity:} All reported fitted weights, predictions,
-  and evaluation scores must be well-defined for every evaluated partition.
+  \item \textbf{Numerical validity:} 
+  % All reported fitted weights, predictions, and evaluation scores must be well-defined for every evaluated partition.
+  All output metrics (e.g., Pearson $r$) shall fall within their theoretical bounds (e.g., $[-1, 1]$), and the system shall handle potential floating-point errors.
 
-  \item \textbf{Traceability of results:} Each reported score must be uniquely
-  attributable to a specific predictor definition, lag window, CV partitioning,
-  and regularization setting, so that the evaluation can be repeated under the
-  same specification.
+  \item \textbf{Traceability of results:} 
+  % Each reported score must be uniquelyattributable to a specific predictor definition, lag window, CV partitioning,
+  % and regularization setting, so that the evaluation can be repeated under the same specification.
+  The system shall generate a metadata log recording the specific predictor definition, lag window, and CV seed used for every generated score.
 \end{itemize}
 
-
+Each property defined in this section corresponds to a specific test case in the V\&V Plan.
 
 
 % \begin{table}[!h]
@@ -2013,29 +2150,33 @@ qualities that the software is expected to exhibit.
 \noindent \begin{itemize}
 
 \item[R\refstepcounter{reqnum}\thereqnum \label{R_Inputs}:]
-The system should accept speech stimuli and MEG signals as inputs. 
+% The system should accept speech stimuli and MEG signals as inputs. 
+The system shall accept (i) speech stimuli and (ii) MEG recordings as inputs, in formats sufficient to construct time-aligned predictors on the MEG sampling grid. Satisfied by: IM\ref{IM_predictor_align}, IM\ref{IM_cv_score}.
 
 \item[R\refstepcounter{reqnum}\thereqnum \label{R_InputValidation}:]
-The system shall validate that the provided inputs are internally consistent
-before model fitting.
+% The system shall validate that the provided inputs are internally consistent before model fitting.
+The system shall validate input consistency required for model fitting, including time base compatibility (sampling rate, segment durations) and the presence of metadata necessary for alignment and cross-validation.
+Satisfied by: IM\ref{IM_predictor_align}, IM\ref{IM_cv_score}.
 
 
 \item[R\refstepcounter{reqnum}\thereqnum \label{R_ConstructPredictors}:]
-Given a predictor definition, the system shall construct a time-aligned predictor
-matrix on the MEG sampling grid.
-
-
-
+% Given a predictor definition, the system shall construct a time-aligned predictor matrix on the MEG sampling grid.
+Given a predictor definition (baseline or model-extracted), the system shall construct a time-aligned predictor matrix $\tilde{\mathbf{R}}\in\mathbb{R}^{N\times D}$ on the MEG sampling grid using a single alignment procedure shared across predictors. Satisfied by: IM\ref{IM_predictor_align}.
 
 \item[R\refstepcounter{reqnum}\thereqnum \label{R_FairEval}:]
-The system shall evaluate all candidate predictors under a consistent protocol.
+% The system shall evaluate all candidate predictors under a consistent protocol.
+The system shall evaluate all candidate predictors under an identical protocol, including the same lag window, discretization, fitting rule, regularization selection, cross-validation partitions, and score metric. Satisfied by: IM\ref{IM_cv_score}.
 
 \item[R\refstepcounter{reqnum}\thereqnum \label{R_Scoring}:]
-For each predictor, the system shall compute an encoding score.
+% For each predictor, the system shall compute an encoding score.
+For each predictor, the system shall compute a cross-validated encoding score $\rho_{\mathrm{CV}}$ as the mean of fold-wise scores under protocol $\Pi$. Satisfied by: IM\ref{IM_cv_score}.
+
 
 \item[R\refstepcounter{reqnum}\thereqnum \label{R_QuantifyGain}:]
-The system shall compute baseline-referenced improvement for each candidate predictor relative to a specified acoustic baseline predictor.
-
+% The system shall compute baseline-referenced improvement for each candidate predictor relative to a specified acoustic baseline predictor.
+The system shall compute baseline-referenced improvement for each candidate predictor
+relative to a specified acoustic baseline predictor as
+$\Delta\rho = \rho_{\mathrm{CV}}(\text{candidate}) - \rho_{\mathrm{CV}}(\text{baseline})$, and report $\Delta\rho$ under the same protocol $\Pi$. Satisfied by: IM\ref{IM_cv_score}.
 
 
 \end{itemize}
