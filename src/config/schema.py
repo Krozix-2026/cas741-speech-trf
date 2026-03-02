@@ -36,6 +36,15 @@ class TrainConfig:
     tail_ms: int = 100
     word_vocab_topk: int = 20000
 
+    # ---- LAS-Monotonic (semantic) params ----
+    las_enc_subsample: int = 2         # causal time downsample by stacking frames
+    las_attn_dim: int = 128
+    las_dec_embed: int = 256
+    las_dec_hidden: int = 512
+    las_dec_layers: int = 2
+    las_max_words: int = 200           # cap output words per utterance for speed/stability
+    
+    
     # ---- feature / model (shared defaults; can be overridden per task) ----
     sample_rate: int = 16000
     n_mels: int = 80
@@ -76,7 +85,6 @@ class TrainConfig:
     def __post_init__(self) -> None:
         # normalize typos / casing
         ds = self.dataset.strip().lower()
-
         self.dataset = ds
 
         task = self.task_name.strip().upper()
@@ -118,12 +126,19 @@ class TrainConfig:
             raise ValueError(f"Unknown dataset: {self.dataset} (expected 'librispeech' or 'burgundy')")
 
         # ---- task defaults ----
-        if self.task_name == "LSTM" or "LSTM_WORD":
+        if self.task_name in ("LSTM", "LSTM_WORD"):
             # 你原来 LSTM 的 batch_size=32
             if self.batch_size is None:
                 self.batch_size = 32
             # LSTM 的 bidirectional 默认 True 已经设了
 
+        elif self.task_name == "LAS_MOCHA_WORDS":
+            # Monotonic-attention LAS baseline (strictly causal encoder + monotonic attention)
+            self.bidirectional = False
+            # this model is heavier than frame-classification; safer default
+            self.batch_size = min(self.batch_size, 8)
+        
+        
         elif self.task_name == "RNNT":
             # 你原来 RNNT 的默认设置
             self.lstm_hidden = 256
