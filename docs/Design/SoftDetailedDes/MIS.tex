@@ -53,8 +53,8 @@ urlcolor=cyan          % color of external links
 \begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
 \toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
 \midrule
-Date 1 & 1.0 & Notes\\
-Date 2 & 1.1 & Notes\\
+March 20, 2026 & 1.0 & Initial version\\
+% Date 2 & 1.1 & Notes\\
 \bottomrule
 \end{tabularx}
 
@@ -62,9 +62,11 @@ Date 2 & 1.1 & Notes\\
 
 \section{Symbols, Abbreviations and Acronyms}
 
-See SRS Documentation at \wss{give url}
+See SRS Documentation at \href{https://github.com/Krozix-2026/cas741-speech-trf/blob/main/docs/SRS/SRS.tex}{SRS.tex}
 
-\wss{Also add any additional symbols, abbreviations or acronyms}
+
+
+% \wss{Also add any additional symbols, abbreviations or acronyms}
 
 \newpage
 
@@ -77,48 +79,124 @@ See SRS Documentation at \wss{give url}
 \section{Introduction}
 
 The following document details the Module Interface Specifications for
-\wss{Fill in your project name and description}
+\progname{}. This pipeline accepts different deep learning-based models for MEG analyzing, performing mTRF test for comparison.
+
 
 Complementary documents include the System Requirement Specifications
 and Module Guide.  The full documentation and implementation can be
-found at \url{...}.  \wss{provide the url for your repo}
+found at \url{https://github.com/Krozix-2026/cas741-speech-trf}.  
+The key companion documents are \href{https://github.com/Krozix-2026/cas741-speech-trf/blob/main/docs/SRS/SRS.tex}{SRS}
+and
+\href{https://github.com/Krozix-2026/cas741-speech-trf/blob/main/docs/Design/SoftArchitecture/MG.tex}{MG}.
 
 \section{Notation}
 
-\wss{You should describe your notation.  You can use what is below as
-  a starting point.}
+% \wss{You should describe your notation.  You can use what is below as
+%   a starting point.}
 
 The structure of the MIS for modules comes from \citet{HoffmanAndStrooper1995},
 with the addition that template modules have been adapted from
 \cite{GhezziEtAl2003}.  The mathematical notation comes from Chapter 3 of
-\citet{HoffmanAndStrooper1995}.  For instance, the symbol := is used for a
-multiple assignment statement and conditional rules follow the form $(c_1
-\Rightarrow r_1 | c_2 \Rightarrow r_2 | ... | c_n \Rightarrow r_n )$.
+\citet{HoffmanAndStrooper1995}.  
+% For instance, the symbol := is used for a
+% multiple assignment statement and conditional rules follow the form $(c_1
+% \Rightarrow r_1 | c_2 \Rightarrow r_2 | ... | c_n \Rightarrow r_n )$.
 
 The following table summarizes the primitive data types used by \progname. 
 
-\begin{center}
-\renewcommand{\arraystretch}{1.2}
-\noindent 
-\begin{tabular}{l l p{7.5cm}} 
-\toprule 
-\textbf{Data Type} & \textbf{Notation} & \textbf{Description}\\ 
+\renewcommand{\arraystretch}{1.15}
+\noindent
+\begin{longtable}{l l p{11.0cm}}
+\toprule
+\textbf{Symbol} & \textbf{Unit} & \textbf{Description}\\
 \midrule
-character & char & a single symbol or digit\\
-integer & $\mathbb{Z}$ & a number without a fractional component in (-$\infty$, $\infty$) \\
-natural number & $\mathbb{N}$ & a number without a fractional component in [1, $\infty$) \\
-real & $\mathbb{R}$ & any number in (-$\infty$, $\infty$)\\
+\endfirsthead
+
+\toprule
+\textbf{Symbol} & \textbf{Unit} & \textbf{Description}\\
+\midrule
+\endhead
+
+\midrule
+\multicolumn{3}{r}{\emph{Continued on next page}}\\
+\endfoot
+
 \bottomrule
-\end{tabular} 
-\end{center}
+\endlastfoot
+
+$C$ & -- & Number of MEG sensors.\\
+$D$ & -- & Predictor feature dimension.\\
+$D_b$ & -- & Feature dimension of the baseline predictor matrix $\mathbf{R}^{(\mathrm{base})}$.\\
+$B$ & -- & Training batch size.\\
+$E$ & -- & Number of training epochs.\\
+$K$ & -- & Number of time lags used in the TRF model.\\
+$L$ & -- & Number of candidate predictors or layers being compared.\\
+$N$ & -- & Number of aligned time samples used for TRF fitting.\\
+$N_{\mathrm{ROI}}$ & -- & Number of regions of interest (ROI), if ROI-based analysis is performed.\\
+
+$\mathcal{D}$ & -- & Speech dataset collection.\\
+$\mathcal{D}_{\mathrm{train}}$ & -- & Training split of dataset $\mathcal{D}$.\\
+$\mathcal{D}_{\mathrm{val}}$ & -- & Validation split of dataset $\mathcal{D}$.\\
+$\mathcal{D}_{\mathrm{test}}$ & -- & Test split of dataset $\mathcal{D}$.\\
+
+$\boldsymbol{a}$ & -- & Audio input sequence provided to the speech model.\\
+$\boldsymbol{s}^{\star}$ & -- & Ground-truth transcript for ASR training.\\
+$\boldsymbol{\theta}$ & -- & Trainable parameters of the speech model.\\
+$\boldsymbol{\theta}^{\ast}$ & -- & Optimized model parameters after training.\\
+$f_{\boldsymbol{\theta}}(\cdot)$ & -- & Speech model parameterized by $\boldsymbol{\theta}$.\\
+$\mathcal{L}_{\mathrm{ASR}}$ & -- & ASR training loss used to fit $f_{\boldsymbol{\theta}}$.\\
+$\eta$ & -- & Learning rate for gradient-based optimization.\\
+
+$\ell$ & -- & Layer index of the deep speech model.\\
+$H_{\ell}$ & -- & Hidden-state dimensionality of layer $\ell$.\\
+$n$ & -- & Discrete time index after temporal alignment or model frame sampling.\\
+$t$ & \si{\second} & Continuous time variable in seconds.\\
+$\Delta t$ & \si{\second} & Sampling interval of MEG signals, $\Delta t = 1/f_s$.\\
+
+$\boldsymbol{h}^{(\ell)}_{n}$ & -- & Hidden state vector from layer $\ell$ at discrete time index $n$.\\
+$g(\cdot)$ & -- & Optional transformation applied to hidden states to form predictors.\\
+$\boldsymbol{r}^{(\ell)}_{n}$ & -- & Predictor representation vector derived from $\boldsymbol{h}^{(\ell)}_{n}$.\\
+$\mathbf{R}^{(\ell)}$ & -- & Time-by-feature predictor matrix derived from layer $\ell$, with $\mathbf{R}^{(\ell)} \in \mathbb{R}^{N \times D}$.\\
+$\mathbf{R}^{(\mathrm{base})}$ & -- & Baseline predictor matrix, with $\mathbf{R}^{(\mathrm{base})} \in \mathbb{R}^{N \times D_b}$.\\
+
+$\mathbf{X}(\mathbf{R})$ & -- & Lagged design matrix constructed from predictor matrix $\mathbf{R}$, with $\mathbf{X}(\mathbf{R}) \in \mathbb{R}^{N \times (KD)}$.\\
+$\mathbf{X}$ & -- & Design matrix formed from time-lagged predictors when the underlying predictor matrix is clear from context.\\
+$\mathbf{X}_{\tau}$ & -- & Portion of the design matrix corresponding to lag $\tau$.\\
+
+$f_s$ & \si{\hertz} & Sampling frequency of MEG signals used for TRF modeling.\\
+$f_a$ & \si{\hertz} & Sampling frequency of the raw audio waveform.\\
+$\tau$ & \si{\second} & Time-lag variable in the TRF model.\\
+$\tau_{\min}$ & \si{\second} & Start of the TRF lag window.\\
+$\tau_{\max}$ & \si{\second} & End of the TRF lag window.\\
+
+$\boldsymbol{x}(n)$ & -- & Predictor vector at aligned discrete time index $n$.\\
+$\boldsymbol{y}(n)$ & \si{\tesla} / \si{\femto\tesla} & MEG response vector across sensors at aligned discrete time index $n$.\\
+$\mathbf{Y}$ & \si{\tesla} / \si{\femto\tesla} & MEG response matrix across time and sensors.\\
+$\hat{\mathbf{Y}}$ & \si{\tesla} / \si{\femto\tesla} & Predicted MEG responses from the fitted encoding model.\\
+
+$\mathbf{w}(\tau)$ & -- & TRF weight vector at lag $\tau$.\\
+$\mathbf{W}$ & -- & Full TRF weight matrix across lags and sensors.\\
+$\mathbf{W}^{\ast}$ & -- & Ridge-regularized estimate of the TRF weights.\\
+$\lambda$ & -- & Ridge regularization coefficient for TRF fitting.\\
+
+$\rho$ & -- & Prediction score of an encoding model.\\
+$\rho_{\mathrm{base}}$ & -- & Encoding score obtained using only the baseline predictor.\\
+$\rho_{\ell}$ & -- & Encoding score obtained using predictors derived from layer $\ell$.\\
+$\Delta \rho_{\ell}$ & -- & Improvement over baseline, defined as $\Delta \rho_{\ell} = \rho_{\ell} - \rho_{\mathrm{base}}$.\\
+$\rho_{\mathrm{CV}}$ & -- & Cross-validated prediction score.\\
+
+\end{longtable}
+
 
 \noindent
-The specification of \progname \ uses some derived data types: sequences, strings, and
-tuples. Sequences are lists filled with elements of the same data type. Strings
-are sequences of characters. Tuples contain a list of values, potentially of
-different types. In addition, \progname \ uses functions, which
-are defined by the data types of their inputs and outputs. Local functions are
-described by giving their type signature followed by their specification.
+The specification of \progname \ uses some derived data types: sequences,
+strings, tuples, matrices, and tensors. Sequences are lists filled with
+elements of the same data type. Strings are sequences of characters. Tuples
+contain a list of values, potentially of different types. Matrices and tensors
+denote multi-dimensional arrays of real values. In addition, \progname \ pipeline uses
+functions, which are defined by the data types of their inputs and outputs.
+Local functions are described by giving their type signature followed by their
+specification.
 
 \section{Module Decomposition}
 
@@ -131,57 +209,149 @@ The following table is taken directly from the Module Guide document for this pr
 \textbf{Level 1} & \textbf{Level 2}\\
 \midrule
 
-{Hardware-Hiding} & ~ \\
+\multirow{2}{0.3\textwidth}{Hardware-Hiding}
+& Audio Data Module\\
+& MEG Data Module\\
 \midrule
 
-\multirow{7}{0.3\textwidth}{Behaviour-Hiding} & Input Parameters\\
-& Output Format\\
-& Output Verification\\
-& Temperature ODEs\\
-& Energy Equations\\ 
-& Control Module\\
-& Specification Parameters Module\\
+\multirow{5}{0.3\textwidth}{Behaviour-Hiding}
+& Input Parameters Module\\
+& Model Training Module\\
+& Frozen Model Module\\
+& Representation Extraction Module\\
+% & Baseline Predictor Module\\
+% & Predictor Assembly Module\\
+% & Brain Alignment Module\\
+& Statistical Analysis Module\\
+% & Output Verification Module\\
+% & Output Format Module\\
 \midrule
 
-\multirow{3}{0.3\textwidth}{Software Decision} & {Sequence Data Structure}\\
-& ODE Solver\\
-& Plotting\\
+\multirow{1}{0.3\textwidth}{Software Decision}
+% & Checkpoint / Serialization Module\\
+% & Feature Cache Module\\
+% & TRF Backend Interface Module\\
+& Plotting Module\\
 \bottomrule
-
 \end{tabular}
 \caption{Module Hierarchy}
 \label{TblMH}
 \end{table}
 
+
+
+
+
+
+
 \newpage
-~\newpage
+% ~\newpage
 
-\section{MIS of \wss{Module Name}} \label{Module} \wss{Use labels for
-  cross-referencing}
 
-\wss{You can reference SRS labels, such as R\ref{R_Inputs}.}
 
-\wss{It is also possible to use \LaTeX for hypperlinks to external documents.}
+% \section{MIS of \wss{Module Name}} \label{Module} \wss{Use labels for
+%   cross-referencing}
+
+% \wss{You can reference SRS labels, such as R\ref{R_Inputs}.}
+
+% \wss{It is also possible to use \LaTeX for hypperlinks to external documents.}
+
+% \subsection{Module}
+
+% \wss{Short name for the module}
+
+% \subsection{Uses}
+
+
+% \subsection{Syntax}
+
+% \subsubsection{Exported Constants}
+
+% \subsubsection{Exported Access Programs}
+
+% \begin{center}
+% \begin{tabular}{p{2cm} p{4cm} p{4cm} p{2cm}}
+% \hline
+% \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+% \hline
+% \wss{accessProg} & - & - & - \\
+% \hline
+% \end{tabular}
+% \end{center}
+
+% \subsection{Semantics}
+
+% \subsubsection{State Variables}
+
+% \wss{Not all modules will have state variables.  State variables give the module
+%   a memory.}
+
+% \subsubsection{Environment Variables}
+
+% \wss{This section is not necessary for all modules.  Its purpose is to capture
+%   when the module has external interaction with the environment, such as for a
+%   device driver, screen interface, keyboard, file, etc.}
+
+% \subsubsection{Assumptions}
+
+% \wss{Try to minimize assumptions and anticipate programmer errors via
+%   exceptions, but for practical purposes assumptions are sometimes appropriate.}
+
+% \subsubsection{Access Routine Semantics}
+
+% \noindent \wss{accessProg}():
+% \begin{itemize}
+% \item transition: \wss{if appropriate} 
+% \item output: \wss{if appropriate} 
+% \item exception: \wss{if appropriate} 
+% \end{itemize}
+
+% \wss{A module without environment variables or state variables is unlikely to
+%   have a state transition.  In this case a state transition can only occur if
+%   the module is changing the state of another module.}
+
+% \wss{Modules rarely have both a transition and an output.  In most cases you
+%   will have one or the other.}
+
+% \subsubsection{Local Functions}
+
+% \wss{As appropriate} \wss{These functions are for the purpose of specification.
+%   They are not necessarily something that is going to be implemented
+%   explicitly.  Even if they are implemented, they are not exported; they only
+%   have local scope.}
+
+
+\section{MIS of Audio Data Module} \label{Module_AudioData}
 
 \subsection{Module}
 
-\wss{Short name for the module}
+Audio Data Module
 
 \subsection{Uses}
 
+Input Parameters Module
 
 \subsection{Syntax}
 
 \subsubsection{Exported Constants}
 
+\begin{itemize}
+    \item $\mathcal{D}_{\mathrm{Audio}}$: the collection of audio datasets available to \progname, including training audio and stimulus audio.
+\end{itemize}
+
 \subsubsection{Exported Access Programs}
 
 \begin{center}
-\begin{tabular}{p{2cm} p{4cm} p{4cm} p{2cm}}
+\begin{tabular}{p{3.2cm} p{4.2cm} p{4.2cm} p{2.4cm}}
 \hline
 \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
 \hline
-\wss{accessProg} & - & - & - \\
+initAudioData & - & - & unsupported dataset, file error \\
+getTrainSplit & dataset name: string & $\mathcal{D}_{\mathrm{train}}$ & dataset not initialized \\
+getValSplit & dataset name: string & $\mathcal{D}_{\mathrm{val}}$ & dataset not initialized \\
+getTestSplit & dataset name: string & $\mathcal{D}_{\mathrm{test}}$ & dataset not initialized \\
+getAudio & utterance id: string & $\boldsymbol{a}$ & utterance not found, file error \\
+
 \hline
 \end{tabular}
 \end{center}
@@ -190,89 +360,869 @@ The following table is taken directly from the Module Guide document for this pr
 
 \subsubsection{State Variables}
 
-\wss{Not all modules will have state variables.  State variables give the module
-  a memory.}
+\begin{itemize}
+    \item $datasetRegistry$: a mapping from dataset names to dataset descriptors and file locations.
+    \item $audioIndex$: a mapping from utterance identifiers to audio file locations and metadata.
+    \item $initialized$: $\mathbb{B}$, indicates whether the module has loaded dataset structure information.
+\end{itemize}
 
 \subsubsection{Environment Variables}
 
-\wss{This section is not necessary for all modules.  Its purpose is to capture
-  when the module has external interaction with the environment, such as for a
-  device driver, screen interface, keyboard, file, etc.}
+\begin{itemize}
+    \item Audio files stored in the external file system.
+    \item Dataset directory paths provided by the Input Parameters Module.
+\end{itemize}
 
 \subsubsection{Assumptions}
 
-\wss{Try to minimize assumptions and anticipate programmer errors via
-  exceptions, but for practical purposes assumptions are sometimes appropriate.}
+\begin{itemize}
+    \item The required audio datasets are present at the file locations specified by the Input Parameters Module.
+    \item Each utterance identifier uniquely determines one audio sample.
+    \item Audio files can be decoded into real-valued waveform sequences.
+\end{itemize}
 
 \subsubsection{Access Routine Semantics}
 
-\noindent \wss{accessProg}():
+\noindent \textbf{initAudioData}():
 \begin{itemize}
-\item transition: \wss{if appropriate} 
-\item output: \wss{if appropriate} 
-\item exception: \wss{if appropriate} 
+    \item transition: $datasetRegistry$, $audioIndex$, $initialized$ are populated from the configured dataset locations.
+    \item exception: raised if a required dataset is unavailable, unsupported, or cannot be indexed.
 \end{itemize}
 
-\wss{A module without environment variables or state variables is unlikely to
-  have a state transition.  In this case a state transition can only occur if
-  the module is changing the state of another module.}
+\noindent \textbf{getTrainSplit}(dataset name):
+\begin{itemize}
+    \item output: returns $\mathcal{D}_{\mathrm{train}}$ for the requested dataset.
+    \item exception: raised if the module has not been initialized or the dataset name is unknown.
+\end{itemize}
 
-\wss{Modules rarely have both a transition and an output.  In most cases you
-  will have one or the other.}
+\noindent \textbf{getValSplit}(dataset name):
+\begin{itemize}
+    \item output: returns $\mathcal{D}_{\mathrm{val}}$ for the requested dataset.
+    \item exception: raised if the module has not been initialized or the dataset name is unknown.
+\end{itemize}
+
+\noindent \textbf{getTestSplit}(dataset name):
+\begin{itemize}
+    \item output: returns $\mathcal{D}_{\mathrm{test}}$ for the requested dataset.
+    \item exception: raised if the module has not been initialized or the dataset name is unknown.
+\end{itemize}
+
+\noindent \textbf{getAudio}(utterance id):
+\begin{itemize}
+    \item output: returns the audio waveform $\boldsymbol{a}$ associated with the given utterance identifier.
+    \item exception: raised if the utterance identifier is not present in $audioIndex$ or the file cannot be read.
+\end{itemize}
+
+
 
 \subsubsection{Local Functions}
 
-\wss{As appropriate} \wss{These functions are for the purpose of specification.
-  They are not necessarily something that is going to be implemented
-  explicitly.  Even if they are implemented, they are not exported; they only
-  have local scope.}
+\begin{itemize}
+    \item buildAudioIndex :   
+    Constructs the mapping from utterance identifiers to file paths and metadata.
+    \item decodeAudio :   
+    Reads an audio file and converts it to the gammatone filterbank sequence.
+\end{itemize}
+
+
+
+
 
 \newpage
+
+
+\section{MIS of MEG Data Module} \label{Module_MEGData}
+
+\subsection{Module}
+
+MEG Data Module
+
+\subsection{Uses}
+
+Input Parameters Module
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+
+\begin{itemize}
+    \item $\mathcal{D}_{\mathrm{MEG}}$: the collection of MEG recordings and associated metadata available to \progname.
+\end{itemize}
+
+\subsubsection{Exported Access Programs}
+
+\begin{center}
+\begin{tabular}{p{3.2cm} p{4.2cm} p{4.2cm} p{2.4cm}}
+\hline
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+\hline
+initMEGData & - & - & unsupported dataset, file error \\
+getSubjectList & - & sequence of strings & dataset not initialized \\
+getMEGResponse & subject id: string, utterance id: string & $\mathbf{Y}$ & subject not found, trial not found, file error \\
+getSensorCount & - & $C$ & dataset not initialized \\
+getMEGSamplingRate & - & $f_s$ & dataset not initialized \\
+getTrialMetadata & subject id: string, utterance id: string & tuple & subject not found, trial not found \\
+getStimulusLink & subject id: string, utterance id: string & string & subject not found, trial not found \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+
+\begin{itemize}
+    \item $subjectIndex$: a mapping from subject identifiers to MEG recording descriptors.
+    \item $trialIndex$: a mapping from $(subject\ id,\ utterance\ id)$ pairs to trial locations and metadata.
+    \item $sensorInfo$: metadata describing sensor identities and count $C$.
+    \item $initialized$: $\mathbb{B}$, indicates whether the module has loaded the MEG dataset structure.
+\end{itemize}
+
+\subsubsection{Environment Variables}
+
+\begin{itemize}
+    \item MEG recordings and metadata stored in the external file system.
+    \item Dataset directory paths provided by the Input Parameters Module.
+\end{itemize}
+
+\subsubsection{Assumptions}
+
+\begin{itemize}
+    \item The MEG dataset is available at the configured location.
+    \item Each pair of subject identifier and utterance identifier uniquely identifies one MEG trial.
+    \item The stimulus linkage between MEG trials and utterance identifiers is valid and consistent.
+\end{itemize}
+
+\subsubsection{Access Routine Semantics}
+
+\noindent \textbf{initMEGData}():
+\begin{itemize}
+    \item transition: $subjectIndex$, $trialIndex$, $sensorInfo$, and $initialized$ are populated from the configured MEG dataset.
+    \item exception: raised if the MEG dataset is unavailable, unsupported, or cannot be indexed.
+\end{itemize}
+
+\noindent \textbf{getSubjectList}():
+\begin{itemize}
+    \item output: returns the sequence of subject identifiers available in $\mathcal{D}_{\mathrm{MEG}}$.
+    \item exception: raised if the module has not been initialized.
+\end{itemize}
+
+\noindent \textbf{getMEGResponse}(subject id, utterance id):
+\begin{itemize}
+    \item output: returns the MEG response matrix $\mathbf{Y}$ associated with the specified subject and utterance.
+    \item exception: raised if the subject identifier or utterance identifier is unknown, or if the corresponding recording cannot be read.
+\end{itemize}
+
+\noindent \textbf{getSensorCount}():
+\begin{itemize}
+    \item output: returns the number of MEG sensors $C$.
+    \item exception: raised if the module has not been initialized.
+\end{itemize}
+
+\noindent \textbf{getMEGSamplingRate}():
+\begin{itemize}
+    \item output: returns the MEG sampling frequency $f_s$.
+    \item exception: raised if the module has not been initialized.
+\end{itemize}
+
+\noindent \textbf{getTrialMetadata}(subject id, utterance id):
+\begin{itemize}
+    \item output: returns metadata associated with the given trial, such as timing information, recording identifiers, and preprocessing descriptors.
+    \item exception: raised if the subject identifier or utterance identifier is unknown.
+\end{itemize}
+
+\noindent \textbf{getStimulusLink}(subject id, utterance id):
+\begin{itemize}
+    \item output: returns the stimulus identifier linked to the requested MEG trial.
+    \item exception: raised if the subject identifier or utterance identifier is unknown.
+\end{itemize}
+
+\subsubsection{Local Functions}
+
+\begin{itemize}
+    \item buildSubjectIndex :   
+    Constructs the mapping from subject identifiers to recording descriptors.
+    \item buildTrialIndex :   
+    Constructs the mapping from $(subject\ id,\ utterance\ id)$ pairs to trial locations and metadata.
+
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+\newpage
+
+
+
+\section{MIS of Input Parameters Module} \label{Module_InputParameters}
+
+\subsection{Module}
+
+Input Parameters Module
+
+\subsection{Uses}
+
+None
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+
+\begin{itemize}
+    \item $SupportedDatasets$: the set of dataset names supported by \progname.
+    \item $SupportedModels$: the set of speech model types supported by \progname.
+\end{itemize}
+
+\subsubsection{Exported Access Programs}
+
+\begin{center}
+\begin{tabular}{p{3.4cm} p{4.2cm} p{4.2cm} p{2.4cm}}
+\hline
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+\hline
+initParameters & config source: string & - & invalid config, file error \\
+getDatasetConfig & dataset name: string & tuple & unknown dataset, not initialized \\
+getTrainingConfig & - & tuple & not initialized \\
+getExtractionConfig & - & tuple & not initialized \\
+getAnalysisConfig & - & tuple & not initialized \\
+getPathConfig & - & tuple & not initialized \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+
+\begin{itemize}
+    \item $paramTable$: a mapping from configuration keys to parameter values.
+    \item $initialized$: $\mathbb{B}$, indicates whether the configuration has been loaded.
+\end{itemize}
+
+\subsubsection{Environment Variables}
+
+\begin{itemize}
+    \item Configuration file stored in the external file system.
+\end{itemize}
+
+\subsubsection{Assumptions}
+
+\begin{itemize}
+    \item A valid configuration source is provided before any dependent module is initialized.
+\end{itemize}
+
+\subsubsection{Access Routine Semantics}
+
+\noindent \textbf{initParameters}(config source):
+\begin{itemize}
+    \item transition: $paramTable$ and $initialized$ are populated from the configuration source.
+    \item exception: raised if the configuration file cannot be read or contains invalid parameter values.
+\end{itemize}
+
+\noindent \textbf{getDatasetConfig}(dataset name):
+\begin{itemize}
+    \item output: returns the tuple of dataset-specific parameters for the requested dataset, including location and split information.
+    \item exception: raised if the module is not initialized or the dataset name is unsupported.
+\end{itemize}
+
+\noindent \textbf{getTrainingConfig}():
+\begin{itemize}
+    \item output: returns the tuple of training parameters, such as model type, batch size $B$, epochs $E$, and learning rate $\eta$.
+    \item exception: raised if the module is not initialized.
+\end{itemize}
+
+\noindent \textbf{getExtractionConfig}():
+\begin{itemize}
+    \item output: returns the tuple of representation extraction parameters, such as selected layers, optional transformation $g(\cdot)$, and alignment settings.
+    \item exception: raised if the module is not initialized.
+\end{itemize}
+
+\noindent \textbf{getAnalysisConfig}():
+\begin{itemize}
+    \item output: returns the tuple of analysis parameters, such as lag window $[\tau_{\min}, \tau_{\max}]$, number of lags $K$, and evaluation options.
+    \item exception: raised if the module is not initialized.
+\end{itemize}
+
+\noindent \textbf{getPathConfig}():
+\begin{itemize}
+    \item output: returns the tuple of configured file-system paths used by \progname.
+    \item exception: raised if the module is not initialized.
+\end{itemize}
+
+\subsubsection{Local Functions}
+
+\begin{itemize}
+    \item parseConfig :   
+    Parses the configuration source into a parameter mapping.
+    % \item $validateConfig : \text{Map} \rightarrow \mathbb{B}$  
+    % Checks whether required configuration fields are present and well-formed.
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+
+
+\newpage
+
+
+
+
+\section{MIS of Model Training Module} \label{Module_ModelTraining}
+
+\subsection{Module}
+
+Model Training Module
+
+\subsection{Uses}
+
+Input Parameters Module, Audio Data Module
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+
+None
+
+\subsubsection{Exported Access Programs}
+
+\begin{center}
+\begin{tabular}{p{3.4cm} p{4.2cm} p{4.2cm} p{2.4cm}}
+\hline
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+\hline
+trainModel & model name: string, dataset name: string & $\boldsymbol{\theta}^{\ast}$ & training failed, invalid config \\
+getParameters & model name: string & $\boldsymbol{\theta}^{\ast}$ & model not trained \\
+getReport & model name: string & tuple & model not trained \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+
+\begin{itemize}
+    \item $trainedModelTable$: a mapping from model names to optimized parameters $\boldsymbol{\theta}^{\ast}$.
+    \item $trainingReportTable$: a mapping from model names to training summaries and diagnostics.
+\end{itemize}
+
+\subsubsection{Environment Variables}
+
+None
+
+\subsubsection{Assumptions}
+
+\begin{itemize}
+    \item The requested training dataset is available through the Audio Data Module.
+    \item The requested model type is supported by \progname.
+\end{itemize}
+
+\subsubsection{Access Routine Semantics}
+
+\noindent \textbf{trainModel}(model name, dataset name):
+\begin{itemize}
+    \item transition: the model $f_{\boldsymbol{\theta}}$ is trained on $\mathcal{D}_{\mathrm{train}}$ using the configured optimization settings. $trainedModelTable$ and $trainingReportTable$ are updated.
+    \item output: returns the optimized parameters $\boldsymbol{\theta}^{\ast}$.
+    \item exception: raised if configuration values are invalid, the dataset is unavailable, or optimization fails.
+\end{itemize}
+
+\noindent \textbf{getTrainedParameters}(model name):
+\begin{itemize}
+    \item output: returns $\boldsymbol{\theta}^{\ast}$ associated with the requested model.
+    \item exception: raised if the requested model has not been trained.
+\end{itemize}
+
+\noindent \textbf{getTrainingReport}(model name):
+\begin{itemize}
+    \item output: returns a tuple containing training diagnostics, such as loss history and stopping information.
+    \item exception: raised if the requested model has not been trained.
+\end{itemize}
+
+\subsubsection{Local Functions}
+
+\begin{itemize}
+    \item optimizeModel :   
+    Optimizes model parameters using the configured training procedure.
+    \item buildTrainingReport :   
+    Constructs a summary of training progress and outcomes.
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+
+
+\newpage
+
+
+
+
+
+\section{MIS of Frozen Model Module} \label{Module_FrozenModel}
+
+\subsection{Module}
+
+Frozen Model Module
+
+\subsection{Uses}
+
+Input Parameters Module, Model Training Module
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+
+None
+
+\subsubsection{Exported Access Programs}
+
+\begin{center}
+\begin{tabular}{p{3.4cm} p{4.2cm} p{4.2cm} p{2.4cm}}
+\hline
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+\hline
+loadFrozenModel & model name: string & - & model not available, file error \\
+getFrozenModel & model name: string & $f_{\boldsymbol{\theta}^{\ast}}(\cdot)$ & model not loaded \\
+getLayerCount & model name: string & $L$ & model not loaded \\
+isFrozen & model name: string & $\mathbb{B}$ & model not loaded \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+
+\begin{itemize}
+    \item $frozenModelTable$: a mapping from model names to loaded frozen models.
+    \item $freezeStatus$: a mapping from model names to boolean values indicating whether parameter updates are disabled.
+\end{itemize}
+
+\subsubsection{Environment Variables}
+
+\begin{itemize}
+    \item Stored model checkpoints in the external file system.
+\end{itemize}
+
+\subsubsection{Assumptions}
+
+\begin{itemize}
+    \item A trained checkpoint exists for each model requested by this module.
+\end{itemize}
+
+\subsubsection{Access Routine Semantics}
+
+\noindent \textbf{loadFrozenModel}(model name):
+\begin{itemize}
+    \item transition: loads the optimized parameters $\boldsymbol{\theta}^{\ast}$ for the requested model and constructs a frozen model instance with parameter updates disabled; updates $frozenModelTable$ and $freezeStatus$.
+    \item exception: raised if the requested model is unavailable or its checkpoint cannot be loaded.
+\end{itemize}
+
+\noindent \textbf{getFrozenModel}(model name):
+\begin{itemize}
+    \item output: returns the frozen model $f_{\boldsymbol{\theta}^{\ast}}(\cdot)$.
+    \item exception: raised if the requested model has not been loaded.
+\end{itemize}
+
+\noindent \textbf{getLayerCount}(model name):
+\begin{itemize}
+    \item output: returns the number of accessible internal layers $L$ for the requested frozen model.
+    \item exception: raised if the requested model has not been loaded.
+\end{itemize}
+
+\noindent \textbf{isFrozen}(model name):
+\begin{itemize}
+    \item output: returns \texttt{true} if the requested model has been loaded in frozen form, and \texttt{false} otherwise.
+    \item exception: raised if the requested model has not been loaded.
+\end{itemize}
+
+\subsubsection{Local Functions}
+
+\begin{itemize}
+    \item freezeParameters :   
+    Converts a loaded trained model into a non-trainable model instance.
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+
+
+
+\newpage
+
+
+
+
+
+
+\section{MIS of Representation Extraction Module} \label{Module_RepresentationExtraction}
+
+\subsection{Module}
+
+Representation Extraction Module
+
+\subsection{Uses}
+
+Input Parameters Module, Audio Data Module, Frozen Model Module, Feature Cache Module
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+
+None
+
+\subsubsection{Exported Access Programs}
+
+\begin{center}
+\begin{tabular}{p{3.4cm} p{4.2cm} p{4.2cm} p{2.4cm}}
+\hline
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+\hline
+extractHiddenStates & utterance id: string, model name: string, layer index: $\ell$ & sequence of $\boldsymbol{h}^{(\ell)}_{n}$ & utterance not found, model not loaded \\
+buildPredictor & utterance id: string, model name: string, layer index: $\ell$ & $\mathbf{R}^{(\ell)}$ & extraction failed \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+
+\begin{itemize}
+    \item $extractionSpec$: tuple of extraction parameters obtained from the Input Parameters Module.
+\end{itemize}
+
+\subsubsection{Environment Variables}
+
+None
+
+\subsubsection{Assumptions}
+
+\begin{itemize}
+    \item The requested utterance is available through the Audio Data Module.
+    \item The requested frozen model has already been loaded.
+    \item The requested layer index $\ell$ is valid for the chosen model.
+\end{itemize}
+
+\subsubsection{Access Routine Semantics}
+
+\noindent \textbf{extractHiddenStates}(utterance id, model name, layer index):
+\begin{itemize}
+    \item output: returns the sequence of hidden state vectors $\boldsymbol{h}^{(\ell)}_{n}$ produced by the frozen model for the requested utterance.
+    \item exception: raised if the utterance or model is unavailable, or if the requested layer index is invalid.
+\end{itemize}
+
+\noindent \textbf{buildPredictorMatrix}(utterance id, model name, layer index):
+\begin{itemize}
+    \item output: returns the time-by-feature predictor matrix $\mathbf{R}^{(\ell)}$ derived from the hidden states, after optional transformation $g(\cdot)$ and temporal alignment.
+    \item exception: raised if hidden-state extraction fails or the requested data are invalid.
+\end{itemize}
+
+\subsubsection{Local Functions}
+
+\begin{itemize}
+    % \item $applyTransform : \seqof{\boldsymbol{h}^{(\ell)}_{n}} \times g(\cdot) \rightarrow \seqof{\boldsymbol{r}^{(\ell)}_{n}}$  
+    % Applies the configured transformation to hidden states.
+    \item alignToAnalysisGrid: 
+    Converts transformed representations into a predictor matrix aligned to the analysis time grid.
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+
+\newpage
+
+
+
+\section{MIS of Statistical Analysis Module} \label{Module_StatisticalAnalysis}
+
+\subsection{Module}
+
+Statistical Analysis Module
+
+\subsection{Uses}
+
+Input Parameters Module, Brain Alignment Module
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+
+None
+
+\subsubsection{Exported Access Programs}
+
+\begin{center}
+\begin{tabular}{p{3.4cm} p{4.2cm} p{4.2cm} p{2.4cm}}
+\hline
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+\hline
+runStatAnalysis & model name: string & tuple & alignment results unavailable \\
+getLayerSummary & model name: string & tuple & analysis not run \\
+getBestLayer & model name: string & $\ell$ & analysis not run \\
+getImprovementTable & model name: string & tuple & analysis not run \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+
+\begin{itemize}
+    \item $summaryTable$: a mapping from model names to statistical summaries over layers and subjects.
+    \item $bestLayerTable$: a mapping from model names to the layer index with the best evaluation score.
+    \item $improvementTable$: a mapping from model names to the values of $\Delta \rho_{\ell}$ across candidate layers.
+\end{itemize}
+
+\subsubsection{Environment Variables}
+
+None
+
+\subsubsection{Assumptions}
+
+\begin{itemize}
+    \item Brain alignment results have already been generated for the requested model and candidate layers.
+\end{itemize}
+
+\subsubsection{Access Routine Semantics}
+
+\noindent \textbf{runStatisticalAnalysis}(model name):
+\begin{itemize}
+    \item transition: retrieves alignment scores from the Brain Alignment Module, computes summaries across layers and subjects, updates $summaryTable$, $bestLayerTable$, and $improvementTable$.
+    \item output: returns a tuple containing the analysis summary for the requested model.
+    \item exception: raised if the required alignment results are unavailable.
+\end{itemize}
+
+\noindent \textbf{getLayerSummary}(model name):
+\begin{itemize}
+    \item output: returns the stored statistical summary for the requested model, including layer-wise score summaries.
+    \item exception: raised if analysis has not been run for the requested model.
+\end{itemize}
+
+\noindent \textbf{getBestLayer}(model name):
+\begin{itemize}
+    \item output: returns the layer index $\ell$ with the best statistical outcome according to the configured selection rule.
+    \item exception: raised if analysis has not been run for the requested model.
+\end{itemize}
+
+\noindent \textbf{getImprovementTable}(model name):
+\begin{itemize}
+    \item output: returns a tuple containing the layer-wise improvement values $\Delta \rho_{\ell}$ for the requested model.
+    \item exception: raised if analysis has not been run for the requested model.
+\end{itemize}
+
+\subsubsection{Local Functions}
+
+\begin{itemize}
+    \item computeImprovement :   
+    Computes the improvement over the baseline encoding score.
+    \item selectBestLayer :   
+    Selects the best layer according to the configured criterion.
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\newpage
+
+
+
+\section{MIS of Plotting Module} \label{Module_Plotting}
+
+\subsection{Module}
+
+Plotting Module
+
+\subsection{Uses}
+
+Input Parameters Module, Statistical Analysis Module
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+
+None
+
+\subsubsection{Exported Access Programs}
+
+\begin{center}
+\begin{tabular}{p{3.4cm} p{4.2cm} p{4.2cm} p{2.4cm}}
+\hline
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+\hline
+plotLayerScores & model name: string & string & analysis not available, plotting failed \\
+plotImprovement
+Summary & model name: string & string & analysis not available, plotting failed \\
+plotModel
+Comparison & - & string & analysis not available, plotting failed \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+
+\begin{itemize}
+    \item $figureRegistry$: a mapping from plot identifiers to output file locations.
+\end{itemize}
+
+\subsubsection{Environment Variables}
+
+\begin{itemize}
+    \item Figure files written to the external file system.
+\end{itemize}
+
+\subsubsection{Assumptions}
+
+\begin{itemize}
+    \item Statistical summaries required for plotting are already available.
+\end{itemize}
+
+\subsubsection{Access Routine Semantics}
+
+\noindent \textbf{plotLayerScores}(model name):
+\begin{itemize}
+    \item transition: generates and stores a figure summarizing layer-wise scores for the requested model; updates $figureRegistry$.
+    \item output: returns the file location of the generated figure.
+    \item exception: raised if the required analysis results are unavailable or figure generation fails.
+\end{itemize}
+
+\noindent \textbf{plotImprovementSummary}(model name):
+\begin{itemize}
+    \item transition: generates and stores a figure summarizing $\Delta \rho_{\ell}$ across layers for the requested model; updates $figureRegistry$.
+    \item output: returns the file location of the generated figure.
+    \item exception: raised if the required analysis results are unavailable or figure generation fails.
+\end{itemize}
+
+\noindent \textbf{plotModelComparison}():
+\begin{itemize}
+    \item transition: generates and stores a figure comparing multiple trained models according to the configured analysis outputs; updates $figureRegistry$.
+    \item output: returns the file location of the generated figure.
+    \item exception: raised if the required analysis results are unavailable or figure generation fails.
+\end{itemize}
+
+\subsubsection{Local Functions}
+
+\begin{itemize}
+    \item renderFigure :  
+    Converts a plotting specification and its associated data into a saved figure file.
+    \item makePlotSpec :   
+    Constructs the internal plotting specification used by this module.
+\end{itemize}
+
+
+
+
+
+
 
 \bibliographystyle {plainnat}
 \bibliography {../../../refs/References}
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 \newpage
 
-\section{Appendix} \label{Appendix}
+% \section{Appendix} \label{Appendix}
 
-\wss{Extra information if required}
+% \wss{Extra information if required}
 
-\newpage{}
+% \newpage{}
 
-\section*{Appendix --- Reflection}
+% \section*{Appendix --- Reflection}
 
-\wss{Not required for CAS 741 projects}
+% \wss{Not required for CAS 741 projects}
 
-The information in this section will be used to evaluate the team members on the
-graduate attribute of Problem Analysis and Design.
+% The information in this section will be used to evaluate the team members on the
+% graduate attribute of Problem Analysis and Design.
 
-\input{../../Reflection.text}
+% \input{../../Reflection.text}
 
-\begin{enumerate}
-  \item What went well while writing this deliverable? 
-  \item What pain points did you experience during this deliverable, and how
-    did you resolve them?
-  \item Which of your design decisions stemmed from speaking to your client(s)
-  or a proxy (e.g. your peers, stakeholders, potential users)? For those that
-  were not, why, and where did they come from?
-  \item While creating the design doc, what parts of your other documents (e.g.
-  requirements, hazard analysis, etc), it any, needed to be changed, and why?
-  \item What are the limitations of your solution?  Put another way, given
-  unlimited resources, what could you do to make the project better? (LO\_ProbSolutions)
-  \item Give a brief overview of other design solutions you considered.  What
-  are the benefits and tradeoffs of those other designs compared with the chosen
-  design?  From all the potential options, why did you select the documented design?
-  (LO\_Explores)
-  \item (After you have implemented another team's module, which means this
-  isn't filled in until after the original deadline). What did you learn by
-  implementing another team's module? Were all the details you needed in the
-  documentation, or did you need to make assumptions, or ask the other team
-  questions?  If your team also had another team implement one of your modules,
-  what was this experience like?  Are there things in your documentation you
-  could have changed to make the process go more smoothly for when an
-  ``outsider'' completes some of the implementation?
-\end{enumerate}
+% \begin{enumerate}
+%   \item What went well while writing this deliverable? 
+%   \item What pain points did you experience during this deliverable, and how
+%     did you resolve them?
+%   \item Which of your design decisions stemmed from speaking to your client(s)
+%   or a proxy (e.g. your peers, stakeholders, potential users)? For those that
+%   were not, why, and where did they come from?
+%   \item While creating the design doc, what parts of your other documents (e.g.
+%   requirements, hazard analysis, etc), it any, needed to be changed, and why?
+%   \item What are the limitations of your solution?  Put another way, given
+%   unlimited resources, what could you do to make the project better? (LO\_ProbSolutions)
+%   \item Give a brief overview of other design solutions you considered.  What
+%   are the benefits and tradeoffs of those other designs compared with the chosen
+%   design?  From all the potential options, why did you select the documented design?
+%   (LO\_Explores)
+%   \item (After you have implemented another team's module, which means this
+%   isn't filled in until after the original deadline). What did you learn by
+%   implementing another team's module? Were all the details you needed in the
+%   documentation, or did you need to make assumptions, or ask the other team
+%   questions?  If your team also had another team implement one of your modules,
+%   what was this experience like?  Are there things in your documentation you
+%   could have changed to make the process go more smoothly for when an
+%   ``outsider'' completes some of the implementation?
+% \end{enumerate}
 
 
 \end{document}
