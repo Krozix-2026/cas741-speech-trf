@@ -833,7 +833,7 @@ isFrozen & model name: string & $\mathbb{B}$ & model not loaded \\
 
 \noindent \textbf{loadFrozenModel}(model name):
 \begin{itemize}
-    \item transition: loads the optimized parameters $\boldsymbol{\theta}^{\ast}$ for the requested model and constructs a frozen model instance with parameter updates disabled; updates $frozenModelTable$ and $freezeStatus$.
+    \item transition: loads the optimized parameters $\boldsymbol{\theta}^{\ast}$ for the requested model and constructs a frozen model instance with parameter updates disabled. Updates $frozenModelTable$ and $freezeStatus$.
     \item exception: raised if the requested model is unavailable or its checkpoint cannot be loaded.
 \end{itemize}
 

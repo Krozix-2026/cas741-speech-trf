@@ -8,6 +8,8 @@
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{hyperref}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta}
 \hypersetup{
     colorlinks,
     citecolor=blue,
@@ -46,8 +48,8 @@
 \begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
 \toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
 \midrule
-Date 1 & 1.0 & Notes\\
-Date 2 & 1.1 & Notes\\
+March 25, 2026 & 1.0 & Initial Draft\\
+% Date 2 & 1.1 & Notes\\
 \bottomrule
 \end{tabularx}
 
@@ -60,23 +62,35 @@ This section records information for easy reference.
 \subsection{Abbreviations and Acronyms}
 
 \renewcommand{\arraystretch}{1.2}
-\begin{tabular}{l l} 
-  \toprule		
-  \textbf{symbol} & \textbf{description}\\
-  \midrule 
-  AC & Anticipated Change\\
-  DAG & Directed Acyclic Graph \\
-  M & Module \\
-  MG & Module Guide \\
-  OS & Operating System \\
-  R & Requirement\\
-  SC & Scientific Computing \\
-  SRS & Software Requirements Specification\\
-  \progname & Explanation of program name\\
-  UC & Unlikely Change \\
-  \wss{etc.} & \wss{...}\\
-  \bottomrule
-\end{tabular}\\
+\begin{table}[ht]
+\centering
+\begin{tabular}{l p{11.5cm}}
+\toprule
+\textbf{symbol} & \textbf{description}\\
+\midrule
+AC & Anticipated Change\\
+API & Application Programming Interface\\
+BIDS & Brain Imaging Data Structure\\
+CLI & Command Line Interface\\
+CV & Cross-Validation\\
+DL & Deep Learning\\
+HPC & High-Performance Computing\\
+M & Module\\
+MEG & Magnetoencephalography\\
+MG & Module Guide\\
+MIS & Module Interface Specification\\
+mTRF & Multivariate Temporal Response Function\\
+OS & Operating System\\
+ROI & Region of Interest\\
+SRS & Software Requirements Specification\\
+TRF & Temporal Response Function\\
+UC & Unlikely Change\\
+WER & Word Error Rate\\
+\progname & Program name for the Model--to--Brain Alignment for Speech Recognition system\\
+\bottomrule
+\end{tabular}
+\caption{Abbreviations and acronyms used in this document}
+\end{table}
 
 \newpage
 
@@ -157,16 +171,47 @@ adapted here is called design for
 change.
 
 \begin{description}
-\item[\refstepcounter{acnum} \actheacnum \label{acHardware}:] The specific
-  hardware on which the software is running.
-\item[\refstepcounter{acnum} \actheacnum \label{acInput}:] The format of the
-  initial input data.
-\item ...
+% \item[\refstepcounter{acnum} \actheacnum \label{acHardware}:] The specific
+% hardware and operating system on which the software is executed.
+
+\item[\refstepcounter{acnum} \actheacnum \label{acAudioFormat}:] The storage
+format, indexing scheme, and metadata organization of the audio datasets.
+
+\item[\refstepcounter{acnum} \actheacnum \label{acMEGFormat}:] The storage
+format, trial organization, and metadata organization of the MEG datasets.
+
+\item[\refstepcounter{acnum} \actheacnum \label{acParams}:] The set of input
+parameters, including file locations, model choices, lag windows, and
+cross-validation settings.
+
+\item[\refstepcounter{acnum} \actheacnum \label{acTraining}:] The training
+procedure used to optimize the speech model parameters.
+
+\item[\refstepcounter{acnum} \actheacnum \label{acFrozen}:] The representation
+and loading strategy for trained checkpoints and frozen models.
+
+\item[\refstepcounter{acnum} \actheacnum \label{acRepresentation}:] The method
+used to extract hidden states and convert them into aligned predictor matrices.
+
+\item[\refstepcounter{acnum} \actheacnum \label{acAnalysis}:] The statistical
+analysis protocol used to fit encoding models, compute cross-validated scores,
+and quantify baseline-referenced gains.
+
+\item[\refstepcounter{acnum} \actheacnum \label{acPlot}:] The choice of
+visualization routines and output figure formats.
 \end{description}
 
-\wss{Anticipated changes relate to changes that would be made in requirements,
-design or implementation choices.  They are not related to changes that are made
-at run-time, like the values of parameters.}
+
+
+% \wss{Anticipated changes relate to changes that would be made in requirements,
+% design or implementation choices.  They are not related to changes that are made
+% at run-time, like the values of parameters.}
+
+
+
+
+
+
 
 \subsection{Unlikely Changes} \label{SecUchange}
 
@@ -178,10 +223,25 @@ will potentially need to be modified. Hence, it is not intended that these
 decisions will be changed.
 
 \begin{description}
-\item[\refstepcounter{ucnum} \uctheucnum \label{ucIO}:] Input/Output devices
-  (Input: File and/or Keyboard, Output: File, Memory, and/or Screen).
-\item ...
+\item[\refstepcounter{ucnum} \uctheucnum \label{ucIO}:] Input and output remain
+file-based rather than interactive or device-driven.
+
+\item[\refstepcounter{ucnum} \uctheucnum \label{ucDomain}:] The system remains
+an offline scientific workflow for model-to-brain alignment of speech data,
+rather than a real-time or online prediction system.
+
+\item[\refstepcounter{ucnum} \uctheucnum \label{ucDB}:] No dedicated database
+system is required. Datasets and outputs are managed through the file system.
+
+\item[\refstepcounter{ucnum} \uctheucnum \label{ucProtocol}:] No external
+communication protocol is required beyond local file access.
 \end{description}
+
+
+
+
+
+
 
 \section{Module Hierarchy} \label{SecMH}
 
@@ -191,9 +251,22 @@ below, which are leaves in the hierarchy tree, are the modules that will
 actually be implemented.
 
 \begin{description}
-\item [\refstepcounter{mnum} \mthemnum \label{mHH}:] Hardware-Hiding Module
-\item ...
+\item[\refstepcounter{mnum} \mthemnum \label{mAudio}:] Audio Data Module
+\item[\refstepcounter{mnum} \mthemnum \label{mMEG}:] MEG Data Module
+
+\item[\refstepcounter{mnum} \mthemnum \label{mParams}:] Input Parameters Module
+\item[\refstepcounter{mnum} \mthemnum \label{mTrain}:] Model Training Module
+\item[\refstepcounter{mnum} \mthemnum \label{mFrozen}:] Frozen Model Module
+\item[\refstepcounter{mnum} \mthemnum \label{mExtract}:] Representation Extraction Module
+\item[\refstepcounter{mnum} \mthemnum \label{mStats}:] Statistical Analysis Module
+
+\item[\refstepcounter{mnum} \mthemnum \label{mPlot}:] Plotting Module
 \end{description}
+
+
+
+
+
 
 
 \begin{table}[h!]
@@ -203,41 +276,88 @@ actually be implemented.
 \textbf{Level 1} & \textbf{Level 2}\\
 \midrule
 
-{Hardware-Hiding Module} & ~ \\
+\multirow{2}{0.3\textwidth}{Hardware-Hiding Module}
+& Audio Data Module\\
+& MEG Data Module\\
 \midrule
 
-\multirow{7}{0.3\textwidth}{Behaviour-Hiding Module} & ?\\
-& ?\\
-& ?\\
-& ?\\
-& ?\\
-& ?\\
-& ?\\ 
-& ?\\
+\multirow{5}{0.3\textwidth}{Behaviour-Hiding Module}
+& Input Parameters Module\\
+& Model Training Module\\
+& Frozen Model Module\\
+& Representation Extraction Module\\
+& Statistical Analysis Module\\
 \midrule
 
-\multirow{3}{0.3\textwidth}{Software Decision Module} & {?}\\
-& ?\\
-& ?\\
+\multirow{1}{0.3\textwidth}{Software Decision Module}
+& Plotting Module\\
 \bottomrule
-
 \end{tabular}
 \caption{Module Hierarchy}
 \label{TblMH}
 \end{table}
 
+
+
+
 \section{Connection Between Requirements and Design} \label{SecConnection}
 
 The design of the system is intended to satisfy the requirements developed in
-the SRS. In this stage, the system is decomposed into modules. The connection
-between requirements and modules is listed in Table~\ref{TblRT}.
+the SRS. At this stage, the system is decomposed into modules. The connection
+between requirements and modules is listed in Table~\ref{TblConnection}.
 
-\wss{The intention of this section is to document decisions that are made
-  ``between'' the requirements and the design.  To satisfy some requirements,
-  design decisions need to be made.  Rather than make these decisions implicit,
-  they are explicitly recorded here.  For instance, if a program has security
-  requirements, a specific design decision may be made to satisfy those
-  requirements with a password.}
+\begin{table}[H]
+\centering
+\begin{tabular}{p{0.42\textwidth} p{0.48\textwidth}}
+\toprule
+\textbf{Requirements (SRS)} & \textbf{Module ID}\\
+\midrule
+R1 (\textit{R-Inputs}) 
+& \mref{mAudio}, \mref{mMEG}, \mref{mParams} \\
+
+R2 (\textit{R-InputValidation}) 
+& \mref{mAudio}, \mref{mMEG}, \mref{mParams}, \mref{mExtract}, \mref{mStats} \\
+
+R3 (\textit{R-ConstructPredictors}) 
+& \mref{mFrozen}, \mref{mExtract} \\
+
+R4 (\textit{R-FairEvaluation}) 
+& \mref{mParams}, \mref{mStats} \\
+
+R5 (\textit{R-Scoring}) 
+& \mref{mStats} \\
+
+R6 (\textit{R-QuantifyGain}) 
+& \mref{mStats}, \mref{mPlot} \\
+
+NFR1 (\textit{Usability}) 
+& \mref{mParams}, \mref{mPlot} \\
+
+NFR2 (\textit{Maintainability}) 
+& \mref{mAudio}, \mref{mMEG}, \mref{mParams}, \mref{mTrain}, \mref{mFrozen}, \mref{mExtract}, \mref{mStats}, \mref{mPlot} \\
+
+NFR3 (\textit{Portability}) 
+& \mref{mAudio}, \mref{mMEG}, \mref{mParams}, \mref{mPlot} \\
+
+NFR4 (\textit{Accuracy}) 
+& \mref{mFrozen}, \mref{mExtract}, \mref{mStats} \\
+\bottomrule
+\end{tabular}
+\caption{Connection Between Requirements and Module IDs}
+\label{TblConnection}
+\end{table}
+
+% \wss{The intention of this section is to document decisions that are made
+%   ``between'' the requirements and the design.  To satisfy some requirements,
+%   design decisions need to be made.  Rather than make these decisions implicit,
+%   they are explicitly recorded here.  For instance, if a program has security
+%   requirements, a specific design decision may be made to satisfy those
+%   requirements with a password.}
+
+
+
+
+
 
 \section{Module Decomposition} \label{SecMD}
 
@@ -255,57 +375,158 @@ Only the leaf modules in the hierarchy have to be implemented. If a dash
 (\emph{--}) is shown, this means that the module is not a leaf and will not have
 to be implemented.
 
-\subsection{Hardware Hiding Modules (\mref{mHH})}
+
+
+
+
+\subsection{Hardware Hiding Modules}
+
+These modules hide decisions related to external data storage and file-system
+organization.
+
+\subsubsection{Audio Data Module (\mref{mAudio})}
 
 \begin{description}
-\item[Secrets:]The data structure and algorithm used to implement the virtual
-  hardware.
-\item[Services:]Serves as a virtual hardware used by the rest of the
-  system. This module provides the interface between the hardware and the
-  software. So, the system can use it to display outputs or to accept inputs.
-\item[Implemented By:] OS
+\item[Secrets:] The storage format, indexing scheme, and metadata organization
+of the audio datasets.
+\item[Services:] Loads and serves audio recordings, dataset splits, sampling
+rates, and utterance-level metadata to the rest of the system.
+\item[Implemented By:] \progname{}
+\item[Type of Module:] Abstract Object
 \end{description}
+
+\subsubsection{MEG Data Module (\mref{mMEG})}
+
+\begin{description}
+\item[Secrets:] The storage format, trial structure, sensor metadata, and
+stimulus linkage used by the MEG dataset.
+\item[Services:] Loads and serves MEG responses, subject lists, sensor counts,
+sampling rates, and trial-level metadata for downstream analysis.
+\item[Implemented By:] \progname{}
+\item[Type of Module:] Abstract Object
+\end{description}
+
+
+
+
 
 \subsection{Behaviour-Hiding Module}
 
+% \begin{description}
+% \item[Secrets:]The contents of the required behaviours.
+% \item[Services:]Includes programs that provide externally visible behaviour of
+%   the system as specified in the software requirements specification (SRS)
+%   documents. This module serves as a communication layer between the
+%   hardware-hiding module and the software decision module. The programs in this
+%   module will need to change if there are changes in the SRS.
+% \item[Implemented By:] --
+% \end{description}
+
+These modules provide the externally visible scientific behaviour of the
+system, including parameter management, model preparation, predictor
+construction, and statistical evaluation.
+
+
+
+
+\subsubsection{Input Parameters Module (\mref{mParams})}
+
 \begin{description}
-\item[Secrets:]The contents of the required behaviours.
-\item[Services:]Includes programs that provide externally visible behaviour of
-  the system as specified in the software requirements specification (SRS)
-  documents. This module serves as a communication layer between the
-  hardware-hiding module and the software decision module. The programs in this
-  module will need to change if there are changes in the SRS.
-\item[Implemented By:] --
+\item[Secrets:] The organization and validation of configurable inputs, such as
+paths, dataset names, model settings, lag windows, and cross-validation
+settings.
+\item[Services:] Stores and provides validated experiment parameters to other
+modules.
+\item[Implemented By:] \progname{}
+\item[Type of Module:] Abstract Object
 \end{description}
 
-\subsubsection{Input Format Module (\mref{mInput})}
+\subsubsection{Model Training Module (\mref{mTrain})}
 
 \begin{description}
-\item[Secrets:]The format and structure of the input data.
-\item[Services:]Converts the input data into the data structure used by the
-  input parameters module.
-\item[Implemented By:] [Your Program Name Here]
-\item[Type of Module:] [Record, Library, Abstract Object, or Abstract Data Type]
-  [Information to include for leaf modules in the decomposition by secrets tree.]
+\item[Secrets:] The optimization routine, model fitting workflow, and training
+diagnostics used to obtain trained model parameters.
+\item[Services:] Trains speech models on the configured audio data and provides
+optimized parameters together with training summaries.
+\item[Implemented By:] \progname{}
+\item[Type of Module:] Library
 \end{description}
 
-\subsubsection{Etc.}
+\subsubsection{Frozen Model Module (\mref{mFrozen})}
+
+\begin{description}
+\item[Secrets:] The checkpoint loading procedure and the method used to disable
+further parameter updates.
+\item[Services:] Loads trained model checkpoints and provides frozen models for
+representation extraction.
+\item[Implemented By:] \progname{}
+\item[Type of Module:] Abstract Object
+\end{description}
+
+\subsubsection{Representation Extraction Module (\mref{mExtract})}
+
+\begin{description}
+\item[Secrets:] The method used to obtain layer-wise hidden states and convert
+them into time-aligned predictor matrices.
+\item[Services:] Extracts hidden representations from frozen models and
+constructs aligned predictor matrices on the MEG sampling grid.
+\item[Implemented By:] \progname{}
+\item[Type of Module:] Library
+\end{description}
+
+\subsubsection{Statistical Analysis Module (\mref{mStats})}
+
+\begin{description}
+\item[Secrets:] The fitting, cross-validation, score aggregation, and
+baseline-referenced comparison procedures used in the alignment analysis.
+\item[Services:] Evaluates predictors under a common protocol, computes
+cross-validated encoding scores, and reports baseline-referenced improvements.
+\item[Implemented By:] \progname{}
+\item[Type of Module:] Library
+\end{description}
+
+
+
+
+
+
+
+
+
 
 
 \subsection{Software Decision Module}
 
+% \begin{description}
+% \item[Secrets:] The design decision based on mathematical theorems, physical
+%   facts, or programming considerations. The secrets of this module are
+%   \emph{not} described in the SRS.
+% \item[Services:] Includes data structure and algorithms used in the system that
+%   do not provide direct interaction with the user. 
+%   % Changes in these modules are more likely to be motivated by a desire to
+%   % improve performance than by externally imposed changes.
+% \item[Implemented By:] --
+% \end{description}
+These modules hide implementation choices that support the scientific workflow without changing the externally visible behaviour required by the SRS.
+
+
+\subsubsection{Plotting Module (\mref{mPlot})}
+
 \begin{description}
-\item[Secrets:] The design decision based on mathematical theorems, physical
-  facts, or programming considerations. The secrets of this module are
-  \emph{not} described in the SRS.
-\item[Services:] Includes data structure and algorithms used in the system that
-  do not provide direct interaction with the user. 
-  % Changes in these modules are more likely to be motivated by a desire to
-  % improve performance than by externally imposed changes.
-\item[Implemented By:] --
+\item[Secrets:] The choice of plotting library, figure layout, and output file
+format.
+\item[Services:] Generates visual summaries of analysis results, including
+layer-wise scores and baseline-referenced improvements.
+\item[Implemented By:] \progname{}
+\item[Type of Module:] Library
 \end{description}
 
-\subsubsection{Etc.}
+
+% \subsubsection{Etc.}
+
+
+
+
 
 \section{Traceability Matrix} \label{SecTM}
 
@@ -316,50 +537,55 @@ requirements and between the modules and the anticipated changes.
 % like fref
 \begin{table}[H]
 \centering
-\begin{tabular}{p{0.2\textwidth} p{0.6\textwidth}}
+\begin{tabular}{p{0.28\textwidth} p{0.55\textwidth}}
 \toprule
-\textbf{Req.} & \textbf{Modules}\\
+\textbf{Requirement} & \textbf{Modules}\\
 \midrule
-R1 & \mref{mHH}, \mref{mInput}, \mref{mParams}, \mref{mControl}\\
-R2 & \mref{mInput}, \mref{mParams}\\
-R3 & \mref{mVerify}\\
-R4 & \mref{mOutput}, \mref{mControl}\\
-R5 & \mref{mOutput}, \mref{mODEs}, \mref{mControl}, \mref{mSeqDS}, \mref{mSolver}, \mref{mPlot}\\
-R6 & \mref{mOutput}, \mref{mODEs}, \mref{mControl}, \mref{mSeqDS}, \mref{mSolver}, \mref{mPlot}\\
-R7 & \mref{mOutput}, \mref{mEnergy}, \mref{mControl}, \mref{mSeqDS}, \mref{mPlot}\\
-R8 & \mref{mOutput}, \mref{mEnergy}, \mref{mControl}, \mref{mSeqDS}, \mref{mPlot}\\
-R9 & \mref{mVerifyOut}\\
-R10 & \mref{mOutput}, \mref{mODEs}, \mref{mControl}\\
-R11 & \mref{mOutput}, \mref{mODEs}, \mref{mEnergy}, \mref{mControl}\\
+R1(R-Inputs) & \mref{mAudio}, \mref{mMEG}, \mref{mParams}\\
+R2(R-InputValidation) & \mref{mAudio}, \mref{mMEG}, \mref{mParams}, \mref{mExtract}, \mref{mStats}\\
+R3(R-ConstructPredictors) & \mref{mFrozen}, \mref{mExtract}\\
+R4(R-FairEval) & \mref{mParams}, \mref{mStats}\\
+R5(R-Scoring) & \mref{mStats}\\
+R6(R-QuantifyGain) & \mref{mStats}, \mref{mPlot}\\
+NFR1(NFR-Usability) & \mref{mParams}, \mref{mPlot}\\
+NFR2(NFR-Maintainability) & \mref{mAudio}, \mref{mMEG}, \mref{mParams}, \mref{mTrain}, \mref{mFrozen}, \mref{mExtract}, \mref{mStats}, \mref{mPlot}\\
+NFR3(NFR-Portability) & \mref{mAudio}, \mref{mMEG}, \mref{mParams}, \mref{mPlot}\\
+NFR4(NFR-Accuracy) & \mref{mFrozen}, \mref{mExtract}, \mref{mStats}\\
 \bottomrule
 \end{tabular}
 \caption{Trace Between Requirements and Modules}
 \label{TblRT}
 \end{table}
 
+
+
+
+
+
 \begin{table}[H]
 \centering
-\begin{tabular}{p{0.2\textwidth} p{0.6\textwidth}}
+\begin{tabular}{p{0.28\textwidth} p{0.55\textwidth}}
 \toprule
 \textbf{AC} & \textbf{Modules}\\
 \midrule
-\acref{acHardware} & \mref{mHH}\\
-\acref{acInput} & \mref{mInput}\\
+\acref{acAudioFormat} & \mref{mAudio}\\
+\acref{acMEGFormat} & \mref{mMEG}\\
 \acref{acParams} & \mref{mParams}\\
-\acref{acVerify} & \mref{mVerify}\\
-\acref{acOutput} & \mref{mOutput}\\
-\acref{acVerifyOut} & \mref{mVerifyOut}\\
-\acref{acODEs} & \mref{mODEs}\\
-\acref{acEnergy} & \mref{mEnergy}\\
-\acref{acControl} & \mref{mControl}\\
-\acref{acSeqDS} & \mref{mSeqDS}\\
-\acref{acSolver} & \mref{mSolver}\\
+\acref{acTraining} & \mref{mTrain}\\
+\acref{acFrozen} & \mref{mFrozen}\\
+\acref{acRepresentation} & \mref{mExtract}\\
+\acref{acAnalysis} & \mref{mStats}\\
 \acref{acPlot} & \mref{mPlot}\\
 \bottomrule
 \end{tabular}
 \caption{Trace Between Anticipated Changes and Modules}
 \label{TblACT}
 \end{table}
+
+
+
+
+
 
 \section{Use Hierarchy Between Modules} \label{SecUse}
 
@@ -374,18 +600,29 @@ the modules. It can be seen that the graph is a directed acyclic graph
 system, and modules in the higher level of the hierarchy are essentially simpler
 because they use modules from the lower levels.
 
-\wss{The uses relation is not a data flow diagram.  In the code there will often
-be an import statement in module A when it directly uses module B.  Module B
-provides the services that module A needs.  The code for module A needs to be
-able to see these services (hence the import statement).  Since the uses
-relation is transitive, there is a use relation without an import, but the
-arrows in the diagram typically correspond to the presence of import statement.}
+% \wss{The uses relation is not a data flow diagram.  In the code there will often
+% be an import statement in module A when it directly uses module B.  Module B
+% provides the services that module A needs.  The code for module A needs to be
+% able to see these services (hence the import statement).  Since the uses
+% relation is transitive, there is a use relation without an import, but the
+% arrows in the diagram typically correspond to the presence of import statement.}
 
-\wss{If module A uses module B, the arrow is directed from A to B.}
+% \wss{If module A uses module B, the arrow is directed from A to B.}
+
+
+
+
+
+
+
+
+
+
+
 
 \begin{figure}[H]
 \centering
-%\includegraphics[width=0.7\textwidth]{UsesHierarchy.png}
+\includegraphics[width=0.7\textwidth]{framework.png}
 \caption{Use hierarchy among modules}
 \label{FigUH}
 \end{figure}
@@ -394,26 +631,49 @@ arrows in the diagram typically correspond to the presence of import statement.}
 
 \section{User Interfaces}
 
-\wss{Design of user interface for software and hardware.  Attach an appendix if
-needed. Drawings, Sketches, Figma}
+% \wss{Design of user interface for software and hardware.  Attach an appendix if
+% needed. Drawings, Sketches, Figma}
+
+The primary user interface of \progname{} is a script-based or command-line
+scientific workflow. Users provide configuration parameters, dataset locations,
+and model and analysis settings through files or command-line arguments. The
+main user-visible outputs are analysis summaries, score tables, and saved
+figures. No dedicated graphical user interface is required.
+
+
+
+
+
 
 \section{Design of Communication Protocols}
 
-\wss{If there is communication between hardware and software, it may be necessary 
-to explain the design of the communication protocol.  This section should be filled 
-in with NA if it is not appropriate for a given project.}
+% \wss{If there is communication between hardware and software, it may be necessary 
+% to explain the design of the communication protocol.  This section should be filled 
+% in with NA if it is not appropriate for a given project.}
+
+N/A. \progname{} does not require a communication protocol beyond local file
+access and standard operating-system services.
+
+
 
 \section{Database Design}
 
-\wss{If a database is a significant component of the project, the database
-design should be summarized here.  This section should be filled in with NA if
-it is not appropriate for a given project.}
+% \wss{If a database is a significant component of the project, the database
+% design should be summarized here.  This section should be filled in with NA if
+% it is not appropriate for a given project.}
+
+NA
+
 
 \section{Timeline}
 
-\wss{Schedule of tasks and who is responsible}
+% \wss{Schedule of tasks and who is responsible}
 
-\wss{You can point to GitHub if this information is included there}
+The development schedule and division of responsibilities will be maintained in the project repository or shared project planning documents. This section may be updated later with milestones for data preparation, model training,
+representation extraction, statistical analysis, and report generation.
+See Github Project: \url{https://github.com/Krozix-2026/cas741-speech-trf}
+
+% \wss{You can point to GitHub if this information is included there}
 
 \bibliographystyle {plainnat}
 \bibliography{../../../refs/References}
