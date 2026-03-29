@@ -2179,6 +2179,10 @@ The system shall compute baseline-referenced improvement for each candidate pred
 relative to a specified acoustic baseline predictor as
 $\Delta\rho = \rho_{\mathrm{CV}}(\text{candidate}) - \rho_{\mathrm{CV}}(\text{baseline})$, and report $\Delta\rho$ under the same protocol $\Pi$. Satisfied by: IM\ref{IM_cv_score}.
 
+\item[R\refstepcounter{reqnum}\thereqnum \label{R_OutputResults}:]
+The system shall output, for each evaluated predictor, the cross-validated encoding score $\rho_{\mathrm{CV}}$, the baseline-referenced improvement $\Delta\rho$, and the associated metadata needed to identify the model, layer, subject, and evaluation protocol. These outputs shall be saved in a machine-readable format suitable for downstream analysis. Satisfied by: IM\ref{IM_cv_score}.
+
+
 
 \end{itemize}
 
