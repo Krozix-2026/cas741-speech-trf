@@ -424,14 +424,14 @@ The functional tests below cover the end-to-end workflow implied by the SRS requ
 
 \paragraph{Input schema and basic validity checks}
 
+
 \begin{enumerate}
 
 \item{FR-01 (Invalid MEG sampling frequency)\\}
 Control: Automatic \\
 Initial State: Clean environment; default configuration template available. \\
 Input: Provide MEG metadata with $f_s \le 0$ (e.g., $f_s = 0$). \\
-Output: System rejects the run with a clear error message indicating invalid
-sampling frequency. \\
+Output: System rejects the run and reports an \texttt{InvalidConfigurationError} (or equivalent validation failure) identifying the MEG sampling frequency field and stating that the value must be strictly positive. \\
 Test Case Derivation: R1 \\
 How test will be performed: In pytest, add assertions to check valid or invalid file paths.
 
@@ -450,8 +450,7 @@ Initial State: Clean environment; model config loaded. \\
 Input: Set any of the following invalid values:
 \texttt{num\_layers} $\le 0$, \texttt{hidden\_size} $\le 0$, 
 \texttt{dropout} $\notin [0,1)$. \\
-Output: System rejects the configuration with a precise error message indicating
-which hyperparameter is invalid. \\
+Output: System rejects the configuration and reports a validation error that identifies the invalid hyperparameter name and states the violated constraint (e.g., \texttt{num\_layers > 0}, \texttt{hidden\_size > 0}, or \texttt{dropout $\in$ [0,1)}). \\
 Test Case Derivation: R2 \\
 How test will be performed: In pytest, run config validation; assert failure and message.
 
@@ -459,7 +458,7 @@ How test will be performed: In pytest, run config validation; assert failure and
 Control: Automatic \\
 Initial State: A feature extractor produces input tensors matches the model expects. \\
 Input: Provide data with wrong feature dimension (e.g., wrong number of gammatone channels or acoustic features). \\
-Output: System rejects training and extraction with a clear error specifying expected and observed input dimensions. \\
+Output: System rejects training and extraction and reports a dimension-mismatch error identifying both the expected input dimension and the observed dimension. \\
 Test Case Derivation: R2 \\
 How test will be performed: Construct a small batch with mismatched dimension and
 assert exception before any optimizer step.
@@ -480,7 +479,7 @@ How test will be performed: In pytest, run the pipeline to check the missing aud
 Control: Automatic \\
 Initial State: Clean environment; MEG data loaded with a known MEG sampling rate. \\
 Input: Provide a predictor time series whose timestamps are off-grid or at a different sampling rate than MEG.\\
-Output: System rejects the run with a clear error indicating that the predictor is not aligned to the MEG grid. \\
+Output: System rejects the run and reports an alignment validation error identifying the predictor time axis and the MEG time grid as incompatible. \\
 Test Case Derivation: R3 \\
 How test will be performed: In pytest, create a small synthetic MEG time axis and a predictor with mismatched time axis.
 
@@ -499,7 +498,7 @@ How test will be performed: In pytest, define two predictors and intentionally s
 \item{FR-08 (Encoding score computation returns invalid or missing results)} \\
 Initial State: Clean environment; one predictor matrix and MEG response are available on the same time grid. \\
 Input: Provide a case where the score would be undefined or invalid.\\
-Output: System rejects scoring with a clear error message. \\
+Output: System rejects scoring and reports a scoring error identifying the cause of invalidity, such as NaN values in the predictor matrix or undefined correlation due to a constant response signal. \\
 Test Case Derivation: R5 \\
 How test will be performed: In pytest, construct a tiny dataset with (a) constant MEG signal or (b) NaN in predictor.
 
