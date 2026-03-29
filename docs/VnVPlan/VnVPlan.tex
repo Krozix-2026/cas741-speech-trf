@@ -32,7 +32,7 @@
 \midrule
 Feb 10, 2026 & 1.0 & Initial draft\\
 Feb 13, 2026 & 1.1 & Adjust according to feedback\\
-% Date 2 & 1.1 & Notes\\
+March 29, 2026 & 1.2 & Adjust according to feedback\\
 \bottomrule
 \end{tabularx}
 
@@ -269,21 +269,30 @@ A classmate will review the VnV Plan in detail using checklist in course repo an
 
 \subsection{Implementation Verification}
 
-% \wss{You should at least point to the tests listed in this document and the unit
-%   testing plan.}
-
-% \wss{In this section you would also give any details of any plans for static
-%   verification of the implementation.  Potential techniques include code
-%   walkthroughs, code inspection, static analyzers, etc.}
-
-% \wss{The final class presentation in CAS 741 could be used as a code
-% walkthrough.  There is also a possibility of using the final presentation (in
-% CAS741) for a partial usability survey.}
 
 \begin{itemize}
-  \item \textbf{Unit testing:} Automated tests for core modules (alignment, lagged design matrix, ridge fit, scoring, artifact logging). 
-  Unit tests target both normal behavior and edge cases (shape errors, invalid inputs, NaNs).
-  \item \textbf{Integration testing:} End-to-end pipeline tests on small reference datasets to verify correct wiring.
+  \item \textbf{Unit testing:} Automated tests are used for core modules
+  (alignment, lagged design matrix construction, ridge fitting, scoring, and
+  artifact logging). These tests cover both normal behavior and edge cases,
+  including shape mismatches, invalid inputs, and missing or NaN values.
+
+  \item \textbf{Integration testing:} End-to-end pipeline tests on small
+  reference datasets are used to verify correct interaction among modules,
+  including data loading, predictor construction, temporal alignment, model
+  fitting, scoring, and result generation.
+
+  \item \textbf{Requirement-based verification:} System-level checks are used to
+  confirm that the implementation satisfies the intended functional behavior
+  described in the SRS. For example, tests verify that all predictors specified
+  in an experiment are evaluated under the same protocol, that cross-validated
+  scores are aggregated as specified, that baseline-referenced gains are
+  computed and recorded, and that invalid inputs are rejected before model
+  fitting.
+
+  \item \textbf{Reproducibility and regression checks:} Repeated runs under the
+  same configuration are compared to confirm stable behavior, and regression
+  tests are used to detect unintended changes in outputs after implementation
+  updates.
 \end{itemize}
 
 
