@@ -276,8 +276,7 @@ A classmate will review the VnV Plan in detail using checklist in course repo an
   artifact logging). These tests cover both normal behavior and edge cases,
   including shape mismatches, invalid inputs, and missing or NaN values.
 
-  \item \textbf{Integration testing:} End-to-end pipeline tests on small
-  reference datasets are used to verify correct interaction among modules,
+  \item \textbf{Integration testing:} End-to-end pipeline tests on Librispeech dataset are used to verify correct interaction among modules,
   including data loading, predictor construction, temporal alignment, model
   fitting, scoring, and result generation.
 
@@ -612,7 +611,7 @@ How test will be performed: Track engineering time using commits/issues; compare
 \item{NFR-03\\}
 Type: Manual \\
 Initial State: Clean Windows, macOS, and Linux environments prepared. \\
-Input/Condition: Install \progname{} and run a small smoke-test workflow on each OS using a bundled demo configuration and a small public dataset subset (or a tiny packaged sample). \\
+Input/Condition: Install \progname{} and run a small smoke-test workflow on each OS using a bundled demo configuration and a small subset of Librispeech. \\
 Output/Result: The pipeline installs and runs successfully on Windows, macOS, and Linux and produces the expected output files for the workflow. \\
 How test will be performed: Create different workflows for each OS on GitHub Actions (or run the same documented steps manually if CI is unavailable) and record pass/fail logs.
 
