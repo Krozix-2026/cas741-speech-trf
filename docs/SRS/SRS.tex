@@ -2152,11 +2152,11 @@ qualities that the software is expected to exhibit.
 
 \item[R\refstepcounter{reqnum}\thereqnum \label{R_Inputs}:]
 % The system should accept speech stimuli and MEG signals as inputs. 
-The system shall accept (i) speech stimuli and (ii) MEG recordings as inputs, in formats sufficient to construct time-aligned predictors on the MEG sampling grid. Satisfied by: IM\ref{IM_predictor_align}, IM\ref{IM_cv_score}.
+The system accepts (i) speech stimuli and (ii) MEG recordings as inputs, in formats sufficient to construct time-aligned predictors on the MEG sampling grid. Satisfied by: IM\ref{IM_predictor_align}, IM\ref{IM_cv_score}.
 
 \item[R\refstepcounter{reqnum}\thereqnum \label{R_InputValidation}:]
 % The system shall validate that the provided inputs are internally consistent before model fitting.
-The system shall validate input consistency required for model fitting, including time base compatibility (sampling rate, segment durations) and the presence of metadata necessary for alignment and cross-validation.
+The system validates input consistency required for model fitting, including time base compatibility (sampling rate, segment durations) and the presence of metadata necessary for alignment and cross-validation.
 Satisfied by: IM\ref{IM_predictor_align}, IM\ref{IM_cv_score}.
 
 
@@ -2165,22 +2165,22 @@ Satisfied by: IM\ref{IM_predictor_align}, IM\ref{IM_cv_score}.
 Given a predictor definition (baseline or model-extracted), the system shall construct a time-aligned predictor matrix $\tilde{\mathbf{R}}\in\mathbb{R}^{N\times D}$ on the MEG sampling grid using a single alignment procedure shared across predictors. Satisfied by: IM\ref{IM_predictor_align}.
 
 \item[R\refstepcounter{reqnum}\thereqnum \label{R_FairEval}:]
-% The system shall evaluate all candidate predictors under a consistent protocol.
-The system shall evaluate all candidate predictors under an identical protocol, including the same lag window, discretization, fitting rule, regularization selection, cross-validation partitions, and score metric. Satisfied by: IM\ref{IM_cv_score}.
+The system evaluates all predictors specified in the experiment configuration under an identical protocol, including the same lag window, discretization, fitting rule, regularization selection, cross-validation partitions, and score metric. The predictor set may include baseline predictors and model-extracted predictors. Satisfied by: IM\ref{IM_cv_score}.
 
 \item[R\refstepcounter{reqnum}\thereqnum \label{R_Scoring}:]
 % For each predictor, the system shall compute an encoding score.
-For each predictor, the system shall compute a cross-validated encoding score $\rho_{\mathrm{CV}}$ as the mean of fold-wise scores under protocol $\Pi$. Satisfied by: IM\ref{IM_cv_score}.
+For each predictor, the system computes a cross-validated encoding score $\rho_{\mathrm{CV}}$, 
+where each fold-wise score is the Pearson correlation between predicted and observed MEG responses on held-out data, as the mean of fold-wise scores under protocol $\Pi$. Satisfied by: IM\ref{IM_cv_score}.
 
 
 \item[R\refstepcounter{reqnum}\thereqnum \label{R_QuantifyGain}:]
 % The system shall compute baseline-referenced improvement for each candidate predictor relative to a specified acoustic baseline predictor.
-The system shall compute baseline-referenced improvement for each candidate predictor
+The system computes baseline-referenced improvement for each candidate predictor
 relative to a specified acoustic baseline predictor as
 $\Delta\rho = \rho_{\mathrm{CV}}(\text{candidate}) - \rho_{\mathrm{CV}}(\text{baseline})$, and report $\Delta\rho$ under the same protocol $\Pi$. Satisfied by: IM\ref{IM_cv_score}.
 
 \item[R\refstepcounter{reqnum}\thereqnum \label{R_OutputResults}:]
-The system shall output, for each evaluated predictor, the cross-validated encoding score $\rho_{\mathrm{CV}}$, the baseline-referenced improvement $\Delta\rho$, and the associated metadata needed to identify the model, layer, subject, and evaluation protocol. These outputs shall be saved in a machine-readable format suitable for downstream analysis. Satisfied by: IM\ref{IM_cv_score}.
+The system outputs the cross-validated encoding score $\rho_{\mathrm{CV}}$ for each evaluated predictor, the baseline-referenced improvement $\Delta\rho$, and the associated metadata needed to identify the model, layer, subject, and evaluation protocol. These outputs shall be saved in a machine-readable format suitable for downstream analysis. Satisfied by: IM\ref{IM_cv_score}.
 
 
 
