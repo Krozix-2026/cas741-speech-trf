@@ -791,9 +791,24 @@ The end user of \progname{} should have experience in:
 
 \begin{itemize}
   \item \textbf{Python program:} \progname{} shall be implemented in Python.
+  \begin{itemize}
+  \item Rationale: Python provides the most comprehensive ecosystem for scientific computing and is the primary language supported by the required neuroimaging libraries (Eelbrain).
+  \end{itemize}
+  
   \item \textbf{Deep learning method:} Model training and representation extraction shall use PyTorch.
+  \begin{itemize}
+  \item Rationale: PyTorch offers the flexibility needed for custom neural network architectures and has extensive community support for speech recognition research.
+  \end{itemize}
+  
   \item \textbf{TRF backend:} Encoding analysis and visualization shall use the Eelbrain TRF pipeline.
+  \begin{itemize}
+    \item Rationale: Eelbrain provides established tools for temporal response function analysis, which are required for relating model-derived features to time-resolved MEG responses.
+  \end{itemize}
+  
   \item \textbf{MEG dependency:} The Eelbrain pipeline shall delegate MEG data structures and preprocessing operations to MNE-Python.
+  \begin{itemize}
+    \item Rationale: MNE-Python is the standard library for MEG data handling and preprocessing, and it is required for compatibility with the selected Eelbrain-based analysis workflow.
+  \end{itemize}
 
 \end{itemize}
 
