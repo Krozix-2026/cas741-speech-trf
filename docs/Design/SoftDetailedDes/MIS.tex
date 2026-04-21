@@ -542,7 +542,7 @@ getStimulusLink & subject id: string, utterance id: string & string & subject no
 
 \noindent \textbf{getSensorCount}():
 \begin{itemize}
-    \item output: returns the number of MEG sensors $C$.
+    \item output: looks up dataset in $sensorInfo$ and returns the sensor count $C$ stored in the corresponding sensor descriptor.
     \item exception: raised if the module has not been initialized.
 \end{itemize}
 
