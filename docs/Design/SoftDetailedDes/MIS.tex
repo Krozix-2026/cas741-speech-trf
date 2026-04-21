@@ -500,7 +500,7 @@ getStimulusLink & subject id: string, utterance id: string & string & subject no
 
 \begin{itemize}
     \item $subjectIndex$: a mapping from subject identifiers to MEG recording descriptors.
-    \item $trialIndex$: a mapping from $(subject\ id,\ utterance\ id)$ pairs to trial locations and metadata.
+    \item $trialIndex$: a mapping from $(subject\ id,\ utterance\ id)$ pairs to dataset locations (path) and metadata (wav file for audio, and bid-format MEG data for brain signal).
     \item $sensorInfo$: metadata describing sensor identities and count $C$.
     \item $initialized$: $\mathbb{B}$, indicates whether the module has loaded the MEG dataset structure.
 \end{itemize}
