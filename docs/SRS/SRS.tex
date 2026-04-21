@@ -2011,19 +2011,20 @@ A correct solution must exhibit:
 
 
 \begin{itemize}
-  \item \textbf{Time-base consistency:} Any predictor and neural response used
-  together must be defined on the same sampling grid after alignment. 
+  \item \textbf{Time-base consistency:}
+  For any evaluated predictor--response pair, the aligned predictor matrix and the corresponding neural response data shall be defined on the same sampling grid and contain the same number of time samples after alignment.
 
-  \item \textbf{Protocol invariance across predictors:} When comparing multiple
-  predictors, the lag window, lag discretization, cross-validation procedure, and regularization selection over $\lambda$ must be identical across predictors so that differences in scores reflect predictor information rather than evaluation artifacts.
+  \item \textbf{Protocol invariance across predictors:}
+  When comparing multiple predictor sets, the lag window, lag discretization, cross-validation partition, score definition, and regularization search space shall be identical across predictors. A comparison is valid only if these settings are the same.
 
-  \item \textbf{Numerical validity:} All reported fitted weights, predictions,
-  and evaluation scores must be well-defined for every evaluated partition.
+  \item \textbf{Numerical validity:}
+  For every evaluated fold and predictor set, the fitted weights, predicted neural responses, and reported evaluation scores shall be finite numeric values, with no undefined entries (NaN) or infinite values.
 
-  \item \textbf{Traceability of results:} Each reported score must be uniquely
-  attributable to a specific predictor definition, lag window, CV partitioning,
-  and regularization setting, so that the evaluation can be repeated under the
-  same specification.
+  \item \textbf{Traceability of results:}
+  Every reported score shall be uniquely attributable to a predictor definition, model or layer identifier, alignment setting, lag window, cross-validation partition, regularization setting, random seed, and code or configuration version.
+
+  \item \textbf{Reproducibility of reruns:}
+  Re-running the same experiment with the same inputs, configuration, and random seed shall reproduce the same analysis artifacts and reported evaluation results, subject only to explicitly documented numerical tolerance.
 \end{itemize}
 
 
@@ -2049,7 +2050,7 @@ A correct solution must exhibit:
   \toprule
   \textbf{Var} & \textbf{Physical Constraints} \\
   \midrule
-  $\rho$ & $-1 \le \rho \le 1$ (by DD\ref{DD_score_corr})\\
+  % $\rho$ & $-1 \le \rho \le 1$ (by DD\ref{DD_score_corr})\\
   $\rho_{\mathrm{CV}}$ & $-1 \le \rho_{\mathrm{CV}} \le 1$ (by DD\ref{DD_cv_score})\\
   $\Delta \rho$ & $-2 \le \Delta \rho \le 2$\\
   \bottomrule
