@@ -54,7 +54,7 @@ urlcolor=cyan          % color of external links
 \toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
 \midrule
 March 20, 2026 & 1.0 & Initial version\\
-% Date 2 & 1.1 & Notes\\
+April 21 & 1.1 & Update according to smith's feedback\\
 \bottomrule
 \end{tabularx}
 
@@ -336,21 +336,48 @@ Input Parameters Module
 \subsubsection{Exported Constants}
 
 \begin{itemize}
-    \item $\mathcal{D}_{\mathrm{Audio}}$: the collection of audio datasets available to \progname, including training audio and stimulus audio.
+\item $\mathcal{S}_{\mathrm{Audio}}$: the finite set of supported audio dataset identifiers available to \progname.
+For the current system, this includes the training-audio datasets used for model training and the stimulus-audio dataset used in model-to-brain alignment.
+
+\item $\mathcal{I}_{\mathrm{Audio}}$: the audio dataset index, represented
+abstractly as a mapping from a dataset identifier and utterance identifier
+to the corresponding audio record metadata. Each audio record contains at
+least a file path, a split label (if applicable), and an utterance identifier.
+
+\item $\mathcal{W}$: the abstract type of an audio waveform returned by this module. A value of type $\mathcal{W}$ contains the audio sample sequence together with its sampling rate.
 \end{itemize}
 
 \subsubsection{Exported Access Programs}
 
 \begin{center}
-\begin{tabular}{p{3.2cm} p{4.2cm} p{4.2cm} p{2.4cm}}
+\begin{tabular}{p{3.0cm} p{4.8cm} p{4.4cm} p{3.0cm}}
 \hline
 \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
 \hline
-initAudioData & - & - & unsupported dataset, file error \\
-getTrainSplit & dataset name: string & $\mathcal{D}_{\mathrm{train}}$ & dataset not initialized \\
-getValSplit & dataset name: string & $\mathcal{D}_{\mathrm{val}}$ & dataset not initialized \\
-getTestSplit & dataset name: string & $\mathcal{D}_{\mathrm{test}}$ & dataset not initialized \\
-getAudio & utterance id: string & $\boldsymbol{a}$ & utterance not found, file error \\
+initAudioData &
+audio dataset configuration: map &
+initialized audio index $\mathcal{I}_{\mathrm{Audio}}$ &
+unsupported dataset identifier, missing manifest, malformed metadata, file error \\
+
+getTrainSplit &
+dataset id: element of $\mathcal{S}_{\mathrm{Audio}}$ &
+sequence of utterance identifiers for the training split &
+dataset not initialized, training split unavailable \\
+
+getValSplit &
+dataset id: element of $\mathcal{S}_{\mathrm{Audio}}$ &
+sequence of utterance identifiers for the validation split &
+dataset not initialized, validation split unavailable \\
+
+getTestSplit &
+dataset id: element of $\mathcal{S}_{\mathrm{Audio}}$ &
+sequence of utterance identifiers for the test split &
+dataset not initialized, test split unavailable \\
+
+getAudio &
+dataset id: element of $\mathcal{S}_{\mathrm{Audio}}$, utterance id: string &
+audio waveform $\in \mathcal{W}$ &
+dataset not initialized, utterance not found, file error \\
 
 \hline
 \end{tabular}
