@@ -310,32 +310,35 @@ between requirements and modules is listed in Table~\ref{TblConnection}.
 \toprule
 \textbf{Requirements (SRS)} & \textbf{Module ID}\\
 \midrule
-R1 (\textit{R-Inputs}) 
+R1 (\textit{Accept inputs}) 
 & \mref{mAudio}, \mref{mMEG}, \mref{mParams} \\
 
-R2 (\textit{R-InputValidation}) 
-& \mref{mAudio}, \mref{mMEG}, \mref{mParams}, \mref{mExtract}, \mref{mStats} \\
+R2 (\textit{Train model}) 
+& \mref{mTrain}, \mref{mParams} \\
 
-R3 (\textit{R-ConstructPredictors}) 
+R3 (\textit{Extract predictor stream}) 
 & \mref{mFrozen}, \mref{mExtract} \\
 
-R4 (\textit{R-FairEvaluation}) 
-& \mref{mParams}, \mref{mStats} \\
+R4 (\textit{Align predictor matrix}) 
+& \mref{mExtract} \\
 
-R5 (\textit{R-Scoring}) 
+R5 (\textit{Build design matrix}) 
 & \mref{mStats} \\
 
-R6 (\textit{R-QuantifyGain}) 
-& \mref{mStats}, \mref{mPlot} \\
+R6 (\textit{Fit TRF}) 
+& \mref{mStats} \\
+
+R7 (\textit{Predict and score}) 
+& \mref{mStats} \\
 
 NFR1 (\textit{Usability}) 
-& \mref{mParams}, \mref{mPlot} \\
+& \mref{mParams}, \mref{mTrain}, \mref{mStats}, \mref{mPlot} \\
 
 NFR2 (\textit{Maintainability}) 
 & \mref{mAudio}, \mref{mMEG}, \mref{mParams}, \mref{mTrain}, \mref{mFrozen}, \mref{mExtract}, \mref{mStats}, \mref{mPlot} \\
 
 NFR3 (\textit{Portability}) 
-& \mref{mAudio}, \mref{mMEG}, \mref{mParams}, \mref{mPlot} \\
+& \mref{mAudio}, \mref{mMEG}, \mref{mParams}, \mref{mTrain}, \mref{mFrozen}, \mref{mExtract}, \mref{mStats}, \mref{mPlot} \\
 
 NFR4 (\textit{Accuracy}) 
 & \mref{mFrozen}, \mref{mExtract}, \mref{mStats} \\
