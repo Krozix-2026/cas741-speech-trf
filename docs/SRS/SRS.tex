@@ -1412,7 +1412,7 @@ The objective $\mathcal{L}$ defines TRF parameter estimation as ridge-regularize
 \hline
 Sources& None\\
 \hline
-Ref.\ By & \ddref{DD_score_corr}, \ddref{DD_cv_score}\\
+Ref.\ By & \ddref{DD_cv_score}\\
 \hline
 \end{tabular}
 \end{minipage}\\
@@ -1422,35 +1422,39 @@ Ref.\ By & \ddref{DD_score_corr}, \ddref{DD_cv_score}\\
 % -------------------------
 % DD6: Encoding score (Pearson correlation)
 % -------------------------
-\noindent
-\begin{minipage}{\textwidth}
-\renewcommand*{\arraystretch}{1.5}
-\begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
-\hline
-\rowcolor[gray]{0.9}
-Number& DD\refstepcounter{datadefnum}\thedatadefnum \label{DD_score_corr}\\
-\hline
-Label& \bf Prediction score\\
-\hline
-Symbol & $\rho$\\
-\hline
-SI Units & --\\
-\hline
-Equation&
-$\rho = \mathrm{corr}\!\left(\hat{\mathbf{Y}}, \mathbf{Y}\right)$\\
-\hline
-Description &
-The prediction score $\rho$ summarizes model performance by computing the Pearson
-correlation between predicted MEG responses $\hat{\mathbf{Y}}$ and observed MEG
-responses $\mathbf{Y}$. Correlation may be computed per sensor  and optionally aggregated over sensors or ROIs using a fixed rule
-defined by the experiment specification.\\
-\hline
-Sources& None\\
-\hline
-Ref.\ By & \ddref{DD_cv_score}\\
-\hline
-\end{tabular}
-\end{minipage}\\
+% \noindent
+% \begin{minipage}{\textwidth}
+% \renewcommand*{\arraystretch}{1.5}
+% \begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
+%   \hline
+%   \rowcolor[gray]{0.9}
+%   Number & DD\refstepcounter{datadefnum}\thedatadefnum \label{DD_score_corr}\\
+%   \hline
+%   Label & \bf Prediction score\\
+%   \hline
+%   Symbol & $\rho$\\
+%   \hline
+%   SI Units & ---\\
+%   \hline
+%   Equation &
+%   $
+%   \rho = \mathrm{corr}(\hat{\mathbf{Y}}, \mathbf{Y})
+%   $
+%   \\
+%   \hline
+%   Description &
+%   The prediction score $\rho$ is defined as the Pearson correlation between the
+%   predicted neural responses $\hat{\mathbf{Y}}$ and the observed neural responses
+%   $\mathbf{Y}$. In \progname{}, this quantity is used as the evaluation metric for
+%   comparing candidate predictor sets. Correlation may be computed at the sensor
+%   or ROI level and then aggregated according to the evaluation protocol.\\
+%   \hline
+%   Sources & Standard Pearson correlation definition; Maple SRS reference for correlation definition.\\
+%   \hline
+%   Ref.\ By & DD\ref{DD_cv_score}, IM\ref{IM_cv_score}\\
+%   \hline
+% \end{tabular}
+% \end{minipage}
 
 ~\newline
 
