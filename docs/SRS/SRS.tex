@@ -951,46 +951,20 @@ includes the following elements:
 
 \subsubsection{Goal Statements}
 
-% \plt{The goal statements refine the ``Problem Description''
-%   (Section~\ref{Sec_pd}).  A goal is a functional objective the system under
-%   consideration should achieve. Goals provide criteria for sufficient
-%   completeness of a requirements specification and for requirements
-%   pertinence. Goals will be refined in Section “Instanced Models”
-%   (Section~\ref{sec_instance}). Large and complex goals should be decomposed
-%   into smaller sub-goals.  The goals are written abstractly, with a minimal
-%   amount of technical language.  They should be understandable by non-domain
-%   experts.}
-
-Given the input peech stimuli, neural responses, the goal statements are:
-
-% \begin{itemize}
-
-% \item[GS\refstepcounter{goalnum}\thegoalnum \label{G_meaningfulLabel}:] \plt{One
-%     sentence description of the goal.  There may be more than one.  Each Goal
-%     should have a meaningful label.}
-
-% \end{itemize}
-
-
+Given (i) speech stimuli, (ii) neural responses, and (iii) a set of candidate speech representations extracted from acoustic baselines and trained models, the system shall produce outputs that support model-to-brain comparison.
 
 \begin{itemize}
-  \item[GS\refstepcounter{goalnum}\thegoalnum \label{G_reproCompare}:]
-  Enable reproducible comparison of multiple candidate speech representations by
-  their ability to predict neural responses under a consistent protocol.
+  \item[GS\refstepcounter{goalnum}\thegoalnum \label{G_standardizedPredictors}:]
+  Produce a standardized and time-aligned predictor representation for each candidate speech representation.
 
-  \item[GS\refstepcounter{goalnum}\thegoalnum \label{G_fairEval}:]
-  Ensure fair evaluation across predictors by applying the same alignment
-  assumptions, lag window, regularization selection, and cross-validation
-  procedure.
+  \item[GS\refstepcounter{goalnum}\thegoalnum \label{G_encodingResults}:]
+  Produce encoding-model evaluation results that quantify how well each predictor explains neural responses.
 
-  \item[GS\refstepcounter{goalnum}\thegoalnum \label{G_quantifyGain}:]
-  Quantify how much each model-extracted representation improves neural prediction
-  relative to an acoustic baseline in a way that supports scientific
-  interpretation.
+  \item[GS\refstepcounter{goalnum}\thegoalnum \label{G_baselineComparison}:]
+  Produce comparison results showing how each candidate representation performs relative to an acoustic baseline.
 
   \item[GS\refstepcounter{goalnum}\thegoalnum \label{G_traceableArtifacts}:]
-  Produce traceable artifacts and summaries that allow experiments and results
-  to be inspected, repeated, and extended.
+  Produce traceable analysis artifacts that allow the evaluation results to be inspected and reproduced.
 \end{itemize}
 
 
