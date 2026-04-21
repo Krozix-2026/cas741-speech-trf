@@ -621,13 +621,13 @@ getPathConfig & - & tuple & not initialized \\
 
 \begin{itemize}
     \item $paramTable$: a mapping from configuration keys to parameter values.
-    \item $initialized$: $\mathbb{B}$, indicates whether the configuration has been loaded.
+    \item $configLoaded : \mathbb{B}$, indicates whether the module has loaded and validated the configuration source.
 \end{itemize}
 
 \subsubsection{Environment Variables}
 
 \begin{itemize}
-    \item Configuration file stored in the external file system.
+    \item $configFilePath : \textit{Path}$, the file-system path of the external configuration file supplied to this module.
 \end{itemize}
 
 \subsubsection{Assumptions}
