@@ -536,7 +536,7 @@ getStimulusLink & subject id: string, utterance id: string & string & subject no
 
 \noindent \textbf{getMEGResponse}(subject id, utterance id):
 \begin{itemize}
-    \item output: returns the MEG response matrix $\mathbf{Y}$ associated with the specified subject and utterance.
+    \item output: Read the preprocessed MEG trial from the external file system, and returns the response matrix $\mathbf{Y} \in \mathbb{R}^{N \times C}$, where $N$ is the number of time samples in the trial and $C$ is the number of MEG sensors defined by $sensorInfo$.
     \item exception: raised if the subject identifier or utterance identifier is unknown, or if the corresponding recording cannot be read.
 \end{itemize}
 
