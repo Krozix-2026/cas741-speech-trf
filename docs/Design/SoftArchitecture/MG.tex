@@ -314,7 +314,7 @@ R1 (\textit{Accept inputs})
 & \mref{mAudio}, \mref{mMEG}, \mref{mParams} \\
 
 R2 (\textit{Train model}) 
-& \mref{mTrain}, \mref{mParams} \\
+& \mref{mParams}, \mref{mAudio}, \mref{mTrain} \\
 
 R3 (\textit{Extract predictor stream}) 
 & \mref{mFrozen}, \mref{mExtract} \\
@@ -332,7 +332,7 @@ R7 (\textit{Predict and score})
 & \mref{mStats} \\
 
 NFR1 (\textit{Usability}) 
-& \mref{mParams}, \mref{mTrain}, \mref{mStats}, \mref{mPlot} \\
+& \mref{mParams}, \mref{mStats}, \mref{mPlot} \\
 
 NFR2 (\textit{Maintainability}) 
 & \mref{mAudio}, \mref{mMEG}, \mref{mParams}, \mref{mTrain}, \mref{mFrozen}, \mref{mExtract}, \mref{mStats}, \mref{mPlot} \\
@@ -433,56 +433,64 @@ construction, and statistical evaluation.
 \subsubsection{Input Parameters Module (\mref{mParams})}
 
 \begin{description}
-\item[Secrets:] The organization and validation of configurable inputs, such as
-paths, dataset names, model settings, lag windows, and cross-validation
-settings.
-\item[Services:] Stores and provides validated experiment parameters to other
-modules.
+\item[Secrets:] The schema and validation rules for experiment configuration, including how paths, dataset identifiers, model settings, lag-window parameters, and cross-validation settings are represented and checked.
+\item[Services:] Stores, validates, and provides experiment configuration
+parameters to other modules.
 \item[Implemented By:] \progname{}
 \item[Type of Module:] Abstract Object
 \end{description}
+
 
 \subsubsection{Model Training Module (\mref{mTrain})}
 
 \begin{description}
-\item[Secrets:] The optimization routine, model fitting workflow, and training
-diagnostics used to obtain trained model parameters.
-\item[Services:] Trains speech models on the configured audio data and provides
-optimized parameters together with training summaries.
+\item[Secrets:] The training workflow used to obtain optimized model
+parameters from configured audio data.
+\item[Services:] Trains speech models and provides trained model parameters
+together with training summaries.
 \item[Implemented By:] \progname{}
 \item[Type of Module:] Library
 \end{description}
+
+
+
 
 \subsubsection{Frozen Model Module (\mref{mFrozen})}
 
 \begin{description}
-\item[Secrets:] The checkpoint loading procedure and the method used to disable
-further parameter updates.
-\item[Services:] Loads trained model checkpoints and provides frozen models for
-representation extraction.
+\item[Secrets:] The checkpoint loading and parameter-freezing strategy used to prepare trained models for representation extraction.
+\item[Services:] Loads trained model checkpoints and provides frozen models for representation extraction.
 \item[Implemented By:] \progname{}
 \item[Type of Module:] Abstract Object
 \end{description}
 
+
+
+
 \subsubsection{Representation Extraction Module (\mref{mExtract})}
 
 \begin{description}
-\item[Secrets:] The method used to obtain layer-wise hidden states and convert
-them into time-aligned predictor matrices.
+\item[Secrets:] The procedure used to extract layer-wise hidden representations
+and convert them into predictor matrices aligned to the MEG sampling grid.
 \item[Services:] Extracts hidden representations from frozen models and
-constructs aligned predictor matrices on the MEG sampling grid.
+constructs aligned predictor matrices for downstream analysis.
 \item[Implemented By:] \progname{}
 \item[Type of Module:] Library
 \end{description}
 
+
+
+
 \subsubsection{Statistical Analysis Module (\mref{mStats})}
 
 \begin{description}
-\item[Secrets:] The fitting, cross-validation, score aggregation, and
-baseline-referenced comparison procedures used in the alignment analysis.
-\item[Services:] Evaluates predictors under a common protocol, computes
-cross-validated encoding scores, and reports baseline-referenced improvements.
-\item[Implemented By:] \progname{}
+\item[Secrets:] The project-specific evaluation workflow used to construct
+analysis matrices, fit encoding models, perform cross-validation, aggregate
+scores, and compute baseline-referenced comparisons.
+\item[Services:] Performs the statistical evaluation of aligned predictors under
+a common protocol, including design-matrix construction, model fitting,
+prediction, score computation, and baseline comparison.
+\item[Implemented By:] \progname{} using external scientific Python libraries (EElbrain).
 \item[Type of Module:] Library
 \end{description}
 
@@ -514,11 +522,10 @@ These modules hide implementation choices that support the scientific workflow w
 \subsubsection{Plotting Module (\mref{mPlot})}
 
 \begin{description}
-\item[Secrets:] The choice of plotting library, figure layout, and output file
-format.
-\item[Services:] Generates visual summaries of analysis results, including
-layer-wise scores and baseline-referenced improvements.
-\item[Implemented By:] \progname{}
+\item[Secrets:] The mapping from analysis outputs to figures and tables,
+including figure layout, plotting conventions, and output serialization format.
+\item[Services:] Generates project-specific visual summaries and tables from the analysis outputs produced by \mref{mStats}, including layer-wise scores and baseline-referenced improvements.
+\item[Implemented By:] \progname{} using external plotting libraries (Eelbrain).
 \item[Type of Module:] Library
 \end{description}
 
