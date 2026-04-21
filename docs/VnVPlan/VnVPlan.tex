@@ -692,10 +692,19 @@ same configuration and seed. Compare the lists of generated output files, and co
 
 \item{NFR-05\\}
 Type: Automatic \\
-Initial State: A small benchmark configuration is prepared (short audio duration, small MEG segment, minimal cross-validation). \\
-Input/Condition: Run the full workflow on the benchmark configuration. \\
-Output/Result: The workflow completes successfully within a reasonable amount of time on a standard workstation without running out of memory. \\
-How test will be performed: Record wall-clock time and check that the run completes and produces the expected outputs; store the timing log with the run artifacts.
+Initial State: A fixed benchmark configuration is available, including a short audio segment, a small MEG segment, one candidate predictor, and a minimal cross-validation setting. \\
+Input/Condition: Run the full workflow on the benchmark configuration,
+including predictor extraction, predictor alignment, design matrix
+construction, TRF fitting, score computation, and summary generation. \\
+Output/Result: The workflow shall complete successfully and produce the
+expected output artifacts, including:
+(a) an aligned predictor matrix file,
+(b) a fitted TRF result file,
+(c) a score summary file, and
+(d) a timing log.
+The run shall terminate without memory exhaustion or runtime failure. \\
+How test will be performed: Record wall-clock runtime and peak memory usage
+for the benchmark run. Verify that all expected output artifacts are created and that the run completes successfully. Store the timing log together with the output artifacts for later comparison.
 
 \end{enumerate}
 
