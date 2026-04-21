@@ -524,7 +524,7 @@ getStimulusLink & subject id: string, utterance id: string & string & subject no
 
 \noindent \textbf{initMEGData}():
 \begin{itemize}
-    \item transition: $subjectIndex$, $trialIndex$, $sensorInfo$, and $initialized$ are populated from the configured MEG dataset.
+    \item transition: $subjectIndex$, $trialIndex$, $sensorInfo$, and $initialized$ are constructed from the supplied MEG dataset configuration, and $initialized := \mathrm{true}$.
     \item exception: raised if the MEG dataset is unavailable, unsupported, or cannot be indexed.
 \end{itemize}
 
