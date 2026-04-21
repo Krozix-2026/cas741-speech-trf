@@ -2070,37 +2070,36 @@ This section provides the functional requirements, the business tasks that the
 software is expected to complete, and the nonfunctional requirements, the
 qualities that the software is expected to exhibit.
 
+
+
 \subsection{Functional Requirements}
 
-\noindent \begin{itemize}
+\noindent 
 
-\item[R\refstepcounter{reqnum}\thereqnum \label{R_Inputs}:]
-The system should accept speech stimuli and MEG signals as inputs. 
+\begin{itemize}
+  \item[R1:] \label{R_accept_inputs}
+  The system shall accept speech stimuli, any required training supervision, and preprocessed MEG responses as inputs.
 
-\item[R\refstepcounter{reqnum}\thereqnum \label{R_InputValidation}:]
-The system shall validate that the provided inputs are internally consistent
-before model fitting.
+  \item[R2:] \label{R_train_model}
+  Given a specified model architecture, training dataset, and optimization configuration, the system shall train a deep learning model and produce trained model parameters. [IM\ref{IM_train_model}]
 
+  \item[R3:] \label{R_extract_predictor}
+  Given a trained model and a specified layer index, the system shall extract a hidden-state predictor stream from the model for each stimulus. [IM\ref{IM_rep_extract}]
 
-\item[R\refstepcounter{reqnum}\thereqnum \label{R_ConstructPredictors}:]
-Given a predictor definition, the system shall construct a time-aligned predictor
-matrix on the MEG sampling grid.
+  \item[R4:] \label{R_align_predictor}
+  Given a predictor stream and MEG sampling information, the system shall construct a time-aligned predictor matrix on the MEG sampling grid. [IM\ref{IM_predictor_align}]
 
+  \item[R5:] \label{R_build_design_matrix}
+  Given an aligned predictor matrix and a specified lag window, the system shall construct a lagged design matrix for TRF fitting. [IM\ref{IM_design_matrix}]
 
+  \item[R6:] \label{R_fit_trf}
+  Given a lagged design matrix, MEG responses, and a regularization setting, the system shall fit a ridge-regularized TRF model. [IM\ref{IM_ridge_fit}]
 
-
-\item[R\refstepcounter{reqnum}\thereqnum \label{R_FairEval}:]
-The system shall evaluate all candidate predictors under a consistent protocol.
-
-\item[R\refstepcounter{reqnum}\thereqnum \label{R_Scoring}:]
-For each predictor, the system shall compute an encoding score.
-
-\item[R\refstepcounter{reqnum}\thereqnum \label{R_QuantifyGain}:]
-The system shall compute baseline-referenced improvement for each candidate predictor relative to a specified acoustic baseline predictor.
-
-
-
+  \item[R7:] \label{R_predict_and_score}
+  The system shall compute predicted neural responses and a cross-validated encoding score for each candidate predictor under the specified evaluation protocol. [IM\ref{IM_trf_predict}, IM\ref{IM_cv_score}, DD\ref{DD_cv_score}]
 \end{itemize}
+
+
 
 % \plt{Every IM should map to at least one requirement, but not every requirement
 %   has to map to a corresponding IM.}
@@ -2128,19 +2127,19 @@ The system shall compute baseline-referenced improvement for each candidate pred
 
 \item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Usability}:]
 \textbf{Usability} 
-\progname{} shall support intended users (researchers and students with experience in scientific Python and neural data workflows.
+\progname{} shall provide documented steps and configuration examples sufficient for a user familiar with scientific Python workflows to execute one end-to-end experiment without modifying source code other than dataset paths and configuration values.
 
 \item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Maintainability}:]
 \textbf{Maintainability} 
-The effort required to implement any of the likely changes shall be less than 0.5 of the original development effort.
+Changes to the lag window, regularization grid, cross-validation partition, and selected model layer shall be achievable through configuration files or command-line arguments without modifying the core analysis code.
 
 \item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Portability}:]
 \textbf{Portability} 
-\progname{} shall run on modern Windows, macOS, and Linux systems. The procedures in the Verification and Validation Plan shall be executable on all supported operating environments.
+The system shall run in a standard Python environment on Linux, and shall not rely on operating-system-specific functionality in its core analysis pipeline.
 
-\item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Accuracy}:]
-\textbf{Accuracy} 
-The accuracy of results produced by \progname{} shall meet the level required for scientific comparison of predictors in neural speech encoding. 
+\item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_repro}:]
+\textbf{Reproducibility} 
+Given the same inputs, configuration, and random seed, the system shall reproduce the same reported results and analysis artifacts, subject only to documented numerical tolerance. 
 
 
 
@@ -2154,10 +2153,9 @@ The accuracy of results produced by \progname{} shall meet the level required fo
 % should be provided for scope decisions, modelling decisions, assumptions and
 % typical values.}
 
-The requirements emphasize protocol consistency and traceability because the primary scientific objective is to compare predictors under controlled conditions (GS\ref{G_reproCompare}, GS\ref{G_fairEval}). 
+The requirements emphasize protocol consistency and traceability because the primary scientific objective is to compare predictors under controlled conditions (GS\ref{G_baselineComparison}, GS\ref{G_traceableArtifacts}). 
 In particular, the choice to formalize the workflow around time alignment, shared lag windows, and cross-validation ensures that differences in $\rho_{\mathrm{CV}}$ and
-$\Delta\rho$ reflect differences in predictor information content rather than
-differences in evaluation settings. 
+$\Delta\rho$ reflect differences in predictor information content rather than differences in evaluation settings. 
 Typical parameter ranges in Section~\ref{sec_DataConstraints} are conservative to avoid unstable regression fits and to support practical runtimes while still permitting exploratory experiments.
 
 \section{Likely Changes}    
@@ -2212,6 +2210,13 @@ the assumptions.
 % A-trace: Assumptions vs other items
 % (Keep it conservative: only mark "X" where the assumption is truly invoked)
 % ---------------------------------------------------------
+% ---------------------------------------------------------
+% A-trace: Assumptions vs TM/DD/IM
+% A1: linear time-lagged encoding approximation
+% A2: time-invariant mapping within an analysis segment
+% A3: negligible alignment error after preprocessing/resampling
+% A4: finite relevant temporal history within the chosen lag window
+% ---------------------------------------------------------
 \afterpage{
 \begin{landscape}
 \begin{table}[h!]
@@ -2219,22 +2224,22 @@ the assumptions.
 \renewcommand{\arraystretch}{1.1}
 \begin{tabular}{|c|c|c|c|c|}
 \hline
- & \aref{A_preprocessed} & \aref{A_linearencoding} & \aref{A_stationarity} & \aref{A_labels} \\
+ & A1 & A2 & A3 & A4 \\
 \hline
-\tref{TM:ERM}               &  &  &  & X \\ \hline
-\tref{TM:Representation}    & X &  &  &  \\ \hline
-\ddref{DD_sampling}         & X &  &  &  \\ \hline
-\ddref{DD_lag_grid}         & X & X &  &  \\ \hline
-\ddref{DD_trf_prediction}   & X & X & X &  \\ \hline
-\ddref{DD_ridge_objective}  & X & X & X &  \\ \hline
-\ddref{DD_score_corr}       & X &  &  &  \\ \hline
-\ddref{DD_cv_score}         & X &  &  &  \\ \hline
-\iref{IM_predictor_align}   & X &  &  &  \\ \hline
-\iref{IM_design_matrix}     & X & X &  &  \\ \hline
-\iref{IM_ridge_fit}         & X & X & X &  \\ \hline
-\iref{IM_trf_predict}       & X & X & X &  \\ \hline
-\iref{IM_cv_score}          & X & X & X &  \\ \hline
-\hline
+\tref{TM:Training}          &   &   &   &   \\ \hline
+\tref{TM:Representation}    &   &   &   &   \\ \hline
+\ddref{DD_sampling}         &   &   &   &   \\ \hline
+\ddref{DD_lag_grid}         & X &   & X & X \\ \hline
+\ddref{DD_trf_prediction}   & X & X &   & X \\ \hline
+\ddref{DD_ridge_objective}  & X & X &   &   \\ \hline
+\ddref{DD_cv_score}         & X & X & X & X \\ \hline
+\iref{IM_train_model}       &   &   &   &   \\ \hline
+\iref{IM_rep_extract}       &   &   &   &   \\ \hline
+\iref{IM_predictor_align}   &   &   & X &   \\ \hline
+\iref{IM_design_matrix}     & X &   & X & X \\ \hline
+\iref{IM_ridge_fit}         & X & X &   &   \\ \hline
+\iref{IM_trf_predict}       & X & X &   & X \\ \hline
+\iref{IM_cv_score}          & X & X & X & X \\ \hline
 \end{tabular}
 \caption{Traceability Matrix Showing the Connections Between Assumptions and Other Items}
 \label{Table:A_trace}
@@ -2246,53 +2251,65 @@ the assumptions.
 % Cross-trace: TM/GD/DD/IM dependencies (who uses whom)
 % Rows depend on columns. Put X when row uses/refines the column.
 % ---------------------------------------------------------
+% ---------------------------------------------------------
+% Cross-trace: TM/DD/IM dependencies
+% Rows depend on columns. Put X when the row directly uses/refines the column.
+% ---------------------------------------------------------
+\afterpage{
+\begin{landscape}
+\begin{table}[h!]
+\centering
+\renewcommand{\arraystretch}{1.05}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+\hline
+ & \tref{TM:Training} & \tref{TM:Representation} & \ddref{DD_sampling} & \ddref{DD_lag_grid} &
+ \ddref{DD_trf_prediction} & \ddref{DD_ridge_objective} & \ddref{DD_cv_score} &
+ \iref{IM_train_model} & \iref{IM_rep_extract} & \iref{IM_predictor_align} &
+ \iref{IM_design_matrix} & \iref{IM_ridge_fit} & \iref{IM_trf_predict} \\
+\hline
+\tref{TM:Training}          &   &   &   &   &   &   &   &   &   &   &   &   &      \\ \hline
+\tref{TM:Representation}    &   &   &   &   &   &   &   &   &   &   &   &   &      \\ \hline
+\ddref{DD_sampling}         &   &   &   &   &   &   &   &   &   &   &   &   &     \\ \hline
+\ddref{DD_lag_grid}         &   &   & X &   &   &   &   &   &   &   &   &   &      \\ \hline
+\ddref{DD_trf_prediction}   &   &   &   &   &   &   &   &   &   &   &   &   &      \\ \hline
+\ddref{DD_ridge_objective}  &   &   &   &   &   &   &   &   &   &   &   &   &      \\ \hline
+
+\ddref{DD_cv_score}         &   &   &   &   &   &   & X &   &   &   &   &   &      \\ \hline
+\iref{IM_train_model}       & X &   &   &   &   &   &   &   &   &   &   &   &      \\ \hline
+\iref{IM_rep_extract}       &   & X &   &   &   &   &   &   & X &   &   &   &      \\ \hline
+\iref{IM_predictor_align}   &   & X & X &   &   &   &   &   &   & X &   &   &      \\ \hline
+\iref{IM_design_matrix}     &   &   &   & X &   &   &   &   &   &   & X &   &      \\ \hline
+\iref{IM_ridge_fit}         &   &   &   &   &   & X &   &   &   &   &   & X &      \\ \hline
+\iref{IM_trf_predict}       &   &   &   &   & X &   &   &   &   &   &   &   & X    \\ \hline
+\iref{IM_cv_score}          &   &   &   &   &   &   & X & X &   &   & X & X & X  \\ \hline
+\end{tabular}
+\caption{Traceability Matrix Showing the Connections Between Theoretical Models, Data Definitions, and Instance Models}
+\label{Table:trace}
+\end{table}
+\end{landscape}
+}
+
+% ---------------------------------------------------------
+% R-trace: Requirements vs IMs and DDs
+% Replace the row labels below with your actual requirement labels if needed.
+% ---------------------------------------------------------
 \begin{table}[h!]
 \centering
 \renewcommand{\arraystretch}{1.1}
 \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
 \hline
- & \tref{TM:ERM} & \tref{TM:Representation} & \ddref{DD_sampling} & \ddref{DD_lag_grid} &
- \ddref{DD_trf_prediction} & \ddref{DD_ridge_objective} & \ddref{DD_score_corr} & \ddref{DD_cv_score} \\
+ & \iref{IM_train_model} & \iref{IM_rep_extract} & \iref{IM_predictor_align} &
+ \iref{IM_design_matrix} & \iref{IM_ridge_fit} & \iref{IM_trf_predict} & \iref{IM_cv_score} & \ddref{DD_cv_score} \\
 \hline
-\tref{TM:ERM}               &  &  &  &  &  &  &  &  \\ \hline
-\tref{TM:Representation}    &  &  &  &  &  &  &  &  \\ \hline
-\ddref{DD_sampling}         &  &  &  &  &  &  &  &  \\ \hline
-\ddref{DD_lag_grid}         &  &  & X &  &  &  &  &  \\ \hline
-\ddref{DD_trf_prediction}   &  &  & X & X &  &  &  &  \\ \hline
-\ddref{DD_ridge_objective}  &  &  & X & X & X &  &  &  \\ \hline
-\ddref{DD_score_corr}       &  &  &  &  &  &  &  &  \\ \hline
-\ddref{DD_cv_score}         &  &  &  &  &  & X & X &  \\ \hline
-\iref{IM_predictor_align}   &  & X & X &  &  &  &  &  \\ \hline
-\iref{IM_design_matrix}     &  & X & X & X &  &  &  &  \\ \hline
-\iref{IM_ridge_fit}         &  &  &  &  & X & X &  &  \\ \hline
-\iref{IM_trf_predict}       &  &  &  &  & X &  &  &  \\ \hline
-\iref{IM_cv_score}          &  &  &  &  & X & X & X & X \\ \hline
-\hline
+\rref{R_accept_inputs}      &   &   &   &   &   &   &   &   \\ \hline
+\rref{R_train_model}        & X &   &   &   &   &   &   &   \\ \hline
+\rref{R_extract_predictor}  &   & X &   &   &   &   &   &   \\ \hline
+\rref{R_align_predictor}    &   &   & X &   &   &   &   &   \\ \hline
+\rref{R_build_design_matrix}&   &   &   & X &   &   &   &   \\ \hline
+\rref{R_fit_trf}            &   &   &   &   & X &   &   &   \\ \hline
+\rref{R_predict_and_score}  &   &   &   &   &   & X & X & X \\ \hline
 \end{tabular}
-\caption{Traceability Matrix Showing the Connections Between Items of Different Sections}
-\label{Table:trace}
-\end{table}
-
-% ---------------------------------------------------------
-% R-trace: Requirements vs IMs and DataConstraints
-% Rows depend on columns (i.e., requirement uses IM / section).
-% ---------------------------------------------------------
-\begin{table}[h!]
-\centering
-\renewcommand{\arraystretch}{1.1}
-\begin{tabular}{|c|c|c|c|c|c|c|c|}
-\hline
- & \iref{IM_predictor_align} & \iref{IM_design_matrix} & \iref{IM_ridge_fit} &
- \iref{IM_trf_predict} & \iref{IM_cv_score} & \ref{sec_DataConstraints} \\
-\hline
-\rref{R_Inputs}             & X &  &  &  &  & X \\ \hline
-\rref{R_InputValidation}    & X & X &  &  &  & X \\ \hline
-\rref{R_ConstructPredictors} & X & X &  &  &  & X \\ \hline
-\rref{R_Scoring}            &  &  &  & X & X &  \\ \hline
-\rref{R_QuantifyGain}       &  &  &  &  & X &  \\ \hline
-\hline
-\end{tabular}
-\caption{Traceability Matrix Showing the Connections Between Requirements and Instance Models}
+\caption{Traceability Matrix Showing the Connections Between Requirements, Instance Models, and Data Definitions}
 \label{Table:R_trace}
 \end{table}
 
