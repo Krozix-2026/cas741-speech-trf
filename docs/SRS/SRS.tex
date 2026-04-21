@@ -1894,13 +1894,13 @@ uncertainty quantification exercise.
   \textbf{Var} & \textbf{Physical Const.} & \textbf{Software Const.} &
   \textbf{Typical Value} & \textbf{Uncert.}\\
   \midrule
-  $f_s$ & $f_s>0$ &
-  $10 \le f_s \le 2000$ \si{\hertz} &
+  $f_s$ & $f_s>0$ & 
+  $f_{s,\min} \le f_s \le f_{s,\max}$ \si{\hertz} & 
   $100$ \si{\hertz} &
   low\\
 
-  $f_a$ & $f_a>0$ &
-  $8000 \le f_a \le 96000$ \si{\hertz} &
+  $f_a$ & $f_a>0$ & 
+  $f_{a,\min} \le f_a \le f_{a,\max}$ \si{\hertz} & 
   $16000$ \si{\hertz} &
   low\\
 
@@ -1944,8 +1944,8 @@ uncertainty quantification exercise.
   selected by CV &
   medium\\
 
-  $\rho_{\mathrm{CV}}$ & defined partitioning &
-  $2 \le J \le 20$ folds/partitions &
+  $\rho_{\mathrm{CV}}$ & defined partitioning & 
+  $J_{\min} \le J \le J_{\max}$ folds/partitions & 
   $J=4$ &
   low\\
 
