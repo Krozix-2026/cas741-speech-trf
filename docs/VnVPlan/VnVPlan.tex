@@ -438,78 +438,114 @@ The functional tests below cover the end-to-end workflow implied by the SRS requ
 
 \item{FR-01 (Invalid MEG sampling frequency)\\}
 Control: Automatic \\
-Initial State: Clean environment; default configuration template available. \\
-Input: Provide MEG metadata with $f_s \le 0$ (e.g., $f_s = 0$). \\
-Output: System rejects the run and reports an \texttt{InvalidConfigurationError} (or equivalent validation failure) identifying the MEG sampling frequency field and stating that the value must be strictly positive. \\
+Initial State: Clean environment; a valid MEG metadata record extracted from an
+Appleseed MEG file is available (for example, via a test fixture or a copied
+header from one valid file). \\
+Input: Start from a valid Appleseed MEG metadata record and set the sampling
+frequency field \texttt{fs} to an invalid value with \texttt{fs = 0}
+(or any \texttt{fs < 0}). \\
+Output: The system rejects the run and reports an
+\texttt{InvalidConfigurationError} (or equivalent validation failure) that
+identifies the MEG sampling frequency field and states that the value must be
+strictly positive. \\
 Test Case Derivation: R1 \\
-How test will be performed: In pytest, add assertions to check valid or invalid file paths.
+How test will be performed: In pytest, load a valid Appleseed-derived metadata
+fixture, modify the field \texttt{fs} to \texttt{0}, call the input or metadata
+validation function, and assert that validation fails with an error message
+containing both the field name \texttt{fs} and the constraint that the sampling
+frequency must be positive.
 
 
 \item{FR-02 (Unsupported deep model type)\\}
 Control: Automatic \\
-Initial State: Clean environment; model config loaded. \\
-Input: Set model type to an unsupported identifier. \\
-Output: System rejects the configuration and lists supported model types (e.g., RNN, LSTM, GRU, Transformer). \\
+Initial State: Clean environment; a valid model configuration is loaded. \\
+Input: Start from a valid model configuration and set the field
+\texttt{model.type} to a specific unsupported identifier, such as
+\texttt{"unsupported\_model"}. \\
+Output: The system rejects the configuration and reports that the specified
+model type is unsupported. The error message shall also list the supported model
+types (for example, \texttt{RNN}, \texttt{LSTM}, \texttt{GRU},
+\texttt{Transformer}). \\
 Test Case Derivation: R2 \\
-How test will be performed: In pytest, access pipeline attributes related to model entities. Assertions will check that the set of correct model entities.
+How test will be performed: In pytest, load a valid model configuration, change
+\texttt{model.type} to \texttt{"unsupported\_model"}, call the model
+configuration validation function, and assert that validation fails with an
+error message that includes the invalid identifier and the supported model type
+list.
 
 \item{FR-03 (Invalid model architecture hyperparameters)\\}
 Control: Automatic \\
-Initial State: Clean environment; model config loaded. \\
-Input: Set any of the following invalid values:
-\texttt{num\_layers} $\le 0$, \texttt{hidden\_size} $\le 0$, 
-\texttt{dropout} $\notin [0,1)$. \\
-Output: System rejects the configuration and reports a validation error that identifies the invalid hyperparameter name and states the violated constraint (e.g., \texttt{num\_layers > 0}, \texttt{hidden\_size > 0}, or \texttt{dropout $\in$ [0,1)}). \\
+Initial State: Clean environment; a valid model configuration is loaded. \\
+Input: Create invalid configuration variants from the valid model configuration
+by setting one hyperparameter at a time to an invalid value:
+\texttt{num\_layers = 0}, \texttt{hidden\_size = 0}, and
+\texttt{dropout = 1.2}. \\
+Output: For each invalid configuration, the system rejects the configuration
+and reports a validation error that identifies the invalid hyperparameter name
+and states the violated constraint (for example,
+\texttt{num\_layers > 0}, \texttt{hidden\_size > 0}, or
+\texttt{dropout \(\in [0,1)\)}). \\
 Test Case Derivation: R2 \\
-How test will be performed: In pytest, run config validation; assert failure and message.
+How test will be performed: In pytest, parameterize the three invalid
+configuration variants, call the model configuration validation function for
+each case, and assert that validation fails with an error message mentioning the
+corresponding hyperparameter name and constraint.
 
 \item{FR-04 (Model input feature dimension mismatch)\\}
 Control: Automatic \\
-Initial State: A feature extractor produces input tensors matches the model expects. \\
-Input: Provide data with wrong feature dimension (e.g., wrong number of gammatone channels or acoustic features). \\
-Output: System rejects training and extraction and reports a dimension-mismatch error identifying both the expected input dimension and the observed dimension. \\
+Initial State: Clean environment; a valid model configuration is loaded, and the configured model expects input tensors with feature dimension $D_{\mathrm{exp}}$ (for example, the number of acoustic features or gammatone channels specified in the configuration). \\
+Input: Construct a small synthetic input batch whose last dimension is
+$D_{\mathrm{obs}} \neq D_{\mathrm{exp}}$; for example, if the model expects
+$D_{\mathrm{exp}} = 64$, provide an input tensor with feature dimension
+$D_{\mathrm{obs}} = 80$. \\
+Output: The system rejects training or representation extraction and reports a dimension-mismatch error identifying both the expected feature dimension and the observed feature dimension. \\
 Test Case Derivation: R2 \\
-How test will be performed: Construct a small batch with mismatched dimension and
-assert exception before any optimizer step.
+How test will be performed: In pytest, load a valid model configuration,
+construct a synthetic batch with mismatched feature dimension, call the model input validation or forward-pass entry point, and assert that an exception is raised before any optimizer step, with an error message containing both $D_{\mathrm{exp}}$ and $D_{\mathrm{obs}}$.
 
 
 \item{FR-05 (LibriSpeech manifest integrity)\\}
 Control: Automatic \\
-Initial State: LibriSpeech subset path configured (e.g., \texttt{train-clean-100}). \\
-Input: Provide a manifest/metadata table that references at least one missing
-audio file or transcript. \\
-Output: System rejects dataset loading and reports the missing file and the manifest row identifiers. \\
+Initial State: Clean environment; a valid LibriSpeech-style manifest or metadata table is available, and the dataset root path is configured (for example, \texttt{train-clean-100}). \\
+Input: Create a test manifest derived from the valid manifest in which one row references a missing audio file or a missing transcript file. The modified row identifier shall be recorded in the test input. \\
+Output: The system rejects dataset loading and reports the missing file path together with the identifier of the manifest row that contains the invalid reference. \\
 Test Case Derivation: R2 \\
-How test will be performed: In pytest, run the pipeline to check the missing audio file. Assertions will check return object types and missing data.
+How test will be performed: In pytest, load the modified manifest, call the
+dataset-loading or manifest-validation function, and assert that loading fails with an error message containing the missing path and the corresponding row identifier.
 
 
 
-\item{FR-06 (Time-aligned predictor matrix)\\}
+\item{FR-06 (Incompatible predictor time axis for alignment)\\}
 Control: Automatic \\
-Initial State: Clean environment; MEG data loaded with a known MEG sampling rate. \\
-Input: Provide a predictor time series whose timestamps are off-grid or at a different sampling rate than MEG.\\
-Output: System rejects the run and reports an alignment validation error identifying the predictor time axis and the MEG time grid as incompatible. \\
-Test Case Derivation: R3 \\
-How test will be performed: In pytest, create a small synthetic MEG time axis and a predictor with mismatched time axis.
+Initial State: Clean environment; MEG data are loaded with a known MEG sampling rate and time grid. \\
+Input: Provide a predictor time series whose time axis is incompatible with the MEG time grid; for example, omit the predictor timestamps entirely, provide a non-monotonic predictor time axis, or provide timestamps whose covered time range does not overlap the MEG segment to be aligned. \\
+Output: The system rejects alignment and reports a validation error identifying the predictor time axis and the MEG time grid as incompatible for alignment. \\
+Test Case Derivation: R4 \\
+How test will be performed: In pytest, create a small synthetic MEG time grid and a predictor with an incompatible time axis, call the predictor-alignment function, and assert that alignment fails with an error message describing the specific incompatibility.
 
 
 
 \item{FR-07 (Inconsistent evaluation protocol across predictors)\\}
 Control: Automatic \\
-Initial State: Clean environment; at least two predictor definitions configured (e.g., gammatone baseline + model hidden states). \\
-Input: Run an experiment where one predictor is evaluated with different protocol settings than another.\\
-Output: System rejects the run and reports which protocol fields differ. \\
-Test Case Derivation: R4 \\
-How test will be performed: In pytest, define two predictors and intentionally set a conflicting per-predictor evaluation setting.
+Initial State: Clean environment; at least two predictor definitions are
+configured (for example, a gammatone baseline and one hidden-state predictor). \\
+Input: Configure the two predictors with different evaluation protocol settings;
+for example, assign different lag windows, different lag discretizations,
+different cross-validation partitions, or different regularization grids. \\
+Output: The system rejects the evaluation run and reports which protocol fields differ across predictors. \\
+Test Case Derivation: R7 \\
+How test will be performed: In pytest, define two predictors, intentionally set one protocol field to a conflicting value for one predictor, call the evaluation protocol validation function, and assert that validation fails with an error message listing the conflicting protocol field names.
 
 
 
-\item{FR-08 (Encoding score computation returns invalid or missing results)} \\
-Initial State: Clean environment; one predictor matrix and MEG response are available on the same time grid. \\
-Input: Provide a case where the score would be undefined or invalid.\\
-Output: System rejects scoring and reports a scoring error identifying the cause of invalidity, such as NaN values in the predictor matrix or undefined correlation due to a constant response signal. \\
-Test Case Derivation: R5 \\
-How test will be performed: In pytest, construct a tiny dataset with (a) constant MEG signal or (b) NaN in predictor.
+\item{FR-08 (Encoding score computation returns invalid or missing results)\\}
+Control: Automatic \\
+Initial State: Clean environment; one predictor matrix and one MEG response
+matrix are available on the same time grid. \\
+Input: Construct a test case in which the score is undefined or invalid; for example, (a) insert a \texttt{NaN} value into the predictor matrix, or (b) provide a constant response signal that makes Pearson correlation undefined. \\
+Output: The system rejects scoring and reports a scoring error identifying the cause of invalidity, such as the presence of \texttt{NaN} values in the predictor matrix or undefined correlation due to a constant response signal. \\
+Test Case Derivation: R7 \\
+How test will be performed: In pytest, construct small synthetic matrices for the predictor and response, evaluate the scoring function under each invalid case, and assert that scoring fails with an error message indicating the specific cause of invalidity.
 
 
 
