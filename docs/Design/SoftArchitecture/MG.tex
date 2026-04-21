@@ -106,14 +106,9 @@ WER & Word Error Rate\\
 
 \section{Introduction}
 
-Decomposing a system into modules is a commonly accepted approach to developing
-software.  A module is a work assignment for a programmer or programming
-team~\citep{ParnasEtAl1984}.  We advocate a decomposition
+Decomposing a system into modules is a commonly accepted approach to developing software.  A module is a work assignment for a programmer or programming team~\citep{ParnasEtAl1984}.  We advocate a decomposition
 based on the principle of information hiding~\citep{Parnas1972a}.  This
-principle supports design for change, because the ``secrets'' that each module
-hides represent likely future changes.  Design for change is valuable in SC,
-where modifications are frequent, especially during initial development as the
-solution space is explored.  
+principle supports design for change, because the ``secrets'' that each module hides represent likely future changes.  Design for change is valuable in SC, where modifications are frequent, especially during initial development as the solution space is explored.  
 
 Our design follows the rules layed out by \citet{ParnasEtAl1984}, as follows:
 \begin{itemize}
@@ -125,50 +120,31 @@ Our design follows the rules layed out by \citet{ParnasEtAl1984}, as follows:
 \end{itemize}
 
 After completing the first stage of the design, the Software Requirements
-Specification (SRS), the Module Guide (MG) is developed~\citep{ParnasEtAl1984}. The MG
-specifies the modular structure of the system and is intended to allow both
-designers and maintainers to easily identify the parts of the software.  The
-potential readers of this document are as follows:
+Specification (SRS), the Module Guide (MG) is developed~\citep{ParnasEtAl1984}. The MG specifies the modular structure of the system and is intended to allow both designers and maintainers to easily identify the parts of the software. The potential readers of this document are as follows:
 
 \begin{itemize}
-\item New project members: This document can be a guide for a new project member
-  to easily understand the overall structure and quickly find the
+\item New project members: This document can be a guide for a new project member to easily understand the overall structure and quickly find the
   relevant modules they are searching for.
-\item Maintainers: The hierarchical structure of the module guide improves the
-  maintainers' understanding when they need to make changes to the system. It is
-  important for a maintainer to update the relevant sections of the document
-  after changes have been made.
-\item Designers: Once the module guide has been written, it can be used to
-  check for consistency, feasibility, and flexibility. Designers can verify the
-  system in various ways, such as consistency among modules, feasibility of the
-  decomposition, and flexibility of the design.
+\item Maintainers: The hierarchical structure of the module guide improves the maintainers' understanding when they need to make changes to the system. It is important for a maintainer to update the relevant sections of the document after changes have been made.
+\item Designers: Once the module guide has been written, it can be used to check for consistency, feasibility, and flexibility. Designers can verify the system in various ways, such as consistency among modules, feasibility of the decomposition, and flexibility of the design.
 \end{itemize}
 
-The rest of the document is organized as follows. Section
-\ref{SecChange} lists the anticipated and unlikely changes of the software
-requirements. Section \ref{SecMH} summarizes the module decomposition that
-was constructed according to the likely changes. Section \ref{SecConnection}
+The rest of the document is organized as follows. Section \ref{SecChange} lists the anticipated and unlikely changes of the software requirements. Section \ref{SecMH} summarizes the module decomposition that was constructed according to the likely changes. Section \ref{SecConnection}
 specifies the connections between the software requirements and the
 modules. Section \ref{SecMD} gives a detailed description of the
 modules. Section \ref{SecTM} includes two traceability matrices. One checks
-the completeness of the design against the requirements provided in the SRS. The
-other shows the relation between anticipated changes and the modules. Section
-\ref{SecUse} describes the use relation between modules.
+the completeness of the design against the requirements provided in the SRS. The other shows the relation between anticipated changes and the modules. Section \ref{SecUse} describes the use relation between modules.
 
 \section{Anticipated and Unlikely Changes} \label{SecChange}
 
-This section lists possible changes to the system. According to the likeliness
-of the change, the possible changes are classified into two
+This section lists possible changes to the system. According to the likeliness of the change, the possible changes are classified into two
 categories. Anticipated changes are listed in Section \ref{SecAchange}, and
 unlikely changes are listed in Section \ref{SecUchange}.
 
 \subsection{Anticipated Changes} \label{SecAchange}
 
 Anticipated changes are the source of the information that is to be hidden
-inside the modules. Ideally, changing one of the anticipated changes will only
-require changing the one module that hides the associated decision. The approach
-adapted here is called design for
-change.
+inside the modules. Ideally, changing one of the anticipated changes will only require changing the one module that hides the associated decision. The approach adapted here is called design for change.
 
 \begin{description}
 % \item[\refstepcounter{acnum} \actheacnum \label{acHardware}:] The specific
@@ -213,23 +189,14 @@ visualization routines and output formats for plots, summary tables, and saved f
 
 \subsection{Unlikely Changes} \label{SecUchange}
 
-The module design should be as general as possible. However, a general system is
-more complex. Sometimes this complexity is not necessary. Fixing some design
-decisions at the system architecture stage can simplify the software design. If
-these decision should later need to be changed, then many parts of the design
-will potentially need to be modified. Hence, it is not intended that these
-decisions will be changed.
+The module design should be as general as possible. However, a general system is more complex. Sometimes this complexity is not necessary. Fixing some design decisions at the system architecture stage can simplify the software design. If these decision should later need to be changed, then many parts of the design will potentially need to be modified. Hence, it is not intended that these decisions will be changed.
 
 \begin{description}
-\item[\refstepcounter{ucnum} \uctheucnum \label{ucIO}:] Input and output remain
-file-based rather than interactive or device-driven.
+\item[\refstepcounter{ucnum} \uctheucnum \label{ucIO}:] Input and output remain file-based rather than interactive or device-driven.
 
-\item[\refstepcounter{ucnum} \uctheucnum \label{ucDomain}:] The system remains
-an offline scientific workflow for model-to-brain alignment of speech data,
-rather than a real-time or online prediction system.
+\item[\refstepcounter{ucnum} \uctheucnum \label{ucDomain}:] The system remains an offline scientific workflow for model-to-brain alignment of speech data, rather than a real-time or online prediction system.
 
-\item[\refstepcounter{ucnum} \uctheucnum \label{ucDB}:] No dedicated database
-system is required. Datasets and outputs are managed through the file system.
+\item[\refstepcounter{ucnum} \uctheucnum \label{ucDB}:] No dedicated database system is required. Datasets and outputs are managed through the file system.
 
 \item[\refstepcounter{ucnum} \uctheucnum \label{ucProtocol}:] No external
 communication protocol is required beyond local file access.
@@ -243,10 +210,7 @@ communication protocol is required beyond local file access.
 
 \section{Module Hierarchy} \label{SecMH}
 
-This section provides an overview of the module design. Modules are summarized
-in a hierarchy decomposed by secrets in Table \ref{TblMH}. The modules listed
-below, which are leaves in the hierarchy tree, are the modules that will
-actually be implemented.
+This section provides an overview of the module design. Modules are summarized in a hierarchy decomposed by secrets in Table \ref{TblMH}. The modules listed below, which are leaves in the hierarchy tree, are the modules that will actually be implemented.
 
 \begin{description}
 \item[\refstepcounter{mnum} \mthemnum \label{mAudio}:] Audio Data Module
@@ -300,9 +264,7 @@ actually be implemented.
 
 \section{Connection Between Requirements and Design} \label{SecConnection}
 
-The design of the system is intended to satisfy the requirements developed in
-the SRS. At this stage, the system is decomposed into modules. The connection
-between requirements and modules is listed in Table~\ref{TblConnection}.
+The design of the system is intended to satisfy the requirements developed in the SRS. At this stage, the system is decomposed into modules. The connection between requirements and modules is listed in Table~\ref{TblConnection}.
 
 \begin{table}[H]
 \centering
@@ -366,15 +328,10 @@ Modules are decomposed according to the principle of ``information hiding''
 proposed by \citet{ParnasEtAl1984}. The \emph{Secrets} field in a module
 decomposition is a brief statement of the design decision hidden by the
 module. The \emph{Services} field specifies \emph{what} the module will do
-without documenting \emph{how} to do it. For each module, a suggestion for the
-implementing software is given under the \emph{Implemented By} title. If the
-entry is \emph{OS}, this means that the module is provided by the operating
-system or by standard programming language libraries.  \emph{\progname{}} means the
-module will be implemented by the \progname{} software.
+without documenting \emph{how} to do it. For each module, a suggestion for the implementing software is given under the \emph{Implemented By} title. If the entry is \emph{OS}, this means that the module is provided by the operating system or by standard programming language libraries.  \emph{\progname{}} means the module will be implemented by the \progname{} software.
 
 Only the leaf modules in the hierarchy have to be implemented. If a dash
-(\emph{--}) is shown, this means that the module is not a leaf and will not have
-to be implemented.
+(\emph{--}) is shown, this means that the module is not a leaf and will not have to be implemented.
 
 
 
@@ -382,18 +339,14 @@ to be implemented.
 
 \subsection{Hardware Hiding Modules}
 
-These modules hide decisions related to external data storage and file-system
-organization.
+These modules hide decisions related to external data storage and file-system organization.
 
 \subsubsection{Audio Data Module (\mref{mAudio})}
 
 \begin{description}
-\item[Secrets:] The storage format, indexing scheme, and metadata organization
-of the audio datasets.
-\item[Services:] Loads and serves audio recordings, dataset splits, sampling
-rates, and utterance-level metadata to the rest of the system.
-\item[Implemented By:] \progname{}
-\item[Type of Module:] Abstract Object
+\item[Secrets:] The storage format, indexing scheme, and metadata organization of the audio datasets.
+\item[Services:] Loads and serves audio recordings, dataset splits, sampling rates, and utterance-level metadata to the rest of the system.
+\item[Implemented By:] \progname{} \item[Type of Module:] Abstract Object
 \end{description}
 
 \subsubsection{MEG Data Module (\mref{mMEG})}
@@ -401,8 +354,7 @@ rates, and utterance-level metadata to the rest of the system.
 \begin{description}
 \item[Secrets:] The storage format, trial structure, sensor metadata, and
 stimulus linkage used by the MEG dataset.
-\item[Services:] Loads and serves MEG responses, subject lists, sensor counts,
-sampling rates, and trial-level metadata for downstream analysis.
+\item[Services:] Loads and serves MEG responses, subject lists, sensor counts, sampling rates, and trial-level metadata for downstream analysis.
 \item[Implemented By:] \progname{}
 \item[Type of Module:] Abstract Object
 \end{description}
@@ -470,8 +422,7 @@ together with training summaries.
 \subsubsection{Representation Extraction Module (\mref{mExtract})}
 
 \begin{description}
-\item[Secrets:] The procedure used to extract layer-wise hidden representations
-and convert them into predictor matrices aligned to the MEG sampling grid.
+\item[Secrets:] The procedure used to extract layer-wise hidden representations and convert them into predictor matrices aligned to the MEG sampling grid.
 \item[Services:] Extracts hidden representations from frozen models and
 constructs aligned predictor matrices for downstream analysis.
 \item[Implemented By:] \progname{}
@@ -487,9 +438,7 @@ constructs aligned predictor matrices for downstream analysis.
 \item[Secrets:] The project-specific evaluation workflow used to construct
 analysis matrices, fit encoding models, perform cross-validation, aggregate
 scores, and compute baseline-referenced comparisons.
-\item[Services:] Performs the statistical evaluation of aligned predictors under
-a common protocol, including design-matrix construction, model fitting,
-prediction, score computation, and baseline comparison.
+\item[Services:] Performs the statistical evaluation of aligned predictors under a common protocol, including design-matrix construction, model fitting, prediction, score computation, and baseline comparison.
 \item[Implemented By:] \progname{} using external scientific Python libraries (EElbrain).
 \item[Type of Module:] Library
 \end{description}
@@ -598,15 +547,7 @@ NFR4(NFR-Accuracy) & \mref{mFrozen}, \mref{mExtract}, \mref{mStats}\\
 \section{Use Hierarchy Between Modules} \label{SecUse}
 
 In this section, the uses hierarchy between modules is
-provided. \citet{Parnas1978} said of two programs A and B that A {\em uses} B if
-correct execution of B may be necessary for A to complete the task described in
-its specification. That is, A {\em uses} B if there exist situations in which
-the correct functioning of A depends upon the availability of a correct
-implementation of B.  Figure \ref{FigUH} illustrates the use relation between
-the modules. It can be seen that the graph is a directed acyclic graph
-(DAG). Each level of the hierarchy offers a testable and usable subset of the
-system, and modules in the higher level of the hierarchy are essentially simpler
-because they use modules from the lower levels.
+provided. \citet{Parnas1978} said of two programs A and B that A {\em uses} B if correct execution of B may be necessary for A to complete the task described in its specification. That is, A {\em uses} B if there exist situations in which the correct functioning of A depends upon the availability of a correct implementation of B.  Figure \ref{FigUH} illustrates the use relation between the modules. It can be seen that the graph is a directed acyclic graph (DAG). Each level of the hierarchy offers a testable and usable subset of the system, and modules in the higher level of the hierarchy are essentially simpler because they use modules from the lower levels.
 
 % \wss{The uses relation is not a data flow diagram.  In the code there will often
 % be an import statement in module A when it directly uses module B.  Module B
@@ -643,10 +584,7 @@ because they use modules from the lower levels.
 % needed. Drawings, Sketches, Figma}
 
 The primary user interface of \progname{} is a script-based or command-line
-scientific workflow. Users provide configuration parameters, dataset locations,
-and model and analysis settings through files or command-line arguments. The
-main user-visible outputs are analysis summaries, score tables, and saved
-figures. No dedicated graphical user interface is required.
+scientific workflow. Users provide configuration parameters, dataset locations, and model and analysis settings through files or command-line arguments. The main user-visible outputs are analysis summaries, score tables, and saved figures. No dedicated graphical user interface is required.
 
 
 
@@ -659,8 +597,7 @@ figures. No dedicated graphical user interface is required.
 % to explain the design of the communication protocol.  This section should be filled 
 % in with NA if it is not appropriate for a given project.}
 
-N/A. \progname{} does not require a communication protocol beyond local file
-access and standard operating-system services.
+N/A. \progname{} does not require a communication protocol beyond local file access and standard operating-system services.
 
 
 
@@ -677,8 +614,7 @@ NA
 
 % \wss{Schedule of tasks and who is responsible}
 
-The development schedule and division of responsibilities will be maintained in the project repository or shared project planning documents. This section may be updated later with milestones for data preparation, model training,
-representation extraction, statistical analysis, and report generation.
+The development schedule and division of responsibilities will be maintained in the project repository or shared project planning documents. This section may be updated later with milestones for data preparation, model training, representation extraction, statistical analysis, and report generation.
 See Github Project: \url{https://github.com/Krozix-2026/cas741-speech-trf}
 
 % \wss{You can point to GitHub if this information is included there}
