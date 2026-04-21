@@ -49,7 +49,7 @@
 \toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
 \midrule
 March 25, 2026 & 1.0 & Initial Draft\\
-% Date 2 & 1.1 & Notes\\
+April 21, 2026 & 1.1 & Update according to smith's feedback\\
 \bottomrule
 \end{tabularx}
 
@@ -86,7 +86,7 @@ SRS & Software Requirements Specification\\
 TRF & Temporal Response Function\\
 UC & Unlikely Change\\
 WER & Word Error Rate\\
-\progname & Program name for the Model--to--Brain Alignment for Speech Recognition system\\
+\progname & Program name\\
 \bottomrule
 \end{tabular}
 \caption{Abbreviations and acronyms used in this document}
@@ -174,31 +174,29 @@ change.
 % \item[\refstepcounter{acnum} \actheacnum \label{acHardware}:] The specific
 % hardware and operating system on which the software is executed.
 
-\item[\refstepcounter{acnum} \actheacnum \label{acAudioFormat}:] The storage
-format, indexing scheme, and metadata organization of the audio datasets.
+\item[\refstepcounter{acnum} \actheacnum \label{acAudioFormat}:] The audio
+dataset access schema, including the file-system layout, naming conventions, and metadata fields used to locate and load audio recordings.
 
-\item[\refstepcounter{acnum} \actheacnum \label{acMEGFormat}:] The storage
-format, trial organization, and metadata organization of the MEG datasets.
+\item[\refstepcounter{acnum} \actheacnum \label{acMEGFormat}:] The MEG dataset access schema, including the file-system layout, trial or segment organization, and metadata fields used to locate and load MEG data.
 
-\item[\refstepcounter{acnum} \actheacnum \label{acParams}:] The set of input
-parameters, including file locations, model choices, lag windows, and
-cross-validation settings.
+\item[\refstepcounter{acnum} \actheacnum \label{acParams}:] The experiment
+configuration schema and validation rules, including how file paths, model
+choices, lag-window parameters, and cross-validation settings are represented and checked.
 
 \item[\refstepcounter{acnum} \actheacnum \label{acTraining}:] The training
 procedure used to optimize the speech model parameters.
 
-\item[\refstepcounter{acnum} \actheacnum \label{acFrozen}:] The representation
-and loading strategy for trained checkpoints and frozen models.
+\item[\refstepcounter{acnum} \actheacnum \label{acFrozen}:] The checkpoint
+serialization format and loading strategy for trained checkpoints and frozen models.
 
-\item[\refstepcounter{acnum} \actheacnum \label{acRepresentation}:] The method
-used to extract hidden states and convert them into aligned predictor matrices.
+\item[\refstepcounter{acnum} \actheacnum \label{acRepresentation}:] The
+procedure used to extract hidden states and convert them into predictor
+representations for downstream alignment and analysis.
 
-\item[\refstepcounter{acnum} \actheacnum \label{acAnalysis}:] The statistical
-analysis protocol used to fit encoding models, compute cross-validated scores,
-and quantify baseline-referenced gains.
+\item[\refstepcounter{acnum} \actheacnum \label{acAnalysis}:] The statistical analysis protocol used to fit encoding models, select regularization, compute cross-validated scores, and quantify baseline-referenced gains.
 
 \item[\refstepcounter{acnum} \actheacnum \label{acPlot}:] The choice of
-visualization routines and output figure formats.
+visualization routines and output formats for plots, summary tables, and saved figures.
 \end{description}
 
 
