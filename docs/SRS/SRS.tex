@@ -1074,21 +1074,13 @@ models can be verified.
 
 
 \begin{itemize}
-  \item[A\refstepcounter{assumpnum}\theassumpnum \label{A_preprocessed}:]
-  Neural recordings are available in a usable preprocessed form with an explicit
-  time base and sampling rate. [IM]
+  \item[A1:] Over the selected lag window, the relationship between a predictor representation and the neural response can be approximated by a linear time-lagged encoding model. [TM:TRF, IM\ref{IM_design_matrix}, IM\ref{IM_ridge_fit}, IM\ref{IM_trf_predict}, IM\ref{IM_cv_score}]
 
-  \item[A\refstepcounter{assumpnum}\theassumpnum \label{A_linearencoding}:]
-  A linear time-lagged encoding model is an appropriate approximation for
-  quantifying predictor--neural relationships over the chosen lag window. [IM]
+  \item[A2:] Within each analysis segment, the mapping from predictors to neural responses is treated as time-invariant for model fitting. [TM:TRF, TM:Ridge, IM\ref{IM_ridge_fit}, IM\ref{IM_trf_predict}, IM\ref{IM_cv_score}]
 
-  \item[A\refstepcounter{assumpnum}\theassumpnum \label{A_stationarity}:]
-  Within an analysis segment, the mapping from predictors to neural responses is
-  treated as time-invariant for the purposes of model fitting. [IM]
+  \item[A3:] After preprocessing and resampling, the temporal alignment error between speech-derived predictors and MEG responses is negligible relative to the analysis resolution and can be absorbed within the chosen lag window. [IM\ref{IM_predictor_align}, IM\ref{IM_design_matrix}, IM\ref{IM_cv_score}]
 
-  \item[A\refstepcounter{assumpnum}\theassumpnum \label{A_labels}:]
-  When supervised training is used, the speech dataset provides sufficient
-  labeling quality for training models to yield stable representations. [IM]
+  \item[A4:] The analyzed neural response is assumed to depend primarily on the supplied predictor set and its recent temporal history, so effects outside the selected lag window are ignored. [TM:TRF, IM\ref{IM_design_matrix}, IM\ref{IM_trf_predict}, IM\ref{IM_cv_score}]
 \end{itemize}
 
 
@@ -1129,36 +1121,38 @@ on.
 
 \noindent
 \deftheory
-{TM:ERM}
-{Empirical risk minimization for speech model training}
+{TM:Training}
+{Empirical risk minimization for learning speech representations}
 {
   $
   \boldsymbol{\theta}^{\ast}
-  = \arg\min_{\boldsymbol{\theta}}
-  \ \mathbb{E}_{(\boldsymbol{a}, \boldsymbol{s}^{\star}) \sim \mathcal{D}_{\text{train}}}
-  \left[\mathcal{L}_{\mathrm{ASR}}\!\left(f_{\boldsymbol{\theta}}(\boldsymbol{a}), \boldsymbol{s}^{\star}\right)\right]
+  =
+  \arg\min_{\boldsymbol{\theta}}
+  \frac{1}{|\mathcal{D}_{\text{train}}|}
+  \sum_{(\boldsymbol{a}, \boldsymbol{y}) \in \mathcal{D}_{\text{train}}}
+  \mathcal{L}_{\text{train}}\!\left(f_{\boldsymbol{\theta}}(\boldsymbol{a}), \boldsymbol{y}\right)
   $
 }
 {
-  This theoretical model states that training a speech model can be expressed as
-  minimizing an expected task loss over a training distribution.
-  Here $\boldsymbol{a}$ denotes speech input,
-  $\boldsymbol{s}^{\star}$ denotes the target labels, $f_{\boldsymbol{\theta}}$
-  is the model parameterized by $\boldsymbol{\theta}$, and $\mathcal{L}_{\mathrm{ASR}}$
-  is a task loss appropriate for sequence prediction. The purpose of training in \progname{} is not to optimize for a single
-  benchmark, but to produce stable internal representations that can be extracted
-  and compared in the neural encoding analysis.
+  This theoretical model states that the parameters of a speech model can be learned
+  by minimizing an empirical training loss over a training dataset.
+  Here $\boldsymbol{a}$ denotes the speech input, $\boldsymbol{y}$ denotes the
+  supervision signal associated with the task, $f_{\boldsymbol{\theta}}$ is the
+  model parameterized by $\boldsymbol{\theta}$, and $\mathcal{L}_{\text{train}}$
+  is the task-specific training loss. In \progname{}, the purpose of training is to
+  obtain a model whose internal representations can later be extracted and compared
+  in neural encoding analysis.
 }
 {None.}
 {
   \url{https://docs.pytorch.org/docs/stable/optim.html}
 }
 {
-  None
+  \iref{IM_train_model}
 }
 {
-  Training data $\mathcal{D}_{\text{train}}$ and a corresponding loss function
-  $\mathcal{L}_{\mathrm{ASR}}$ are defined.
+  A training dataset $\mathcal{D}_{\text{train}}$ and a training loss
+  $\mathcal{L}_{\text{train}}$ are defined.
 }
 {}
 
@@ -1187,7 +1181,7 @@ on.
   \url{https://doi.org/10.1371/journal.pcbi.1013244}
 }
 {
-  None
+  \iref{IM_predictor_align}
 }
 {
   A trained model and a well-defined layer index $\ell$ exist for the stimulus.
@@ -1559,7 +1553,7 @@ identified in Sections~\ref{sec_theoretical} and~\ref{sec_gendef}.
 % \plt{Modify the examples below for your problem, and add additional models as
 %   appropriate.}
 
-The goals GS\ref{G_reproCompare}--GS\ref{G_traceableArtifacts} are solved by the
+The goals GS\ref{G_standardizedPredictors}--GS\ref{G_traceableArtifacts} are solved by the
 instance models IM\ref{IM_predictor_align}--IM\ref{IM_cv_score}, which define
 (i) how predictors are aligned and assembled into TRF-ready inputs, (ii) how TRF
 models are fit under a fixed protocol, (iii) how performance is evaluated fairly
@@ -1570,6 +1564,82 @@ how artifacts are defined for reproducibility.
 
 
 ~\newline
+
+\noindent
+\begin{minipage}{\textwidth}
+\renewcommand*{\arraystretch}{1.5}
+\begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
+  \hline
+  \rowcolor[gray]{0.9}
+  Number& IM\refstepcounter{instnum}\theinstnum \label{IM_train_model}\\
+  \hline
+  Label& \bf Training a deep learning speech model\\
+  \hline
+  Input&
+  Training dataset $\mathcal{D}_{\text{train}}$, model family $f_{\boldsymbol{\theta}}$,
+  training loss $\mathcal{L}_{\text{train}}$, and optimization procedure
+  $\Omega$.\\
+  \hline
+  Output&
+  Trained model parameters $\boldsymbol{\theta}^{\ast}$ that minimize the empirical
+  training objective:
+  $
+  \boldsymbol{\theta}^{\ast}
+  =
+  \arg\min_{\boldsymbol{\theta}}
+  \frac{1}{|\mathcal{D}_{\text{train}}|}
+  \sum_{(\boldsymbol{a}, \boldsymbol{y}) \in \mathcal{D}_{\text{train}}}
+  \mathcal{L}_{\text{train}}\!\left(f_{\boldsymbol{\theta}}(\boldsymbol{a}), \boldsymbol{y}\right).
+  $\\
+  \hline
+  Description&
+  This model instantiates TM:Training by learning model parameters from a concrete
+  training dataset. The resulting trained model serves as the source of hidden
+  representations that will later be extracted as candidate predictors for
+  model-to-brain alignment.\\
+  \hline
+  Sources& Standard deep learning optimization workflow.\\
+  \hline
+  Ref.\ By & \iref{IM_rep_extract}\\
+  \hline
+\end{tabular}
+\end{minipage}\\
+
+
+\noindent
+\begin{minipage}{\textwidth}
+\renewcommand*{\arraystretch}{1.5}
+\begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
+  \hline
+  \rowcolor[gray]{0.9}
+  Number& IM\refstepcounter{instnum}\theinstnum \label{IM_rep_extract}\\
+  \hline
+  Label& \bf Extraction of hidden-state predictors from a trained model\\
+  \hline
+  Input&
+  Trained model parameters $\boldsymbol{\theta}^{\ast}$ (\iref{IM_train_model}),
+  speech stimulus $\boldsymbol{a}$, layer index $\ell$, and optional
+  transformation $g(\cdot)$.\\
+  \hline
+  Output&
+  Predictor stream $\boldsymbol{r}^{(\ell)}(t)$ defined by
+  $
+  \boldsymbol{r}^{(\ell)}(t)=g\!\left(\boldsymbol{h}^{(\ell)}(t)\right)\in\mathbb{R}^{D}.
+  $\\
+  \hline
+  Description&
+  This model instantiates TM:Representation by applying a trained deep learning
+  model to the speech stimulus, extracting the hidden representation at layer
+  $\ell$, and optionally transforming it into a standardized predictor stream.
+  The resulting predictor is then passed to the alignment stage.\\
+  \hline
+  Sources& Internal representation extraction from trained neural networks.\\
+  \hline
+  Ref.\ By & \iref{IM_predictor_align}\\
+  \hline
+\end{tabular}
+\end{minipage}\\
+
 
 % ---------------------------------------------------------
 % IM1: Alignment and predictor standardization
@@ -1586,15 +1656,14 @@ how artifacts are defined for reproducibility.
   Label& \bf Time alignment and standardization of predictors\\
   \hline
   Input&
-  Predictor stream $\boldsymbol{x}(t)$ MEG sampling
-  frequency $f_s$.\\
+  Predictor stream $\boldsymbol{r}^{(\ell)}(t)$ from TM:Representation, and MEG sampling frequency $f_s$.\\
   \hline
   Output&
   Time-aligned predictor matrix $\tilde{\mathbf{R}}\in\mathbb{R}^{N\times D}$ on
   the MEG sampling grid\\
   \hline
   Description&
-  This model instantiates the definition of a time-aligned predictor by mapping candidate representations onto the MEG time base. The alignment procedure is applied identically for all predictors to ensure fair comparison.\\
+  This model refines TM:Representation by mapping the abstract predictor stream $\boldsymbol{r}^{(\ell)}(t)$ onto the MEG time base, producing a standardized predictor matrix $\tilde{\mathbf{R}}$ for downstream TRF analysis.\\
   \hline
   Sources& https://eelbrain.readthedocs.io/en/stable/generated/eelbrain.align.html\\
   \hline
