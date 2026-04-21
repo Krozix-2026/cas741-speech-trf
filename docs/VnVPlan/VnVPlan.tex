@@ -671,10 +671,16 @@ How test will be performed: Create different workflows for each OS on GitHub Act
 
 \item{NFR-04\\}
 Type: Automatic \\
-Initial State: A fixed configuration file is available; the run uses a fixed random seed; the same input data are used. \\
-Input/Condition: Run the same end-to-end workflow twice (training-or-load, predictor extraction, mTRF fitting, report generation) without changing any configuration. \\
-Output/Result: The two runs produce consistent results for the reported summary metrics and the same set of output artifacts (same filenames and structure). \\
-How test will be performed: Run the pipeline twice and compare the generated summary files for consistency.
+Initial State: A fixed configuration file is available; the run uses a fixed random seed; the same input data are used; deterministic execution settings are enabled where supported. \\
+Input/Condition: Run the same end-to-end workflow twice without changing the configuration, input data, code version, or random seed. The workflow includes model training (or model loading), predictor extraction, mTRF     fitting, score computation, and report generation. \\
+Output/Result: The two runs shall produce:
+(a) identical output artifact names and directory structure, and
+(b) numerically matching summary results within a fixed tolerance.
+In particular, the reported cross-validated scores, baseline-referenced
+improvements, and other scalar summary metrics shall differ by no more than
+$\epsilon = 10^{-8}$. \\
+How test will be performed: In pytest, execute the pipeline twice using the
+same configuration and seed. Compare the lists of generated output files, and compare the numeric fields in the generated summary files using an absolute tolerance of $10^{-8}$. The test passes only if the artifact structure is the same and all compared summary values fall within the specified tolerance.
 
 \end{enumerate}
 
