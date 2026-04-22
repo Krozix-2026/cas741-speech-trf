@@ -5,6 +5,7 @@
 \usepackage{hyperref}
 \usepackage{graphicx}
 \usepackage{subcaption}
+\usepackage{float}
 \hypersetup{
     colorlinks,
     citecolor=black,
@@ -287,7 +288,7 @@ For the VnV Report, it is sufficient to include a compact benchmark summary rath
 A representative benchmark run should report whether the workflow completed successfully, whether the expected artifacts were generated, and the corresponding runtime information.
 If many result figures are available, they can be referenced briefly here and moved to an appendix or supplementary material.
 
-\begin{table}[h]
+\begin{table}[H]
 \centering
 \caption{Performance benchmark summary. The calculation time is only for the single wav file.}
 \label{tab:performance-results}
@@ -395,7 +396,7 @@ These tests are reported in the functional requirements evaluation and related v
 Overall, the unit tests provide evidence that the core local logic of the system behaves correctly under both valid and invalid input conditions, while the higher-level tests provide evidence that the integrated workflow operates correctly on real data. The tests are shown in Table~\ref{tab:unit-test-summary}.
 
 
-\begin{table}[h]
+\begin{table}[H]
 \centering
 \caption{Summary of implemented tests and their classification.}
 \label{tab:unit-test-summary}
@@ -502,7 +503,7 @@ FR-08 & \texttt{test\_encoding\_score\_invalidity.py}, \texttt{test\_encoding\_s
 
 
 
-\begin{table}[h]
+\begin{table}[H]
 \centering
 \caption{Traceability between NFR and tests/evaluation evidence}
 \label{tab:trace_to_requirements2}
@@ -537,7 +538,7 @@ The purpose of this section is to show that all major modules of \progname{} hav
 The table is shown in Table~\ref{tab:trace_to_modules}.
 
 
-\begin{table}[ht]
+\begin{table}[H]
 \centering
 \caption{Traceability between modules and tests}
 \label{tab:trace_to_modules}
