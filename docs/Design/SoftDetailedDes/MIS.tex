@@ -336,49 +336,64 @@ Input Parameters Module
 \subsubsection{Exported Constants}
 
 \begin{itemize}
-\item $\mathcal{S}_{\mathrm{Audio}}$: the finite set of supported audio dataset identifiers available to \progname.
-For the current system, this includes the training-audio datasets used for model training and the stimulus-audio dataset used in model-to-brain alignment.
+\item $\mathcal{S}_{\mathrm{Audio}}$: the finite set of supported audio dataset identifiers. In the current implementation this includes at least the LibriSpeech-based training data used by the speech-model training pipeline.
 
-\item $\mathcal{I}_{\mathrm{Audio}}$: the audio dataset index, represented
-abstractly as a mapping from a dataset identifier and utterance identifier
-to the corresponding audio record metadata. Each audio record contains at
-least a file path, a split label (if applicable), and an utterance identifier.
+\item $\mathcal{F}_{\mathrm{Seq}}$: the abstract type of a time-by-feature
+matrix, represented in the current implementation as a tensor of shape
+$(T, F)$.
 
-\item $\mathcal{W}$: the abstract type of an audio waveform returned by this module. A value of type $\mathcal{W}$ contains the audio sample sequence together with its sampling rate.
+\item $\mathcal{B}_{\mathrm{Audio}}$: the abstract type of a batched audio
+training sample. In the current implementation this is represented by
+\texttt{LibriSpeechBatch}, \texttt{AlignedWordBatch}, or an equivalent
+dictionary-based batch record, depending on the training task.
 \end{itemize}
 
 \subsubsection{Exported Access Programs}
 
 \begin{center}
-\begin{tabular}{p{3.0cm} p{4.8cm} p{4.4cm} p{3.0cm}}
+\begin{tabular}{p{4.6cm} p{4.6cm} p{3.8cm} p{3.0cm}}
 \hline
 \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
 \hline
-initAudioData &
-audio dataset configuration: map &
-initialized audio index $\mathcal{I}_{\mathrm{Audio}}$ &
-unsupported dataset identifier, missing manifest, malformed metadata, file error \\
+LibriSpeechASR &
+root: Path, subset: string, vocab: CharVocab, sample\_rate: int, n\_mels: int, win\_length\_ms: real, hop\_length\_ms: real, download: bool, limit\_samples: optional int &
+dataset object &
+dataset unavailable, metadata unavailable, file error \\
 
-getTrainSplit &
-dataset id: element of $\mathcal{S}_{\mathrm{Audio}}$ &
-sequence of utterance identifiers for the training split &
-dataset not initialized, training split unavailable \\
+LibriSpeechASR.\\\_\_getitem\_\_ &
+idx: int &
+record containing feat, feat\_len, target, target\_len, text, utt\_id &
+index out of range, file error, malformed audio \\
 
-getValSplit &
-dataset id: element of $\mathcal{S}_{\mathrm{Audio}}$ &
-sequence of utterance identifiers for the validation split &
-dataset not initialized, validation split unavailable \\
+LibriSpeechAlignedWords &
+manifest\_path: Path, subset: string, vocab: WordVocab, tail\_frames: int, limit\_samples: optional int &
+dataset object &
+manifest unavailable, malformed manifest, feature file error \\
 
-getTestSplit &
-dataset id: element of $\mathcal{S}_{\mathrm{Audio}}$ &
-sequence of utterance identifiers for the test split &
-dataset not initialized, test split unavailable \\
+LibriSpeechAlignedWords.\\\_\_getitem\_\_ &
+idx: int &
+record containing feat, feat\_len, target, word\_ids, word\_starts, word\_ends, utt\_id &
+index out of range, malformed feature array, file error \\
 
-getAudio &
-dataset id: element of $\mathcal{S}_{\mathrm{Audio}}$, utterance id: string &
-audio waveform $\in \mathcal{W}$ &
-dataset not initialized, utterance not found, file error \\
+buildWordVocabFrom\\Manifest &
+manifest\_path: Path, topk: int &
+WordVocab &
+manifest unavailable, malformed manifest \\
 
+collateLibriSpeech &
+sequence of LibriSpeechASR item records &
+LibriSpeechBatch &
+malformed item record, inconsistent feature dimension \\
+
+collateRNNT &
+sequence of LibriSpeechASR item records &
+dictionary batch record &
+malformed item record, inconsistent feature dimension \\
+
+collateAlignedWords &
+sequence of LibriSpeechAlignedWords item records &
+AlignedWordBatch &
+malformed item record, inconsistent feature dimension \\
 \hline
 \end{tabular}
 \end{center}
@@ -388,68 +403,107 @@ dataset not initialized, utterance not found, file error \\
 \subsubsection{State Variables}
 
 \begin{itemize}
-    \item $datasetRegistry$: a mapping from dataset names to dataset descriptors and file locations.
-    \item $audioIndex$: a mapping from utterance identifiers to audio file locations and metadata.
-    \item $initialized$: $\mathbb{B}$, indicates whether the module has loaded dataset structure information.
+\item $subset$: string, the dataset subset currently represented by a dataset object (for example, train, validation, or test subset).
+
+\item $indices$: optional sequence of integers, the restricted sample indices used when \texttt{limit\_samples} is specified.
+
+\item $sampleRate$: positive integer, the target sampling rate used for audio loading and optional resampling.
+
+\item $featureSpec$: record containing the feature-extraction parameters used by the audio dataset object, including $n\_mels$, $win\_length\_ms$, and $hop\_length\_ms$.
+
+\item $manifestItems$: sequence of manifest records used by
+\texttt{LibriSpeechAlignedWords}. Each manifest record contains at least the subset identifier, the cochlear-feature path, the word alignment list, and the utterance identifier.
+
+\item $vocab$: the vocabulary object used to encode targets. Depending on the task, this is either a character vocabulary or a word vocabulary.
 \end{itemize}
 
 \subsubsection{Environment Variables}
 
 \begin{itemize}
-    \item Audio files stored in the external file system.
-    \item Dataset directory paths provided by the Input Parameters Module.
+    \item Audio files, feature files, and manifest files stored in the external file system.
 \end{itemize}
 
 \subsubsection{Assumptions}
 
 \begin{itemize}
-    \item The required audio datasets are present at the file locations specified by the Input Parameters Module.
-    \item Each utterance identifier uniquely determines one audio sample.
-    \item Audio files can be decoded into real-valued waveform sequences.
+    \item The dataset paths and manifest paths supplied by the Input Parameters Module are valid.
+
+    \item For \texttt{LibriSpeechASR}, each referenced audio file can be decoded into a waveform and, if necessary, resampled to the requested target sampling rate.
+
+    \item For \texttt{LibriSpeechAlignedWords}, each manifest record contains a valid \texttt{coch\_path} whose array has shape $(64, T)$.
+
+    \item Each utterance identifier is unique within the dataset subset being used.
 \end{itemize}
 
 \subsubsection{Access Routine Semantics}
 
-\noindent \textbf{initAudioData}():
+\noindent \textbf{LibriSpeechASR}(root, subset, vocab, ...):
 \begin{itemize}
-    \item transition: $datasetRegistry$, $audioIndex$, $initialized$ are populated from the configured dataset locations.
-    \item exception: raised if a required dataset is unavailable, unsupported, or cannot be indexed.
+    \item transition: initializes a dataset object backed by
+    \texttt{torchaudio.datasets.LIBRISPEECH}, stores the requested subset and feature-extraction parameters, and prepares the mel-spectrogram and amplitude-to-dB transforms.
+    \item exception: raised if the requested subset cannot be loaded or if the dataset root is invalid.
 \end{itemize}
 
-\noindent \textbf{getTrainSplit}(dataset name):
+\noindent \textbf{LibriSpeechASR.\_\_getitem\_\_}(idx):
 \begin{itemize}
-    \item output: returns $\mathcal{D}_{\mathrm{train}}$ for the requested dataset.
-    \item exception: raised if the module has not been initialized or the dataset name is unknown.
+    \item output: uses dataset metadata to locate the corresponding audio file, loads the waveform through the local audio-loading routine, optionally resamples it to the configured sampling rate, computes the log-mel feature matrix of shape $(T, F)$, normalizes the transcript text, encodes the target sequence, and returns a record containing the feature matrix, feature length, target sequence, target length, normalized text, and utterance identifier.
+    \item exception: raised if the index is invalid, the audio file cannot be read, or the waveform cannot be transformed into the required feature format.
 \end{itemize}
 
-\noindent \textbf{getValSplit}(dataset name):
+\noindent \textbf{LibriSpeechAlignedWords}(manifest\_path, subset, vocab, ...):
 \begin{itemize}
-    \item output: returns $\mathcal{D}_{\mathrm{val}}$ for the requested dataset.
-    \item exception: raised if the module has not been initialized or the dataset name is unknown.
+    \item transition: loads the manifest records for the requested subset,
+    stores the tail-frame setting and the vocabulary object, and prepares the aligned-word dataset object.
+    \item exception: raised if the manifest file is unavailable or malformed.
 \end{itemize}
 
-\noindent \textbf{getTestSplit}(dataset name):
+\noindent \textbf{LibriSpeechAlignedWords.\_\_getitem\_\_}(idx):
 \begin{itemize}
-    \item output: returns $\mathcal{D}_{\mathrm{test}}$ for the requested dataset.
-    \item exception: raised if the module has not been initialized or the dataset name is unknown.
+    \item output: loads the cochlear feature array referenced by the selected manifest record, converts it into a time-by-feature tensor, constructs the frame-level target sequence together with the word-id, word-start, and word-end sequences, and returns the corresponding item record.
+    \item exception: raised if the index is invalid, the feature file is missing,
+    or the loaded feature array has an unexpected shape.
 \end{itemize}
 
-\noindent \textbf{getAudio}(utterance id):
+\noindent \textbf{buildWordVocabFromManifest}(manifest\_path, topk):
 \begin{itemize}
-    \item output: returns the audio waveform $\boldsymbol{a}$ associated with the given utterance identifier.
-    \item exception: raised if the utterance identifier is not present in $audioIndex$ or the file cannot be read.
+    \item output: scans the manifest file, counts word occurrences, and returns a vocabulary object containing the most frequent \texttt{topk} word types together with an unknown-token identifier.
+    \item exception: raised if the manifest file cannot be read or contains malformed records.
 \end{itemize}
 
+\noindent \textbf{collateLibriSpeech}(items):
+\begin{itemize}
+    \item output: sorts item records by feature length, pads the feature tensors to a common time dimension, concatenates the target sequences, and returns a \texttt{LibriSpeechBatch}.
+    \item exception: raised if the item records are malformed or have inconsistent feature dimensions.
+\end{itemize}
 
+\noindent \textbf{collateRNNT}(items):
+\begin{itemize}
+    \item output: sorts item records by feature length, pads feature tensors and target tensors separately, and returns a dictionary-based batch record for RNNT-style training.
+    \item exception: raised if the item records are malformed or have inconsistent feature dimensions.
+\end{itemize}
+
+\noindent \textbf{collateAlignedWords}(items):
+\begin{itemize}
+    \item output: sorts aligned-word item records by feature length, pads the feature tensors, target tensors, and word-boundary arrays, and returns an \texttt{AlignedWordBatch}.
+    \item exception: raised if the item records are malformed or have inconsistent feature dimensions.
+\end{itemize}
 
 \subsubsection{Local Functions}
 
 \begin{itemize}
-    \item buildAudioIndex :   
-    Constructs the mapping from utterance identifiers to file paths and metadata.
-    \item decodeAudio :   
-    Reads an audio file and converts it to the gammatone filterbank sequence.
+    \item \textbf{\_load\_audio\_soundfile}: loads an audio waveform from disk and converts stereo input to mono when needed.
+
+    \item \textbf{normalize\_text}: converts transcripts into the normalized text form used for target encoding.
+
+    \item \textbf{feature extraction transform}: converts waveforms into log-mel features using the configured mel-spectrogram and amplitude-to-dB transforms.
 \end{itemize}
+
+
+
+
+
+
+
 
 
 
@@ -579,6 +633,7 @@ getStimulusLink & subject id: string, utterance id: string & string & subject no
 
 
 
+
 \section{MIS of Input Parameters Module} \label{Module_InputParameters}
 
 \subsection{Module}
@@ -594,23 +649,53 @@ None
 \subsubsection{Exported Constants}
 
 \begin{itemize}
-    \item $SupportedDatasets$: the set of dataset names supported by \progname.
-    \item $SupportedModels$: the set of speech model types supported by \progname.
+    \item $SupportedDatasets$: the set of supported dataset identifiers.
+    \item $SupportedTasks$: the set of supported task identifiers.
+    \item $SupportedLabelTypes$: the set of supported label-type identifiers.
+    \item $SupportedPolicies$: the set of supported policy identifiers.
 \end{itemize}
 
 \subsubsection{Exported Access Programs}
 
 \begin{center}
-\begin{tabular}{p{3.4cm} p{4.2cm} p{4.2cm} p{2.4cm}}
+\begin{tabular}{p{3.4cm} p{4.8cm} p{4.0cm} p{3.0cm}}
 \hline
 \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
 \hline
-initParameters & config source: string & - & invalid config, file error \\
-getDatasetConfig & dataset name: string & tuple & unknown dataset, not initialized \\
-getTrainingConfig & - & tuple & not initialized \\
-getExtractionConfig & - & tuple & not initialized \\
-getAnalysisConfig & - & tuple & not initialized \\
-getPathConfig & - & tuple & not initialized \\
+getPreset &
+preset name: string, seed: int &
+TrainConfig &
+unknown preset \\
+
+validateConfig &
+cfg: TrainConfig &
+-- &
+invalid numeric range, invalid categorical value, invalid field combination, file not found \\
+
+ensureDirs &
+cfg: TrainConfig &
+-- &
+directory creation failure \\
+
+runId &
+cfg: TrainConfig &
+string &
+-- \\
+
+getRunDir &
+cfg: TrainConfig &
+Path &
+-- \\
+
+getCheckpointDir &
+cfg: TrainConfig &
+Path &
+-- \\
+
+getLogDir &
+cfg: TrainConfig &
+Path &
+-- \\
 \hline
 \end{tabular}
 \end{center}
@@ -620,68 +705,76 @@ getPathConfig & - & tuple & not initialized \\
 \subsubsection{State Variables}
 
 \begin{itemize}
-    \item $paramTable$: a mapping from configuration keys to parameter values.
-    \item $configLoaded : \mathbb{B}$, indicates whether the module has loaded and validated the configuration source.
+    \item $presetTable$: a mapping from preset names to preset-construction routines.
+    \item $cfg$: the current training configuration object.
 \end{itemize}
 
 \subsubsection{Environment Variables}
 
 \begin{itemize}
-    \item $configFilePath : \textit{Path}$, the file-system path of the external configuration file supplied to this module.
+    \item Optional local path constants imported from the local path-definition file.
 \end{itemize}
 
 \subsubsection{Assumptions}
 
 \begin{itemize}
-    \item A valid configuration source is provided before any dependent module is initialized.
+    \item A requested preset name is intended to identify one preset-construction routine in $presetTable$.
+    \item When path checking is enabled, the required dataset paths and manifest paths exist in the external file system.
 \end{itemize}
 
 \subsubsection{Access Routine Semantics}
 
-\noindent \textbf{initParameters}(config source):
+\noindent \textbf{getPreset}(preset name, seed):
 \begin{itemize}
-    \item transition: $paramTable$ and $initialized$ are populated from the configuration source.
-    \item exception: raised if the configuration file cannot be read or contains invalid parameter values.
+    \item output: looks up the requested preset name in $presetTable$, invokes the corresponding preset-construction routine with the supplied seed, and returns a \texttt{TrainConfig}.
+    \item exception: raised if the preset name is unknown.
 \end{itemize}
 
-\noindent \textbf{getDatasetConfig}(dataset name):
+\noindent \textbf{validateConfig}(cfg):
 \begin{itemize}
-    \item output: returns the tuple of dataset-specific parameters for the requested dataset, including location and split information.
-    \item exception: raised if the module is not initialized or the dataset name is unsupported.
+    \item output: checks that the configuration satisfies the required numeric, categorical, and combination constraints, and optionally checks dataset paths.
+    \item exception: raised if any configuration field violates a range
+    constraint, categorical constraint, combination constraint, or path-validity requirement.
 \end{itemize}
 
-\noindent \textbf{getTrainingConfig}():
+\noindent \textbf{ensureDirs}(cfg):
 \begin{itemize}
-    \item output: returns the tuple of training parameters, such as model type, batch size $B$, epochs $E$, and learning rate $\eta$.
-    \item exception: raised if the module is not initialized.
+    \item output: creates the run directory, checkpoint directory, and log
+    directory associated with the supplied configuration.
+    \item exception: raised if any required directory cannot be created.
 \end{itemize}
 
-\noindent \textbf{getExtractionConfig}():
+\noindent \textbf{runId}(cfg):
 \begin{itemize}
-    \item output: returns the tuple of representation extraction parameters, such as selected layers, optional transformation $g(\cdot)$, and alignment settings.
-    \item exception: raised if the module is not initialized.
+    \item output: returns the canonical run identifier derived from dataset, task, label type, policy, and seed.
 \end{itemize}
 
-\noindent \textbf{getAnalysisConfig}():
+\noindent \textbf{getRunDir}(cfg):
 \begin{itemize}
-    \item output: returns the tuple of analysis parameters, such as lag window $[\tau_{\min}, \tau_{\max}]$, number of lags $K$, and evaluation options.
-    \item exception: raised if the module is not initialized.
+    \item output: returns the run directory path associated with the supplied configuration.
 \end{itemize}
 
-\noindent \textbf{getPathConfig}():
+\noindent \textbf{getCheckpointDir}(cfg):
 \begin{itemize}
-    \item output: returns the tuple of configured file-system paths used by \progname.
-    \item exception: raised if the module is not initialized.
+    \item output: returns the checkpoint directory path associated with the supplied configuration.
+\end{itemize}
+
+\noindent \textbf{getLogDir}(cfg):
+\begin{itemize}
+    \item output: returns the log directory path associated with the supplied configuration.
 \end{itemize}
 
 \subsubsection{Local Functions}
 
 \begin{itemize}
-    \item parseConfig :   
-    Parses the configuration source into a parameter mapping.
-    % \item $validateConfig : \text{Map} \rightarrow \mathbb{B}$  
-    % Checks whether required configuration fields are present and well-formed.
+    \item \textbf{\_coerce\_enum}: converts user-supplied values into the required enum type.
+    \item \textbf{\_validate\_paths}: checks dataset and manifest paths when path checking is enabled.
+    \item \textbf{\_apply\_task\_defaults}: fills task-specific default values in the configuration object.
 \end{itemize}
+
+
+
+
 
 
 
@@ -713,18 +806,42 @@ Input Parameters Module, Audio Data Module
 
 \subsubsection{Exported Constants}
 
-None
+\begin{itemize}
+    \item $\mathcal{C}_{\mathrm{Train}}$: the abstract type of a training configuration.
+    \item $\mathcal{R}_{\mathrm{Eval}}$: the abstract type of an evaluation result record.
+\end{itemize}
 
 \subsubsection{Exported Access Programs}
 
 \begin{center}
-\begin{tabular}{p{3.4cm} p{4.2cm} p{4.2cm} p{2.4cm}}
+\begin{tabular}{p{3.4cm} p{4.8cm} p{4.0cm} p{3.0cm}}
 \hline
 \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
 \hline
-trainModel & model name: string, dataset name: string & $\boldsymbol{\theta}^{\ast}$ & training failed, invalid config \\
-getParameters & model name: string & $\boldsymbol{\theta}^{\ast}$ & model not trained \\
-getReport & model name: string & tuple & model not trained \\
+getTrainer &
+cfg: $\mathcal{C}_{\mathrm{Train}}$ &
+training routine &
+unsupported task or policy \\
+
+runOnce &
+cfg: $\mathcal{C}_{\mathrm{Train}}$, device: string &
+result summary file and checkpoint files &
+invalid configuration, loader failure, training failure, file error \\
+
+buildLoaders &
+cfg: $\mathcal{C}_{\mathrm{Train}}$, vocab, tailFrames: int &
+train loader, validation loader, test loader &
+dataset unavailable, malformed manifest, loader construction failure \\
+
+runEval &
+model, loader, device: string, srvTable, cfg: $\mathcal{C}_{\mathrm{Train}}$, tailFrames: int &
+$\mathcal{R}_{\mathrm{Eval}}$ &
+evaluation failure, malformed batch \\
+
+saveCheckpoint &
+path: Path, model, optimizer, epoch: int, bestVal: real &
+-- &
+file error \\
 \hline
 \end{tabular}
 \end{center}
@@ -734,49 +851,64 @@ getReport & model name: string & tuple & model not trained \\
 \subsubsection{State Variables}
 
 \begin{itemize}
-    \item $trainedModelTable$: a mapping from model names to optimized parameters $\boldsymbol{\theta}^{\ast}$.
-    \item $trainingReportTable$: a mapping from model names to training summaries and diagnostics.
+    \item $cfg$: the active training configuration.
+    \item $bestVal$: the best validation loss observed so far.
+    \item $currentEpoch$: the current training epoch.
 \end{itemize}
 
 \subsubsection{Environment Variables}
 
-None
+\begin{itemize}
+    \item Checkpoint files, logs, and result files stored in the external file system.
+    \item The hardware device selected for training or evaluation (for example, CPU or CUDA device).
+\end{itemize}
 
 \subsubsection{Assumptions}
 
 \begin{itemize}
-    \item The requested training dataset is available through the Audio Data Module.
-    \item The requested model type is supported by \progname.
+    \item The supplied configuration has already been validated by the Input Parameters Module.
+    \item The requested training dataset and manifests are available through the Audio Data Module.
+    \item The selected model architecture is compatible with the batch feature dimension produced by the Audio Data Module.
 \end{itemize}
 
 \subsubsection{Access Routine Semantics}
 
-\noindent \textbf{trainModel}(model name, dataset name):
+\noindent \textbf{getTrainer}(cfg):
 \begin{itemize}
-    \item transition: the model $f_{\boldsymbol{\theta}}$ is trained on $\mathcal{D}_{\mathrm{train}}$ using the configured optimization settings. $trainedModelTable$ and $trainingReportTable$ are updated.
-    \item output: returns the optimized parameters $\boldsymbol{\theta}^{\ast}$.
-    \item exception: raised if configuration values are invalid, the dataset is unavailable, or optimization fails.
+    \item output: returns the training routine associated with the task and policy specified in $cfg$.
+    \item exception: raised if no supported training routine exists for the requested configuration.
 \end{itemize}
 
-\noindent \textbf{getTrainedParameters}(model name):
+\noindent \textbf{runOnce}(cfg, device):
 \begin{itemize}
-    \item output: returns $\boldsymbol{\theta}^{\ast}$ associated with the requested model.
-    \item exception: raised if the requested model has not been trained.
+    \item transition: creates output directories, initializes logging, constructs the vocabulary and data loaders, initializes the model and optimizer, runs the training loop, evaluates the best checkpoint on the test split, and writes checkpoint and result files.
+    \item output: produces checkpoint files, logs, and a result summary for the completed training run.
+    \item exception: raised if configuration validation, loader construction, training, evaluation, or output serialization fails.
 \end{itemize}
 
-\noindent \textbf{getTrainingReport}(model name):
+\noindent \textbf{buildLoaders}(cfg, vocab, tailFrames):
 \begin{itemize}
-    \item output: returns a tuple containing training diagnostics, such as loss history and stopping information.
-    \item exception: raised if the requested model has not been trained.
+    \item output: returns the train, validation, and test data loaders implied by the current configuration and vocabulary.
+    \item exception: raised if the required manifests or dataset subsets are unavailable or malformed.
+\end{itemize}
+
+\noindent \textbf{runEval}(model, loader, device, srvTable, cfg, tailFrames):
+\begin{itemize}
+    \item output: evaluates the model on the supplied loader and returns an evaluation-result record containing loss and summary metrics.
+    \item exception: raised if evaluation encounters malformed inputs or invalid tensor shapes.
+\end{itemize}
+
+\noindent \textbf{saveCheckpoint}(path, model, optimizer, epoch, bestVal):
+\begin{itemize}
+    \item output: writes a checkpoint file containing model state, optimizer state, epoch number, and the best validation value observed so far.
+    \item exception: raised if the checkpoint file cannot be written.
 \end{itemize}
 
 \subsubsection{Local Functions}
 
 \begin{itemize}
-    \item optimizeModel :   
-    Optimizes model parameters using the configured training procedure.
-    \item buildTrainingReport :   
-    Constructs a summary of training progress and outcomes.
+    \item \textbf{srvLossAndCosFrame}: computes the frame-level SRV loss and cosine summary used during training and evaluation.
+    \item \textbf{srvLossAndCosWord}: computes the word-level semantic SRV loss and cosine summary used during training and evaluation.
 \end{itemize}
 
 
@@ -810,19 +942,36 @@ Input Parameters Module, Model Training Module
 
 \subsubsection{Exported Constants}
 
-None
+\begin{itemize}
+    \item $\mathcal{M}_{\mathrm{Frozen}}$: the abstract type of a frozen neural model.
+\end{itemize}
 
 \subsubsection{Exported Access Programs}
 
 \begin{center}
-\begin{tabular}{p{3.4cm} p{4.2cm} p{4.2cm} p{2.4cm}}
+\begin{tabular}{p{3.6cm} p{4.8cm} p{3.8cm} p{3.0cm}}
 \hline
 \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
 \hline
-loadFrozenModel & model name: string & - & model not available, file error \\
-getFrozenModel & model name: string & $f_{\boldsymbol{\theta}^{\ast}}(\cdot)$ & model not loaded \\
-getLayerCount & model name: string & $L$ & model not loaded \\
-isFrozen & model name: string & $\mathbb{B}$ & model not loaded \\
+loadCheckpoint\\Model &
+checkpoint path: Path, device: string &
+$\mathcal{M}_{\mathrm{Frozen}}$ &
+checkpoint unavailable, incompatible checkpoint, file error \\
+
+freezeModel &
+model &
+$\mathcal{M}_{\mathrm{Frozen}}$ &
+invalid model instance \\
+
+getLayerCount &
+frozen model: $\mathcal{M}_{\mathrm{Frozen}}$ &
+$L$ &
+invalid model instance \\
+
+isFrozen &
+frozen model: $\mathcal{M}_{\mathrm{Frozen}}$ &
+$\mathbb{B}$ &
+invalid model instance \\
 \hline
 \end{tabular}
 \end{center}
@@ -832,53 +981,55 @@ isFrozen & model name: string & $\mathbb{B}$ & model not loaded \\
 \subsubsection{State Variables}
 
 \begin{itemize}
-    \item $frozenModelTable$: a mapping from model names to loaded frozen models.
-    \item $freezeStatus$: a mapping from model names to boolean values indicating whether parameter updates are disabled.
+    \item $loadedCheckpoint$: the checkpoint currently loaded by the module.
+    \item $frozenModel$: the non-trainable model instance derived from the loaded checkpoint.
 \end{itemize}
 
 \subsubsection{Environment Variables}
 
 \begin{itemize}
-    \item Stored model checkpoints in the external file system.
+    \item Stored checkpoint files in the external file system.
 \end{itemize}
 
 \subsubsection{Assumptions}
 
 \begin{itemize}
-    \item A trained checkpoint exists for each model requested by this module.
+    \item A valid trained checkpoint exists at the supplied checkpoint path.
+    \item The checkpoint contains sufficient information to reconstruct the model architecture and load its parameters.
 \end{itemize}
 
 \subsubsection{Access Routine Semantics}
 
-\noindent \textbf{loadFrozenModel}(model name):
+\noindent \textbf{loadCheckpointModel}(checkpoint path, device):
 \begin{itemize}
-    \item transition: loads the optimized parameters $\boldsymbol{\theta}^{\ast}$ for the requested model and constructs a frozen model instance with parameter updates disabled. Updates $frozenModelTable$ and $freezeStatus$.
-    \item exception: raised if the requested model is unavailable or its checkpoint cannot be loaded.
+    \item transition: reads the checkpoint file, reconstructs the corresponding model instance, loads the stored parameters, converts the model to evaluation mode, and stores it as $frozenModel$.
+    \item output: returns the frozen model instance.
+    \item exception: raised if the checkpoint is unavailable, incompatible, or cannot be loaded.
 \end{itemize}
 
-\noindent \textbf{getFrozenModel}(model name):
+\noindent \textbf{freezeModel}(model):
 \begin{itemize}
-    \item output: returns the frozen model $f_{\boldsymbol{\theta}^{\ast}}(\cdot)$.
-    \item exception: raised if the requested model has not been loaded.
+    \item output: disables parameter updates for the supplied model and returns the frozen model instance.
+    \item exception: raised if the supplied model is invalid.
 \end{itemize}
 
-\noindent \textbf{getLayerCount}(model name):
+\noindent \textbf{getLayerCount}(frozen model):
 \begin{itemize}
-    \item output: returns the number of accessible internal layers $L$ for the requested frozen model.
-    \item exception: raised if the requested model has not been loaded.
+    \item output: returns the number of accessible internal layers exposed by the frozen model.
+    \item exception: raised if the supplied model is invalid.
 \end{itemize}
 
-\noindent \textbf{isFrozen}(model name):
+\noindent \textbf{isFrozen}(frozen model):
 \begin{itemize}
-    \item output: returns \texttt{true} if the requested model has been loaded in frozen form, and \texttt{false} otherwise.
-    \item exception: raised if the requested model has not been loaded.
+    \item output: returns \texttt{true} if the supplied model is in non-trainable frozen form, and \texttt{false} otherwise.
+    \item exception: raised if the supplied model is invalid.
 \end{itemize}
 
 \subsubsection{Local Functions}
 
 \begin{itemize}
-    \item freezeParameters :   
-    Converts a loaded trained model into a non-trainable model instance.
+    \item \textbf{inferModelFromCheckpoint}: reconstructs the model architecture associated with a stored checkpoint.
+    \item \textbf{loadStateDict}: loads stored parameters into the reconstructed model.
 \end{itemize}
 
 
@@ -908,23 +1059,43 @@ Representation Extraction Module
 
 \subsection{Uses}
 
-Input Parameters Module, Audio Data Module, Frozen Model Module, Feature Cache Module
+Input Parameters Module, Audio Data Module, Frozen Model Module, MEG Data Module
 
 \subsection{Syntax}
 
 \subsubsection{Exported Constants}
 
-None
+\begin{itemize}
+    \item $\mathcal{H}$: the abstract type of a hidden-state sequence.
+    \item $\mathcal{R}$: the abstract type of a time-by-feature predictor matrix.
+\end{itemize}
 
 \subsubsection{Exported Access Programs}
 
 \begin{center}
-\begin{tabular}{p{3.4cm} p{4.2cm} p{4.2cm} p{2.4cm}}
+\begin{tabular}{p{3.8cm} p{4.8cm} p{3.8cm} p{3.0cm}}
 \hline
 \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
 \hline
-extractHiddenStates & utterance id: string, model name: string, layer index: $\ell$ & sequence of $\boldsymbol{h}^{(\ell)}_{n}$ & utterance not found, model not loaded \\
-buildPredictor & utterance id: string, model name: string, layer index: $\ell$ & $\mathbf{R}^{(\ell)}$ & extraction failed \\
+forwardWithHidden &
+frozen model, input tensor, input lengths &
+hidden-state sequence $\in \mathcal{H}$ &
+model execution failed, invalid input shape \\
+
+computePredictors\\FromHidden &
+hidden-state sequence $\in \mathcal{H}$, transform specification &
+predictor array(s) &
+invalid hidden-state shape, transform failed \\
+
+alignToAnalysisGrid &
+predictor array(s), analysis time grid &
+predictor matrix $\in \mathcal{R}$ &
+time-grid mismatch, alignment failed \\
+
+serializePredictors &
+predictor matrix $\in \mathcal{R}$, output path specification &
+saved predictor file(s) &
+file error, serialization failed \\
 \hline
 \end{tabular}
 \end{center}
@@ -934,42 +1105,55 @@ buildPredictor & utterance id: string, model name: string, layer index: $\ell$ &
 \subsubsection{State Variables}
 
 \begin{itemize}
-    \item $extractionSpec$: tuple of extraction parameters obtained from the Input Parameters Module.
+    \item $extractionSpec$: the extraction and transformation parameters supplied by the Input Parameters Module.
+    \item $timeGrid$: the analysis time grid used to align predictor outputs.
 \end{itemize}
 
 \subsubsection{Environment Variables}
 
-None
+\begin{itemize}
+    \item Input feature files and serialized predictor files stored in the external file system.
+\end{itemize}
 
 \subsubsection{Assumptions}
 
 \begin{itemize}
-    \item The requested utterance is available through the Audio Data Module.
-    \item The requested frozen model has already been loaded.
-    \item The requested layer index $\ell$ is valid for the chosen model.
+    \item The required frozen model has already been loaded.
+    \item The requested input sequence has a feature dimension compatible with the frozen model.
+    \item The analysis time grid is available and compatible with the predictor length.
 \end{itemize}
 
 \subsubsection{Access Routine Semantics}
 
-\noindent \textbf{extractHiddenStates}(utterance id, model name, layer index):
+\noindent \textbf{forwardWithHidden}(frozen model, input tensor, input lengths):
 \begin{itemize}
-    \item output: returns the sequence of hidden state vectors $\boldsymbol{h}^{(\ell)}_{n}$ produced by the frozen model for the requested utterance.
-    \item exception: raised if the utterance or model is unavailable, or if the requested layer index is invalid.
+    \item output: applies the frozen model to the supplied input sequence and returns the hidden-state sequence exposed by the model.
+    \item exception: raised if the model is unavailable or the input tensor has an invalid shape.
 \end{itemize}
 
-\noindent \textbf{buildPredictorMatrix}(utterance id, model name, layer index):
+\noindent \textbf{computePredictorsFromHidden}(hidden-state sequence, transform specification):
 \begin{itemize}
-    \item output: returns the time-by-feature predictor matrix $\mathbf{R}^{(\ell)}$ derived from the hidden states, after optional transformation $g(\cdot)$ and temporal alignment.
-    \item exception: raised if hidden-state extraction fails or the requested data are invalid.
+    \item output: applies the requested transformation to the hidden-state sequence and returns one or more predictor arrays derived from the hidden representations.
+    \item exception: raised if the hidden-state sequence is invalid or the requested transformation cannot be applied.
+\end{itemize}
+
+\noindent \textbf{alignToAnalysisGrid}(predictor array(s), analysis time grid):
+\begin{itemize}
+    \item output: converts the predictor array(s) into predictor matrices aligned to the requested analysis time grid.
+    \item exception: raised if the predictor length and the analysis time grid are incompatible.
+\end{itemize}
+
+\noindent \textbf{serializePredictors}(predictor matrix, output path specification):
+\begin{itemize}
+    \item output: writes the aligned predictor matrix to the required serialized output format.
+    \item exception: raised if serialization fails or the output files cannot be written.
 \end{itemize}
 
 \subsubsection{Local Functions}
 
 \begin{itemize}
-    % \item $applyTransform : \seqof{\boldsymbol{h}^{(\ell)}_{n}} \times g(\cdot) \rightarrow \seqof{\boldsymbol{r}^{(\ell)}_{n}}$  
-    % Applies the configured transformation to hidden states.
-    \item alignToAnalysisGrid: 
-    Converts transformed representations into a predictor matrix aligned to the analysis time grid.
+    \item \textbf{computeMagnitudeChange}: computes magnitude-based and change-based predictor arrays from hidden states.
+    \item \textbf{wrapToSerializedPredictor}: converts predictor arrays into the serialized predictor format expected by downstream analysis.
 \end{itemize}
 
 
@@ -994,25 +1178,48 @@ Statistical Analysis Module
 
 \subsection{Uses}
 
-Input Parameters Module, Brain Alignment Module
+Input Parameters Module, MEG Data Module, Representation Extraction Module
 
 \subsection{Syntax}
 
 \subsubsection{Exported Constants}
 
-None
+\begin{itemize}
+    \item $\mathcal{T}_{\mathrm{TRF}}$: the abstract type of a TRF analysis result.
+    \item $\mathcal{S}_{\mathrm{Summary}}$: the abstract type of a statistical summary table.
+\end{itemize}
 
 \subsubsection{Exported Access Programs}
 
 \begin{center}
-\begin{tabular}{p{3.4cm} p{4.2cm} p{4.2cm} p{2.4cm}}
+\begin{tabular}{p{3.8cm} p{4.8cm} p{3.8cm} p{3.0cm}}
 \hline
 \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
 \hline
-runStatAnalysis & model name: string & tuple & alignment results unavailable \\
-getLayerSummary & model name: string & tuple & analysis not run \\
-getBestLayer & model name: string & $\ell$ & analysis not run \\
-getImprovementTable & model name: string & tuple & analysis not run \\
+runTRFJob &
+analysis configuration &
+$\mathcal{T}_{\mathrm{TRF}}$ &
+invalid configuration, predictor unavailable, fitting failed \\
+
+loadPredictorSafe &
+predictor identifier, predictor source &
+predictor object &
+predictor unavailable, non-finite values, malformed predictor \\
+
+summarizeTRF\\Results &
+TRF result $\in \mathcal{T}_{\mathrm{TRF}}$ &
+$\mathcal{S}_{\mathrm{Summary}}$ &
+result unavailable, malformed result \\
+
+computeImprovement\\Table &
+baseline result, target result &
+improvement summary table &
+shape mismatch, comparison failed \\
+
+selectBestLayer &
+summary table, selection criterion &
+layer index &
+invalid criterion, empty summary \\
 \hline
 \end{tabular}
 \end{center}
@@ -1022,55 +1229,62 @@ getImprovementTable & model name: string & tuple & analysis not run \\
 \subsubsection{State Variables}
 
 \begin{itemize}
-    \item $summaryTable$: a mapping from model names to statistical summaries over layers and subjects.
-    \item $bestLayerTable$: a mapping from model names to the layer index with the best evaluation score.
-    \item $improvementTable$: a mapping from model names to the values of $\Delta \rho_{\ell}$ across candidate layers.
+    \item $analysisSpec$: the statistical-analysis configuration supplied by the Input Parameters Module.
+    \item $resultCache$: a mapping from analysis identifiers to stored TRF result objects.
 \end{itemize}
 
 \subsubsection{Environment Variables}
 
-None
+\begin{itemize}
+    \item Cached TRF result files stored in the external file system.
+\end{itemize}
 
 \subsubsection{Assumptions}
 
 \begin{itemize}
-    \item Brain alignment results have already been generated for the requested model and candidate layers.
+    \item The required MEG data and aligned predictors are already available.
+    \item The analysis configuration defines a valid lag window, sampling rate, and cross-validation setting.
+    \item The underlying Eelbrain/TRF pipeline is available to execute the requested analysis.
 \end{itemize}
 
 \subsubsection{Access Routine Semantics}
 
-\noindent \textbf{runStatisticalAnalysis}(model name):
+\noindent \textbf{runTRFJob}(analysis configuration):
 \begin{itemize}
-    \item transition: retrieves alignment scores from the Brain Alignment Module, computes summaries across layers and subjects, updates $summaryTable$, $bestLayerTable$, and $improvementTable$.
-    \item output: returns a tuple containing the analysis summary for the requested model.
-    \item exception: raised if the required alignment results are unavailable.
+    \item transition: executes the configured TRF analysis, stores the resulting TRF object in $resultCache$, and records any generated cache files.
+    \item output: returns the TRF result object for the requested analysis job.
+    \item exception: raised if the supplied analysis configuration is invalid or if TRF execution fails.
 \end{itemize}
 
-\noindent \textbf{getLayerSummary}(model name):
+\noindent \textbf{loadPredictorSafe}(predictor identifier, predictor source):
 \begin{itemize}
-    \item output: returns the stored statistical summary for the requested model, including layer-wise score summaries.
-    \item exception: raised if analysis has not been run for the requested model.
+    \item output: loads the requested predictor, checks for non-finite values and degenerate columns, and returns a predictor object suitable for downstream TRF analysis.
+    \item exception: raised if the predictor is unavailable, malformed, or unusable.
 \end{itemize}
 
-\noindent \textbf{getBestLayer}(model name):
+\noindent \textbf{summarizeTRFResults}(TRF result):
 \begin{itemize}
-    \item output: returns the layer index $\ell$ with the best statistical outcome according to the configured selection rule.
-    \item exception: raised if analysis has not been run for the requested model.
+    \item output: extracts the summary quantities required for downstream reporting, comparison, and plotting.
+    \item exception: raised if the supplied TRF result is malformed or incomplete.
 \end{itemize}
 
-\noindent \textbf{getImprovementTable}(model name):
+\noindent \textbf{computeImprovementTable}(baseline result, target result):
 \begin{itemize}
-    \item output: returns a tuple containing the layer-wise improvement values $\Delta \rho_{\ell}$ for the requested model.
-    \item exception: raised if analysis has not been run for the requested model.
+    \item output: returns the baseline-referenced comparison table between the supplied analysis results.
+    \item exception: raised if the supplied results are incompatible.
+\end{itemize}
+
+\noindent \textbf{selectBestLayer}(summary table, selection criterion):
+\begin{itemize}
+    \item output: returns the layer index that optimizes the supplied selection criterion.
+    \item exception: raised if the summary table is empty or the criterion is invalid.
 \end{itemize}
 
 \subsubsection{Local Functions}
 
 \begin{itemize}
-    \item computeImprovement :   
-    Computes the improvement over the baseline encoding score.
-    \item selectBestLayer :   
-    Selects the best layer according to the configured criterion.
+    \item \textbf{labelEvents}: matches event markers to stimulus structure and constructs the event labels used for epoching.
+    \item \textbf{sanitizePredictor}: replaces non-finite predictor values and detects flat columns before analysis.
 \end{itemize}
 
 
@@ -1113,15 +1327,24 @@ None
 \subsubsection{Exported Access Programs}
 
 \begin{center}
-\begin{tabular}{p{3.4cm} p{4.2cm} p{4.2cm} p{2.4cm}}
+\begin{tabular}{p{3.6cm} p{4.8cm} p{3.8cm} p{3.0cm}}
 \hline
 \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
 \hline
-plotLayerScores & model name: string & string & analysis not available, plotting failed \\
-plotImprovement
-Summary & model name: string & string & analysis not available, plotting failed \\
-plotModel
-Comparison & - & string & analysis not available, plotting failed \\
+plotCurves &
+cosine curves, probability curves, $L$, env sampling rate, output path, title &
+saved figure path &
+invalid plotting input, plotting failed, file error \\
+
+buildPlotSpec &
+analysis summary, plotting options &
+plot specification &
+invalid summary, invalid plotting options \\
+
+saveFigure &
+plot specification, output path &
+saved figure path &
+plotting failed, file error \\
 \hline
 \end{tabular}
 \end{center}
@@ -1131,7 +1354,7 @@ Comparison & - & string & analysis not available, plotting failed \\
 \subsubsection{State Variables}
 
 \begin{itemize}
-    \item $figureRegistry$: a mapping from plot identifiers to output file locations.
+    \item $figureRegistry$: a mapping from plot identifiers to saved figure paths.
 \end{itemize}
 
 \subsubsection{Environment Variables}
@@ -1143,39 +1366,37 @@ Comparison & - & string & analysis not available, plotting failed \\
 \subsubsection{Assumptions}
 
 \begin{itemize}
-    \item Statistical summaries required for plotting are already available.
+    \item The statistical summaries or curve arrays required for plotting are already available.
+    \item The output directory for the requested figure is writable.
 \end{itemize}
 
 \subsubsection{Access Routine Semantics}
 
-\noindent \textbf{plotLayerScores}(model name):
+\noindent \textbf{plotCurves}(cosine curves, probability curves, $L$, env sampling rate, output path, title):
 \begin{itemize}
-    \item transition: generates and stores a figure summarizing layer-wise scores for the requested model; updates $figureRegistry$.
-    \item output: returns the file location of the generated figure.
-    \item exception: raised if the required analysis results are unavailable or figure generation fails.
+    \item transition: renders the supplied curve arrays into a figure and stores the saved figure path in $figureRegistry$.
+    \item output: returns the path of the generated figure file.
+    \item exception: raised if the supplied curve arrays are malformed or the figure cannot be written.
 \end{itemize}
 
-\noindent \textbf{plotImprovementSummary}(model name):
+\noindent \textbf{buildPlotSpec}(analysis summary, plotting options):
 \begin{itemize}
-    \item transition: generates and stores a figure summarizing $\Delta \rho_{\ell}$ across layers for the requested model; updates $figureRegistry$.
-    \item output: returns the file location of the generated figure.
-    \item exception: raised if the required analysis results are unavailable or figure generation fails.
+    \item output: returns the internal plotting specification derived from the supplied analysis summary and plotting options.
+    \item exception: raised if the summary or plotting options are invalid.
 \end{itemize}
 
-\noindent \textbf{plotModelComparison}():
+\noindent \textbf{saveFigure}(plot specification, output path):
 \begin{itemize}
-    \item transition: generates and stores a figure comparing multiple trained models according to the configured analysis outputs; updates $figureRegistry$.
-    \item output: returns the file location of the generated figure.
-    \item exception: raised if the required analysis results are unavailable or figure generation fails.
+    \item transition: renders the supplied plotting specification and writes the corresponding figure file to the requested output path.
+    \item output: returns the saved figure path.
+    \item exception: raised if rendering fails or the output path is invalid.
 \end{itemize}
 
 \subsubsection{Local Functions}
 
 \begin{itemize}
-    \item renderFigure :  
-    Converts a plotting specification and its associated data into a saved figure file.
-    \item makePlotSpec :   
-    Constructs the internal plotting specification used by this module.
+    \item \textbf{renderFigure}: converts the plotting specification into a concrete figure object.
+    \item \textbf{registerFigure}: records the saved figure path in $figureRegistry$.
 \end{itemize}
 
 
