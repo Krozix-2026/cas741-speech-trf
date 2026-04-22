@@ -2,6 +2,10 @@
 
 \usepackage{tabularx}
 \usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{float}
+
 
 \title{Reflection and Traceability Report on \progname}
 
@@ -16,128 +20,482 @@
 
 \maketitle
 
-\plt{Reflection is an important component of getting the full benefits from a
-learning experience.  Besides the intrinsic benefits of reflection, this
-document will be used to help the TAs grade how well your team responded to
-feedback.  Therefore, traceability between Revision 0 and Revision 1 is and
-important part of the reflection exercise.  In addition, several CEAB (Canadian
-Engineering Accreditation Board) Learning Outcomes (LOs) will be assessed based
-on your reflections.}
+% \plt{Reflection is an important component of getting the full benefits from a
+% learning experience.  Besides the intrinsic benefits of reflection, this
+% document will be used to help the TAs grade how well your team responded to
+% feedback.  Therefore, traceability between Revision 0 and Revision 1 is and
+% important part of the reflection exercise.  In addition, several CEAB (Canadian
+% Engineering Accreditation Board) Learning Outcomes (LOs) will be assessed based
+% on your reflections.}
 
 \section{Changes in Response to Feedback}
 
-\plt{Summarize the changes made over the course of the project in response to
-feedback from TAs, the instructor, teammates, other teams, the project
-supervisor (if present), and from user testers.}
+% \plt{Summarize the changes made over the course of the project in response to
+% feedback from TAs, the instructor, teammates, other teams, the project
+% supervisor (if present), and from user testers.}
 
-\plt{For those teams with an external supervisor, please highlight how the feedback 
-from the supervisor shaped your project.  In particular, you should highlight the 
-supervisor's response to your Rev 0 demonstration to them.}
+% \plt{For those teams with an external supervisor, please highlight how the feedback 
+% from the supervisor shaped your project.  In particular, you should highlight the 
+% supervisor's response to your Rev 0 demonstration to them.}
 
-\plt{Version control can make the summary relatively easy, if you used issues
-and meaningful commits.  If you feedback is in an issue, and you responded in
-the issue tracker, you can point to the issue as part of explaining your
-changes.  If addressing the issue required changes to code or documentation, you
-can point to the specific commit that made the changes.  Although the links are
-helpful for the details, you should include a label for each item of feedback so
-that the reader has an idea of what each item is about without the need to click
-on everything to find out.}
+% \plt{Version control can make the summary relatively easy, if you used issues
+% and meaningful commits.  If you feedback is in an issue, and you responded in
+% the issue tracker, you can point to the issue as part of explaining your
+% changes.  If addressing the issue required changes to code or documentation, you
+% can point to the specific commit that made the changes.  Although the links are
+% helpful for the details, you should include a label for each item of feedback so
+% that the reader has an idea of what each item is about without the need to click
+% on everything to find out.}
 
-\plt{If you were not organized with your commits, traceability between feedback
-and commits will not be feasible to capture after the fact.  You will instead
-need to spend time writing down a summary of the changes made in response to
-each item of feedback.}
+% \plt{If you were not organized with your commits, traceability between feedback
+% and commits will not be feasible to capture after the fact.  You will instead
+% need to spend time writing down a summary of the changes made in response to
+% each item of feedback.}
 
-\plt{You should address EVERY item of feedback.  A table or itemized list is
-recommended.  You should record every item of feedback, along with the source of
-that feedback and the change you made in response to that feedback.  The
-response can be a change to your documentation, code, or development process.
-The response can also be the reason why no changes were made in response to the
-feedback.  To make this information manageable, you will record the feedback and
-response separately for each deliverable in the sections that follow.}
+% \plt{You should address EVERY item of feedback.  A table or itemized list is
+% recommended.  You should record every item of feedback, along with the source of
+% that feedback and the change you made in response to that feedback.  The
+% response can be a change to your documentation, code, or development process.
+% The response can also be the reason why no changes were made in response to the
+% feedback.  To make this information manageable, you will record the feedback and
+% response separately for each deliverable in the sections that follow.}
 
-\plt{If the feedback is general or incomplete, the TA (or instructor) will not
-be able to grade your response to feedback.  In that case your grade on this
-document, and likely the Revision 1 versions of the other documents will be
-low.} 
+% \plt{If the feedback is general or incomplete, the TA (or instructor) will not
+% be able to grade your response to feedback.  In that case your grade on this
+% document, and likely the Revision 1 versions of the other documents will be
+% low.} 
+
+
+This section summarizes the changes made during the project in response to feedback from Professor Smith, Yanyu through GitHub issues, and Professor Brodbeck.
+
+Overall, the feedback influenced the project in three main ways.
+First, it improved the clarity and completeness of the documentation, especially for module definitions, testing traceability, and the distinction between different types of tests.
+Second, it led to concrete engineering changes in the framework, including extensions to the training pipeline and analysis workflow.
+Third, feedback from Professor Brodbeck helped ensure that the framework remained useful for correct speech recognition progress.
+
+
+
+
+
+
+
+
+
 
 \subsection{SRS and Hazard Analysis}
 
+The SRS feedback mainly improved document clarity, concept explanation, and requirement specificity.
+Table~\ref{tab:srs-feedback} summarizes the main changes.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\renewcommand{\arraystretch}{1.05}
+\caption{Changes made to the SRS in response to feedback}
+\label{tab:srs-feedback}
+\begin{tabularx}{0.96\textwidth}{p{1.6cm} p{4.0cm} X}
+\toprule
+\textbf{Source} & \textbf{Feedback} & \textbf{Change Made} \\
+\midrule
+
+Issue \#5 &
+Section 1.3 looked empty because it only contained a table, which made Sections 1.3 and 1.4 visually confusing. &
+Revised the table arrangement and surrounding layout to make the section structure clearer. Fixed in \texttt{0ceb71d}. \\
+
+Issue \#6 &
+The meaning of \emph{alignment} was unclear in the introduction, although it is central to the project. &
+Added an explicit definition of model--to--brain alignment in the introduction. Fixed in \texttt{d321099}. \\
+
+Issue \#7 &
+The functional requirements did not clearly state how the system is operated or what outputs are produced. &
+Clarified that the system uses a command-line/configuration workflow and produces scores, gains, and summary files/plots. Fixed in \texttt{2b92a1d}. \\
+
+Issue \#8 &
+Minor wording, typo, and formatting issues reduced readability. &
+Corrected grammar, typographical errors, and layout problems, including the traceability table formatting. Fixed in \texttt{e8955fa}. \\
+
+Issue \#9 &
+Some functional requirements were not specific enough, especially for predictors, encoding scores, and enforceable wording. &
+Revised the requirements to add clearer examples and stronger, more testable wording. Fixed in \texttt{5d27bc7}. \\
+
+\bottomrule
+\end{tabularx}
+\end{table}
+
+
+
+
+
+
+
 \subsection{Design and Design Documentation}
+
+Feedback on the design documents mainly improved the clarity of module boundaries, the direction of module dependencies, and the readability of the MIS.
+Table~\ref{tab:design-feedback} summarizes the main changes.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\renewcommand{\arraystretch}{1.05}
+\caption{Changes made to the design and design documentation in response to feedback}
+\label{tab:design-feedback}
+\begin{tabularx}{0.96\textwidth}{p{1.8cm} p{4.2cm} X}
+\toprule
+\textbf{Source} & \textbf{Feedback} & \textbf{Change Made} \\
+\midrule
+
+Issue \#28 &
+The scope of the hardware hiding modules was unclear, since M1 appeared to perform both data hiding and signal processing. &
+The module framework was reorganized so that the responsibilities of the hardware hiding modules were clearer. Fixed in \texttt{f1a6db9}. \\
+
+Issue \#29 &
+Figure 1 did not clearly show that M1 and M2 depend on M3, which could cause misunderstanding of the Uses relation. &
+The module dependency figure was revised to make the direction of the Uses relation explicit. Fixed in \texttt{43a2166}. \\
+
+Issue \#30 &
+Function names were inconsistent between access routine semantics and exported access programs. &
+Function naming was unified so that the semantics matched the declared exported programs. Fixed in \texttt{43a2166}. \\
+
+Issue \#31 &
+The naming of nonfunctional requirements was inconsistent across tables. &
+The naming of NFR items was standardized for clarity and consistency. Fixed in \texttt{43a2166}. \\
+
+Issue \#32 &
+The reference section formatting reduced readability. &
+The reference section was reformatted onto a new page to improve document readability. Fixed in \texttt{43a2166}. \\
+
+Professor &
+The module relationship figure needed revision because it did not clearly reflect the intended design structure. &
+Figure 1 was adjusted so that the module structure and dependency relations were easier to interpret. Fixed in \texttt{f1a6db9}. \\
+
+Professor &
+The MIS manuscript was difficult to follow. &
+The document was rewritten to include explicit function names and clearer descriptions, making the MIS easier to read and trace to the implementation. Fixed in \texttt{43a2166}. \\
+
+\bottomrule
+\end{tabularx}
+\end{table}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 \subsection{VnV Plan and Report}
 
+Feedback on the VnV Plan and Report mainly improved the traceability, specificity, and testability of the verification activities.
+In particular, the revisions clarified how tests relate to requirements, defined repeated terminology more precisely, completed missing test cases, and replaced ambiguous wording with more explicit verification criteria.
+Table~\ref{tab:vnv-feedback} summarizes the main changes.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\renewcommand{\arraystretch}{1.05}
+\caption{Changes made to the VnV Plan and Report in response to feedback}
+\label{tab:vnv-feedback}
+\begin{tabularx}{0.96\textwidth}{p{1.8cm} p{4.2cm} X}
+\toprule
+\textbf{Source} & \textbf{Feedback} & \textbf{Change Made} \\
+\midrule
+
+Issue \#10 &
+Section 3.5 should evaluate not only correctness, but also whether the implementation satisfies the intended design and requirements. &
+The implementation-verification section was revised to make requirement satisfaction more explicit, including requirement-based system tests and clearer traceability from functional requirements to verification activities. Fixed in \texttt{b337189}. \\
+
+Issue \#11 &
+The repeated term \emph{clean environment} was not defined clearly. &
+A definition of \emph{clean environment} was added so that the initial-state descriptions became more precise and repeatable. Fixed in \texttt{4e22488}. \\
+
+Issue \#12 &
+The test case for NFR-04 was missing, and NFR-04 and NFR-05 should appear in the traceability table. &
+The missing NFR-04 test case was added, and the traceability table was updated to include both NFR-04 and NFR-05. Fixed in \texttt{a8f7550}. \\
+
+Issue \#13 &
+Phrases such as \emph{clear} or \emph{precise} error message were too ambiguous for verification. &
+The expected error-reporting behavior was rewritten using an explicit convention that states the minimum required contents of an acceptable error report. Fixed in \texttt{81d8606}. \\
+
+Issue \#14 &
+References to small public datasets were too vague and should include an example or link. &
+Example datasets and links were added so that the testing context became easier to understand and reproduce. Fixed in \texttt{d607c30}. \\
+
+Professor &
+NFR-04 needed a more quantitative description. &
+The reproducibility requirement was revised to include more explicit quantitative criteria, improving its measurability and verification value. Fixed in \texttt{491e310}. \\
+
+Professor &
+Some VnV descriptions were too ambiguous. &
+Ambiguous wording was replaced with more detailed implementation-oriented descriptions to make the VnV activities more specific and assessable. Fixed in \texttt{6380f9a}. \\
+
+\bottomrule
+\end{tabularx}
+\end{table}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+% \section{Extras}
+
+% \plt{Summarize the extras that were tackled by this project.  Extras
+% can include usability testing, code walkthroughs, user documentation, formal
+% proof, GenderMag personas, Design Thinking, etc.  Extras should have already
+% been approved by the course instructor as included in your problem statement.}
 \section{Extras}
 
-\plt{Summarize the extras that were tackled by this project.  Extras
-can include usability testing, code walkthroughs, user documentation, formal
-proof, GenderMag personas, Design Thinking, etc.  Extras should have already
-been approved by the course instructor as included in your problem statement.}
+The main extra addressed in this project was usability-oriented evaluation of the research framework.
+In addition to the core software engineering deliverables, the project included an in-class end-to-end demonstration of the workflow and face-to-face discussion with users familiar with Eelbrain.
+These activities were used to evaluate whether the system was easy to understand and operate in practice.
 
+Another extra was the effort to make the framework more reusable for future lab members.
+Rather than developing a one-off experimental script, the project was organized as a modular research framework with clearer separation between configuration, model definition, predictor extraction, statistical analysis, and plotting.
+This extra effort supported future reuse of the system and reduced onboarding cost for new users.
+
+These extras were valuable because the project is intended not only to run a single experiment, but also to serve as a practical research tool for future work.
+
+
+
+
+
+
+
+
+
+
+
+% \section{Design Iteration (LO11 (PrototypeIterate))}
+
+% \plt{Explain how you arrived at your final design and implementation.  How did
+% the design evolve from the first version to the final version?} 
+
+% \plt{Don't just say what you changed, say why you changed it.  The needs of the
+% client should be part of the explanation.  For example, if you made changes in
+% response to usability testing, explain what the testing found and what changes
+% it led to.}
 \section{Design Iteration (LO11 (PrototypeIterate))}
 
-\plt{Explain how you arrived at your final design and implementation.  How did
-the design evolve from the first version to the final version?} 
+The final design of \progname{} was reached through several iterations rather than being fixed from the beginning.
+The initial implementation was closer to a research prototype for running a specific experiment.
+It focused on making the end-to-end workflow executable, including model training or loading, predictor extraction, mTRF fitting, and score comparison.
+This first version was useful for verifying feasibility, but it was not yet ideal as a reusable research framework.
 
-\plt{Don't just say what you changed, say why you changed it.  The needs of the
-client should be part of the explanation.  For example, if you made changes in
-response to usability testing, explain what the testing found and what changes
-it led to.}
+The first major design change was motivated by the need for extensibility.
+Early versions of the implementation were more tightly tied to a small set of model and analysis choices.
+As the project developed, it became clear that the framework should support multiple deep learning models and should make it easy to add new configurations without changing large parts of the code.
+This need came both from the intended research use case and from feedback emphasizing future reuse in the lab.
+As a result, the implementation evolved toward a more modular structure, with clearer separation between data handling, configuration, model definition, representation extraction, statistical analysis, and plotting.
+This change made the framework easier to extend and better aligned with the long-term needs of future users.
+
+The second major design change concerned the training pipeline.
+Initially, the training setup was more limited and mainly supported a fixed training objective.
+During testing and comparison, it became clear that this design made it difficult to study how different loss functions affected the learned representations and the downstream brain-alignment results.
+To address this issue, the LSTM training framework was extended to support multiple loss definitions.
+Additional plotting support was also added so that cohort-level differences under different loss settings could be compared more directly.
+This iteration was important because the client need was not only to run a model, but also to support comparative research on how different training objectives influence alignment to brain responses.
+
+The third major design change concerned the neuroscience analysis itself.
+Earlier versions of the workflow treated the downstream mTRF analysis in a more uniform way.
+However, through discussion and evaluation, it became clear that the framework should better distinguish between different brain regions, especially superior temporal gyrus (STG) and later language-related regions.
+This led to an extension of the mTRF analysis workflow so that these regions could be fit and compared more explicitly.
+The reason for this change was not only technical clarity, but also scientific usefulness: a framework intended for future speech/MEG experiments should support analyses that are meaningful from the perspective of the lab's research questions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 \section{Design Decisions (LO12)}
 
-\plt{Reflect and justify your design decisions.  How did limitations,
- assumptions, and constraints influence your decisions?  Discuss each of these
- separately.}
+% \plt{Reflect and justify your design decisions.  How did limitations,
+%  assumptions, and constraints influence your decisions?  Discuss each of these
+%  separately.}
+
+
+\textbf{Limitations.}
+A major limitation of the project is that it is a research framework rather than a general-purpose software product.
+Many components depend on large datasets, trained checkpoints, Eelbrain analysis objects, and environment-specific resources such as GPUs and local file paths.
+Because of this, the design emphasized modularity and local validation rather than a fully portable or fully automated software package.
+Another limitation is that not every part of the workflow can be tested equally easily using isolated unit tests, so the design needed to support a combination of unit tests, integration-style validation, and manual evaluation.
+
+\textbf{Assumptions.}
+The design assumes that users are researchers or students with some familiarity with Python-based experimental workflows, command-line execution, and speech/MEG analysis tools.
+For this reason, the system was designed as a configuration-driven and script-based framework rather than a GUI application.
+The design also assumes that the main scientific workflow involves comparing model-derived predictors against MEG responses under a consistent analysis protocol.
+This assumption motivated the inclusion of strong validation for configuration consistency, predictor alignment, and invalid scoring conditions.
+
+\textbf{Constraints.}
+A key constraint was the need to support real research experiments within limited development time.
+This required prioritizing correctness, extensibility, and practical usability over features such as complete CI support or formal code coverage reporting.
+
+
+
+
+
+
+
+
+
+
+
 
 \section{Economic Considerations (LO23)}
 
-\plt{Is there a market for your product? What would be involved in marketing your 
-product? What is your estimate of the cost to produce a version that you could 
-sell?  What would you charge for your product?  How many units would you have to 
-sell to make money? If your product isn't something that would be sold, like an 
-open source project, how would you go about attracting users?  How many potential 
-users currently exist?}
+% \plt{Is there a market for your product? What would be involved in marketing your 
+% product? What is your estimate of the cost to produce a version that you could 
+% sell?  What would you charge for your product?  How many units would you have to 
+% sell to make money? If your product isn't something that would be sold, like an 
+% open source project, how would you go about attracting users?  How many potential 
+% users currently exist?}
+\progname{} is better viewed as a research framework than as a mass-market commercial product.
+Its most likely users are researchers and graduate students working on speech processing, deep learning, and MEG/brain-alignment analysis.
+Therefore, the most realistic adoption path is not direct retail sale, but distribution as a reusable academic or open-source tool.
+
+
+
+
 
 \section{Reflection on Project Management (LO24)}
 
-\plt{This question focuses on processes and tools used for project management.}
+% \plt{This question focuses on processes and tools used for project management.}
 
 \subsection{How Does Your Project Management Compare to Your Development Plan}
 
-\plt{Did you follow your Development plan, with respect to the team meeting plan, 
-team communication plan, team member roles and workflow plan.  Did you use the 
-technology you planned on using?}
+% \plt{Did you follow your Development plan, with respect to the team meeting plan, 
+% team communication plan, team member roles and workflow plan.  Did you use the 
+% technology you planned on using?}
+
+The project generally followed the original development plan, but some adjustments were necessary as the research workflow became clearer.
+The planned communication and review process was followed mainly through GitHub, document revision, and discussions with peers and supervisors.
+The planned technologies were also largely used as expected, including Python, PyTorch, Eelbrain, \LaTeX{}, and GitHub.
+However, compared with the original plan, more time was spent on validating research workflows and refining documentation, while less effort was spent on fully automated project-management infrastructure such as CI.
+
+
+
+
+
+
+
 
 \subsection{What Went Well?}
 
-\plt{What went well for your project management in terms of processes and 
-technology?}
+% \plt{What went well for your project management in terms of processes and 
+% technology?}
+GitHub issues and commits made it easier to track feedback and document revisions.
+The use of configuration files, modular code structure, and repeated testing also made it easier to extend the framework and revise the report.
+Communication with peers and supervisors was especially helpful in improving both the scientific usefulness and the software documentation.
+
+
+
+
+
 
 \subsection{What Went Wrong?}
 
-\plt{What went wrong in terms of processes and technology?}
+% \plt{What went wrong in terms of processes and technology?}
+
+One challenge was that this project was a research framework, so some development tasks were less predictable than in a standard software project.
+Another difficulty was that not all testing activities fit neatly into standard categories such as unit testing or CI-based automation, because many steps depended on real datasets, trained models, and local environments.
+
+
+
+
+
+
 
 \subsection{What Would you Do Differently Next Time?}
 
-\plt{What will you do differently for your next project?}
+% \plt{What will you do differently for your next project?}
+
+In a future project, I would define the boundary between unit tests, integration tests, and research evaluation earlier in the project.
+I would also prepare lightweight benchmark datasets and smoke tests sooner, so that reproducibility and portability could be checked more systematically.
+
+
+
+
 
 \section{Ethics and Equity (LO18)}
 
-\plt{Describe how your team applied the principle of equity and universal design
-to ensure equitable treatment of all stakeholders.}
+% \plt{Describe how your team applied the principle of equity and universal design
+% to ensure equitable treatment of all stakeholders.}
+This project applied equity mainly by aiming to produce a reusable and understandable research framework rather than a one-time experimental script.
+The design emphasizes modularity, explicit configuration, and clearer documentation so that future users in the lab can learn and reuse the workflow more easily.
+Feedback from peers and supervisors was used to improve clarity, naming consistency, and usability.
+
+
+
+
+
+
+
 
 \section{Reflection on Capstone}
 
-\plt{This question focuses on what you learned during the course of the capstone project.}
+% \plt{This question focuses on what you learned during the course of the capstone project.}
 
 \subsection{Which Courses Were Relevant}
 
-\plt{Which of the courses you have taken were relevant for the capstone project?}
+% \plt{Which of the courses you have taken were relevant for the capstone project?}
+
+Software engineering was directly relevant for requirements, design documentation, verification and validation, and traceability.
+Machine learning and deep learning knowledge were important for understanding and extending the model-training framework.
+Courses related to signal processing, statistics, and data analysis were also useful for understanding predictor extraction, encoding scores, and mTRF-based analysis.
+In addition, experience with scientific writing was important for producing the project documentation.
+
+
+
+
+
+
+
 
 \subsection{Knowledge/Skills Outside of Courses}
 
-\plt{What skills/knowledge did you need to acquire for your capstone project
-that was outside of the courses you took?}
+% \plt{What skills/knowledge did you need to acquire for your capstone project
+% that was outside of the courses you took?}
+
+A significant amount of knowledge had to be learned outside of formal coursework.
+This included Eelbrain-based analysis, mTRF workflows, MEG-related data handling, and practical issues in connecting deep learning representations to brain-response analysis.
+Additional skills were also needed in environment setup, dataset organization, experiment reproducibility, and research-oriented software design.
+Finally, learning how to balance scientific goals with software engineering documentation requirements was an important skill developed during the project.
+
 
 \end{document}
