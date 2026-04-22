@@ -24,16 +24,15 @@ from eelbrain.pipeline import *
 from trftools.pipeline import *
 
 
-# -------------------------
+
 # Stimuli table
-# -------------------------
 DIR = Path(__file__).parent
 STIMULI = load.tsv(DIR / "appleseed_stimuli.txt", types="fv")
 
 # 真实被试：听 11（不包含 11b）
-STIMULI_REAL_BASE = STIMULI.sub("stimulus != '11b'")    # 11条：1-11
+STIMULI_REAL_BASE = STIMULI.sub("stimulus != '11b'") # 11条：1-11
 # pilot 被试：听 11b（不包含 11）
-STIMULI_PILOTS_BASE = STIMULI.sub("stimulus != '11'")   # 11条：1-10+11b
+STIMULI_PILOTS_BASE = STIMULI.sub("stimulus != '11'")# 11条：1-10+11b
 
 print("[DEBUG] stimuli file:", DIR / "appleseed_stimuli.txt")
 print(f"[DEBUG] STIMULI: n_cases={STIMULI.n_cases} n_vars={len(STIMULI)} values={list(STIMULI['stimulus'])}")
@@ -41,9 +40,7 @@ print(f"[DEBUG] REAL  : n_cases={STIMULI_REAL_BASE.n_cases} n_vars={len(STIMULI_
 print(f"[DEBUG] PILOT : n_cases={STIMULI_PILOTS_BASE.n_cases} n_vars={len(STIMULI_PILOTS_BASE)} tail={list(STIMULI_PILOTS_BASE['stimulus'][-3:])}")
 
 
-# -------------------------
 # Parcellations
-# -------------------------
 LATERAL_TEMPORAL = (
     "transversetemporal", "superiortemporal", "bankssts", "middletemporal",
     "inferiortemporal", "temporalpole"
@@ -66,7 +63,8 @@ class Appleseed(TRFExperiment):
 
     defaults = {
         "task": "Appleseed",
-        "split": "01",
+        # "session": "",
+        # "split": "01",
         "raw": "1-40",
         "rej": "",
         "cov": "emptyroom",
@@ -100,9 +98,7 @@ class Appleseed(TRFExperiment):
 
     variables = {"event": LabelVar("trigger", {162: "onset", 167: "offset"})}
 
-    # -------------------------
     # Empty-room covariance fallback
-    # -------------------------
     def make_cov(self, *args, **kwargs):
         try:
             return super().make_cov(*args, **kwargs)
@@ -113,13 +109,20 @@ class Appleseed(TRFExperiment):
         root = Path(self.root)
         cov_path = self.get("cov-file", make=False)
 
-        candidates = sorted(root.glob("sub-emptyroom/**/meg/*_meg.fif"))
+        # 只找 empty-room noise 原始数据（避免误抓 task-Appleseed）
+        # 支持 split: *_meg.fif, *_meg-1.fif, *_meg-2.fif ...
+        candidates = sorted(root.glob("sub-emptyroom/**/meg/*task-noise*_meg*.fif"))
         if not candidates:
-            candidates = sorted(root.glob("sub-emptyroom/**/meg/*.fif"))
-        if not candidates:
-            raise FileNotFoundError(f"No empty-room MEG FIF found under: {root/'sub-emptyroom'}")
+            raise FileNotFoundError(
+                f"No empty-room NOISE MEG FIF found under: {root/'sub-emptyroom'} "
+                f"(expected something like *task-noise*_meg*.fif)"
+            )
 
-        er_fif = candidates[-1]
+        # 优先选择“非 split 主文件”（没有 -1/-2 的那个），否则退而求其次选最后一个
+        main = [p for p in candidates if p.name.endswith("_meg.fif")]
+        er_fif = main[-1] if main else candidates[-1]
+        
+        
         raw_er = mne.io.read_raw_fif(er_fif, preload=False, verbose="ERROR")
         raw_er.load_data()
         raw_er.filter(1.0, 40.0, verbose="ERROR")
@@ -129,9 +132,7 @@ class Appleseed(TRFExperiment):
         print(f"[INFO] empty-room cov built from {er_fif} -> {cov_path}")
         return cov_path
 
-    # -------------------------
     # Debug: load_epochs
-    # -------------------------
     def load_epochs(self, *args, **kwargs):
         kwargs.setdefault("add_bads", False)
         ds = super().load_epochs(*args, **kwargs)
@@ -151,9 +152,7 @@ class Appleseed(TRFExperiment):
 
         return ds
 
-    # -------------------------
     # Predictor safety checks (optional)
-    # -------------------------
     def load_predictor(self, *args, **kwargs):
         x = super().load_predictor(*args, **kwargs)
         data = x.x
@@ -173,9 +172,7 @@ class Appleseed(TRFExperiment):
 
         return x
 
-    # -------------------------
     # Helper: pair onsets with subsequent offsets
-    # -------------------------
     @staticmethod
     def _pair_on_off(trig: np.ndarray, times: np.ndarray):
         on_idx = np.where(trig == 162)[0]
@@ -195,9 +192,8 @@ class Appleseed(TRFExperiment):
         dur = times[pairs[:, 1]] - times[pairs[:, 0]]
         return pairs, dur
 
-    # -------------------------
+
     # Helper: DP select best K pairs to match expected lengths
-    # -------------------------
     @staticmethod
     def _select_best_k_subsequence(dur: np.ndarray, lens: np.ndarray):
         """
@@ -242,9 +238,8 @@ class Appleseed(TRFExperiment):
         sel.reverse()
         return np.asarray(sel, dtype=int)
 
-    # -------------------------
+
     # label_events: robust alignment to 11 segments (11 or 11b)
-    # -------------------------
     def label_events(self, ds):
         if ds.info.get("task") != "Appleseed":
             return ds
@@ -318,9 +313,8 @@ class Appleseed(TRFExperiment):
         ds.update(stimuli)
         return ds
 
-    # -------------------------
+
     # Epochs
-    # -------------------------
     epochs = {
         "apple": PrimaryEpoch("Appleseed", "event == 'onset'", tmin=0, tmax="length", samplingrate=100),
         "seg1-2": SecondaryEpoch("apple", "stimulus.isin(('1', '2'))"),
@@ -330,19 +324,24 @@ class Appleseed(TRFExperiment):
         "seg6-11": SecondaryEpoch("apple", "stimulus.isin(('6', '7', '8', '9', '10', '11', '11b'))"),
     }
 
-    # -------------------------
+
     # Predictors
-    # -------------------------
     predictors = {
         "gammatone": FilePredictor(resample="resample", sampling="continuous"),
         "phonotactic": FilePredictor(columns=True, resample="bin", sampling="discrete"),
         "phone": FilePredictor(columns=True, resample="bin", sampling="discrete"),
         "c5phone": FilePredictor(columns=True, resample="bin", sampling="discrete"),
+        
+        # word onset + GPT-2 surprisal
+        "word_onset": FilePredictor(resample="resample", sampling="continuous"),
+        "gpt2_surp": FilePredictor(resample="resample", sampling="continuous"),
+        
+        # lstm
+        "lstm_magnitude": FilePredictor(resample="resample", sampling="continuous"),
+        "lstm_change": FilePredictor(resample="resample", sampling="continuous"),
     }
 
-    # -------------------------
     # Models
-    # -------------------------
     models = {
         "gte8": "gammatone-8 + gammatone-edge30-8",
         "phonotactics": "phonotactic-surprisal + phonotactic-entropy",
@@ -356,6 +355,24 @@ class Appleseed(TRFExperiment):
         "c5-cohort-c-0v1_": (
             "c5phone-c_surprisal-p0 + c5phone-c_entropy-p0 + c5phone-c_phoneme_entropy-p0 + "
             "c5phone-c_surprisal-p1_ + c5phone-c_entropy-p1_ + c5phone-c_phoneme_entropy-p1_"
+        ),
+        
+        # language-only (pure onset vs onset+surprisal)
+        "word_onset": "word_onset",
+        "word_onset_surp": "word_onset + gpt2_surp",
+        
+        # acoustic + onset vs acoustic + onset + surprisal
+        "gte8_word_onset": "gammatone-8 + gammatone-edge30-8 + word_onset",
+        "gte8_word_onset_surp": "gammatone-8 + gammatone-edge30-8 + word_onset + gpt2_surp",
+        
+        # LSTM predictors (magnitude / change)
+        "gte8_lstm_mag": "gammatone-8 + gammatone-edge30-8 + lstm_magnitude",
+        "gte8_lstm_chg": "gammatone-8 + gammatone-edge30-8 + lstm_change",
+        "gte8_lstm_both": "gammatone-8 + gammatone-edge30-8 + lstm_magnitude + lstm_change",
+
+        # control lexical boundary
+        "gte8_word_onset_lstm_both": (
+            "gammatone-8 + gammatone-edge30-8 + word_onset + lstm_magnitude + lstm_change"
         ),
     }
 

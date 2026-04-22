@@ -2,13 +2,26 @@ from pathlib import Path
 import json, re
 import numpy as np
 
+
+try:
+    from config.paths_local import DATA_ROOT as _DATA_ROOT
+    from config.paths_local import LIBRISPEECH_ROOT as _LIBRISPEECH_ROOT
+    from config.paths_local import LIBRISPEECH_ALIGNMENT_ROOT as _LIBRISPEECH_ALIGNMENT_ROOT
+    from config.paths_local import LIBRISPEECH_GAMMATONE_ROOT as _LIBRISPEECH_GAMMATONE_ROOT
+    from config.paths_local import LIBRISPEECH_MANIFEST_ROOT as _LIBRISPEECH_MANIFEST_ROOT
+    from config.paths_local import EARSHOT_ROOT as _EARSHOT_ROOT
+except Exception:
+    _DATA_ROOT = None
+    _LIBRISPEECH_ROOT = None
+    _LIBRISPEECH_ALIGNMENT_ROOT = None
+    _LIBRISPEECH_GAMMATONE_ROOT = None
+    _LIBRISPEECH_MANIFEST_ROOT = None
+    _EARSHOT_ROOT = None
+
 ENV_SR = 100
 TAIL_MS = 100
 K = int(round((TAIL_MS/1000) * ENV_SR))  # 10 frames at 100Hz
 
-COCH_ROOT = Path(r"C:\Dataset\LibriSpeech_coch64_env100_f16")
-ALIGN_ROOT = Path(r"C:\Dataset\Librispeech-Alignments\LibriSpeech")
-OUT_MANIFEST = Path(r"C:\Dataset\LibriSpeech\manifest_librispeech_coch_align.jsonl")
 
 SUBSETS = ["train-clean-100", "dev-clean", "test-clean"]
 
@@ -56,14 +69,14 @@ def sec_to_frame(t: float) -> int:
 
 def find_coch_path(subset: str, utt_id: str) -> Path | None:
     # 镜像结构里 utt_id.npy 在某个 speaker/chapter 目录下，rglob 搜索最稳（可缓存优化）
-    hits = list((COCH_ROOT / subset).rglob(f"{utt_id}.npy"))
+    hits = list((_LIBRISPEECH_GAMMATONE_ROOT / subset).rglob(f"{utt_id}.npy"))
     return hits[0] if hits else None
 
 def main():
     n = 0
-    with OUT_MANIFEST.open("w", encoding="utf-8") as f_out:
+    with _LIBRISPEECH_MANIFEST_ROOT.open("w", encoding="utf-8") as f_out:
         for subset in SUBSETS:
-            for aln_file in (ALIGN_ROOT / subset).rglob("*.alignment.txt"):
+            for aln_file in (_LIBRISPEECH_ALIGNMENT_ROOT / subset).rglob("*.alignment.txt"):
                 for line in aln_file.read_text(encoding="utf-8").splitlines():
                     parsed = parse_alignment_line(line)
                     # print("parsed:", parsed)
@@ -104,7 +117,7 @@ def main():
                         print("written", n)
 
     print("Done. total utterances:", n)
-    print("Manifest:", OUT_MANIFEST)
+    print("Manifest:", _LIBRISPEECH_MANIFEST_ROOT)
 
 if __name__ == "__main__":
     main()

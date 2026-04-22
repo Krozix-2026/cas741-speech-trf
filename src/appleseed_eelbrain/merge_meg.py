@@ -1,7 +1,7 @@
 from pathlib import Path
 import mne
 
-root = Path(r"C:\Dataset\Appleseed_BIDS_new")
+root = Path(r"/home/xiaoshao/projects/def-brodbeck/datasets/Appleseed_BIDS_new")
 
 for meg_dir in root.glob("sub-*/meg"):
     parts = sorted(meg_dir.glob("*_task-Appleseed_run*split-*_meg.fif"))

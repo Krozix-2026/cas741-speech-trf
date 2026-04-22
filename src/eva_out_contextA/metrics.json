@@ -1,0 +1,51 @@
+{
+  "i want to": {
+    "n": 4,
+    "targets_top10": [
+      [
+        "get",
+        1
+      ],
+      [
+        "be",
+        1
+      ],
+      [
+        "pull",
+        1
+      ],
+      [
+        "have",
+        1
+      ]
+    ],
+    "mean_sur_ctx": 8.13096142945982,
+    "mean_ent_ctx": 8.489414930343628
+  },
+  "i had to": {
+    "n": 2,
+    "targets_top10": [
+      [
+        "eat",
+        1
+      ],
+      [
+        "read",
+        1
+      ]
+    ],
+    "mean_sur_ctx": 7.9107528166682135,
+    "mean_ent_ctx": 8.497193813323975
+  },
+  "i began to": {
+    "n": 1,
+    "targets_top10": [
+      [
+        "feel",
+        1
+      ]
+    ],
+    "mean_sur_ctx": 8.358255508414603,
+    "mean_ent_ctx": 8.492020606994629
+  }
+}

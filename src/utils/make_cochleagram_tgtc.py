@@ -16,8 +16,8 @@ import soundfile as sf
 import yaml
 
 # ===== paths =====
-LIBRISPEECH_ROOT = Path(r"C:\Dataset\LibriSpeech")
-OUT_ROOT         = Path(r"C:\Dataset\LibriSpeech_coch64_env100_f16")
+LIBRISPEECH_ROOT = Path(r"/home/xiaoshao/projects/def-brodbeck/datasets/LibriSpeech")
+OUT_ROOT = Path(r"/home/xiaoshao/projects/def-brodbeck/datasets/LibriSpeech_coch64_env100_f16")
 
 TGTC_ROOT = Path(r"C:\linux_project\CAS741\cas741-speech-trf\external\TorchGammatoneCochleagram")
 # 让 Python 能 import external 里的 src/

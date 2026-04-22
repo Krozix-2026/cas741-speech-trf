@@ -128,7 +128,7 @@ def _run_eval(cfg: TrainConfig, model: nn.Module, loader: DataLoader, loss_fn: n
 
     return EvalResult(mean_loss=loss_meter.avg, wer=mean_wer, cer=mean_cer)
 
-
+# CTC
 def run_once(cfg: TrainConfig, device: str) -> None:
     cfg.ensure_dirs()
     logger = setup_logger(cfg.log_dir, name=cfg.run_id())

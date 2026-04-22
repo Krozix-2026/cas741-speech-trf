@@ -28,7 +28,6 @@ def build_word_vocab_from_manifest(manifest_path: Path, topk: int = 20000) -> Wo
             obj = json.loads(line)
             for w, sf, ef in obj["words"]:
                 cnt[w] += 1
-    # reserve ids: 0=<unk>
     itos = ["<unk>"] + [w for w, _ in cnt.most_common(topk)]
     stoi = {w: i for i, w in enumerate(itos)}
     return WordVocab(stoi=stoi, itos=itos, unk_id=0)
@@ -61,33 +60,46 @@ class LibriSpeechAlignedWords(Dataset):
 
     def __getitem__(self, idx: int) -> Dict[str, Any]:
         obj = self.items[idx]
-        coch = np.load(obj["coch_path"])  # (64, T) float16
+        coch = np.load(obj["coch_path"])  # (64, T)
         if coch.ndim != 2 or coch.shape[0] != 64:
             raise ValueError(f"Unexpected coch shape {coch.shape} for {obj['coch_path']}")
-        # -> (T, 64)
-        feat = torch.from_numpy(coch.astype("float32")).transpose(0, 1).contiguous()
+        feat = torch.from_numpy(coch.astype("float32")).transpose(0, 1).contiguous()  # (T,64)
         T = feat.shape[0]
 
         target = torch.full((T,), IGNORE, dtype=torch.long)
 
+        word_ids: List[int] = []
+        word_starts: List[int] = []
+        word_ends: List[int] = []
+
         for w, sf, ef in obj["words"]:
-            sf = int(sf); ef = int(ef)
+            sf = int(sf)
+            ef = int(ef)
             if ef <= 0 or sf >= T:
                 continue
             sf = max(sf, 0)
             ef = min(ef, T)
             if ef <= sf:
                 continue
+
             wid = self.vocab.stoi.get(w, self.vocab.unk_id)
 
-            # supervise tail frames
+            # record word sequence boundary
+            word_ids.append(wid)
+            word_starts.append(sf)
+            word_ends.append(ef)
+
+            # supervise tail frames (frame-level word SRV)
             i0 = max(ef - self.tail_frames, sf)
             if ef > i0:
                 target[i0:ef] = wid
 
         return {
-            "feat": feat,              # (T, 64)
+            "feat": feat,                 # (T,64)
             "feat_len": T,
-            "target": target,          # (T,)
+            "target": target,             # (T,)
+            "word_ids": torch.tensor(word_ids, dtype=torch.long),        # (W,)
+            "word_starts": torch.tensor(word_starts, dtype=torch.long),  # (W,)
+            "word_ends": torch.tensor(word_ends, dtype=torch.long),      # (W,)
             "utt_id": obj["utt_id"],
         }

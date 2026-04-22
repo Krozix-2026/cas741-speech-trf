@@ -12,8 +12,23 @@ import soundfile as sf
 from eelbrain import NDVar, UTS, resample, save, gammatone_bank
 
 
+try:
+    from config.paths_local import DATA_ROOT as _DATA_ROOT
+    from config.paths_local import LIBRISPEECH_ROOT as _LIBRISPEECH_ROOT
+    from config.paths_local import LIBRISPEECH_ALIGNMENT_ROOT as _LIBRISPEECH_ALIGNMENT_ROOT
+    from config.paths_local import LIBRISPEECH_GAMMATONE_ROOT as _LIBRISPEECH_GAMMATONE_ROOT
+    from config.paths_local import LIBRISPEECH_MANIFEST_ROOT as _LIBRISPEECH_MANIFEST_ROOT
+    from config.paths_local import EARSHOT_ROOT as _EARSHOT_ROOT
+except Exception:
+    _DATA_ROOT = None
+    _LIBRISPEECH_ROOT = None
+    _LIBRISPEECH_ALIGNMENT_ROOT = None
+    _LIBRISPEECH_GAMMATONE_ROOT = None
+    _LIBRISPEECH_MANIFEST_ROOT = None
+    _EARSHOT_ROOT = None
 
-LIBRISPEECH_ROOT = Path(r"C:\Dataset\LibriSpeech")
+
+
 GAMMATONE_ROOT = Path(r"C:\Dataset\LibriSpeech_gammatone64_100Hz")
 
 SUBSETS = ["train-clean-100", "dev-clean", "test-clean"]
@@ -34,14 +49,14 @@ def load_flac_as_ndvar(path: Path) -> NDVar:
     return NDVar(x, (time,))
 
 for subset in SUBSETS:
-    subset_dir = LIBRISPEECH_ROOT / subset
+    subset_dir = _LIBRISPEECH_ROOT / subset
     if not subset_dir.exists():
         print(f"[Skip] not found: {subset_dir}")
         continue
 
     # 递归扫所有 flac
     for flac_path in subset_dir.rglob("*.flac"):
-        rel = flac_path.relative_to(LIBRISPEECH_ROOT)
+        rel = flac_path.relative_to(_LIBRISPEECH_ROOT)
         dst = (GAMMATONE_ROOT / rel).with_suffix(".pickle")
         dst.parent.mkdir(parents=True, exist_ok=True)
 

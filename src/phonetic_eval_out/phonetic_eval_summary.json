@@ -1,0 +1,172 @@
+{
+  "npz": "C:\\linux_project\\LENS\\round1_word_embeds_devclean_4mats.npz",
+  "meta": {
+    "subset": "dev-clean",
+    "min_count": 20,
+    "topN": 2000,
+    "max_tokens_per_word": 50,
+    "tail_frames": 10,
+    "mid_margin_frames": 3
+  },
+  "k": 15,
+  "n_rand": 50,
+  "n_perm": 2000,
+  "seed": 0,
+  "ranked_by_mean_improvement": [
+    {
+      "method": "mid",
+      "n_words_used": 284.0,
+      "k": 15.0,
+      "n_rand": 50.0,
+      "mean_nnED": 2.873004674911499,
+      "mean_randED": 3.6532299518585205,
+      "mean_improvement": 0.780225396156311,
+      "median_improvement": 0.7953333258628845,
+      "std_improvement": 0.3116484582424164,
+      "p_value_improvement_gt0": 0.0004997501249375312,
+      "obs_mean_improvement": 0.780225396156311
+    },
+    {
+      "method": "tail",
+      "n_words_used": 284.0,
+      "k": 15.0,
+      "n_rand": 50.0,
+      "mean_nnED": 2.937324047088623,
+      "mean_randED": 3.6527791023254395,
+      "mean_improvement": 0.7154553532600403,
+      "median_improvement": 0.7106666564941406,
+      "std_improvement": 0.3513265550136566,
+      "p_value_improvement_gt0": 0.0004997501249375312,
+      "obs_mean_improvement": 0.7154553532600403
+    },
+    {
+      "method": "last",
+      "n_words_used": 284.0,
+      "k": 15.0,
+      "n_rand": 50.0,
+      "mean_nnED": 2.995305299758911,
+      "mean_randED": 3.6549110412597656,
+      "mean_improvement": 0.6596056222915649,
+      "median_improvement": 0.65666663646698,
+      "std_improvement": 0.33090806007385254,
+      "p_value_improvement_gt0": 0.0004997501249375312,
+      "obs_mean_improvement": 0.6596056222915649
+    },
+    {
+      "method": "delta",
+      "n_words_used": 284.0,
+      "k": 15.0,
+      "n_rand": 50.0,
+      "mean_nnED": 3.0147886276245117,
+      "mean_randED": 3.6538829803466797,
+      "mean_improvement": 0.6390939354896545,
+      "median_improvement": 0.6353332996368408,
+      "std_improvement": 0.33555227518081665,
+      "p_value_improvement_gt0": 0.0004997501249375312,
+      "obs_mean_improvement": 0.6390939354896545
+    }
+  ],
+  "all_summaries": [
+    {
+      "method": "tail",
+      "n_words_used": 284.0,
+      "k": 15.0,
+      "n_rand": 50.0,
+      "mean_nnED": 2.937324047088623,
+      "mean_randED": 3.6527791023254395,
+      "mean_improvement": 0.7154553532600403,
+      "median_improvement": 0.7106666564941406,
+      "std_improvement": 0.3513265550136566,
+      "p_value_improvement_gt0": 0.0004997501249375312,
+      "obs_mean_improvement": 0.7154553532600403
+    },
+    {
+      "method": "last",
+      "n_words_used": 284.0,
+      "k": 15.0,
+      "n_rand": 50.0,
+      "mean_nnED": 2.995305299758911,
+      "mean_randED": 3.6549110412597656,
+      "mean_improvement": 0.6596056222915649,
+      "median_improvement": 0.65666663646698,
+      "std_improvement": 0.33090806007385254,
+      "p_value_improvement_gt0": 0.0004997501249375312,
+      "obs_mean_improvement": 0.6596056222915649
+    },
+    {
+      "method": "delta",
+      "n_words_used": 284.0,
+      "k": 15.0,
+      "n_rand": 50.0,
+      "mean_nnED": 3.0147886276245117,
+      "mean_randED": 3.6538829803466797,
+      "mean_improvement": 0.6390939354896545,
+      "median_improvement": 0.6353332996368408,
+      "std_improvement": 0.33555227518081665,
+      "p_value_improvement_gt0": 0.0004997501249375312,
+      "obs_mean_improvement": 0.6390939354896545
+    },
+    {
+      "method": "mid",
+      "n_words_used": 284.0,
+      "k": 15.0,
+      "n_rand": 50.0,
+      "mean_nnED": 2.873004674911499,
+      "mean_randED": 3.6532299518585205,
+      "mean_improvement": 0.780225396156311,
+      "median_improvement": 0.7953333258628845,
+      "std_improvement": 0.3116484582424164,
+      "p_value_improvement_gt0": 0.0004997501249375312,
+      "obs_mean_improvement": 0.780225396156311
+    }
+  ],
+  "pairwise_nnED_signflip_tests": [
+    {
+      "A": "delta",
+      "B": "last",
+      "n_common": 284,
+      "mean(nnB-nnA)": -0.019483570009469986,
+      "p_value_A_better_than_B": 0.975512243878061
+    },
+    {
+      "A": "delta",
+      "B": "mid",
+      "n_common": 284,
+      "mean(nnB-nnA)": -0.14178404211997986,
+      "p_value_A_better_than_B": 1.0
+    },
+    {
+      "A": "delta",
+      "B": "tail",
+      "n_common": 284,
+      "mean(nnB-nnA)": -0.07746478915214539,
+      "p_value_A_better_than_B": 1.0
+    },
+    {
+      "A": "last",
+      "B": "mid",
+      "n_common": 284,
+      "mean(nnB-nnA)": -0.12230046838521957,
+      "p_value_A_better_than_B": 1.0
+    },
+    {
+      "A": "last",
+      "B": "tail",
+      "n_common": 284,
+      "mean(nnB-nnA)": -0.0579812228679657,
+      "p_value_A_better_than_B": 1.0
+    },
+    {
+      "A": "mid",
+      "B": "tail",
+      "n_common": 284,
+      "mean(nnB-nnA)": 0.06431924551725388,
+      "p_value_A_better_than_B": 0.0004997501249375312
+    }
+  ],
+  "notes": {
+    "improvement": "rand_meanED - nn_meanED; positive means topK neighbors are phonetically closer than random.",
+    "p_value_improvement_gt0": "sign-flip permutation p-value for mean(improvement) > 0 (one-sided).",
+    "pairwise": "tests on nn_meanED (smaller is better). mean(nnB-nnA)>0 indicates A better than B."
+  }
+}
